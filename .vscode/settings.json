@@ -1,0 +1,51 @@
+{
+  // -- Python: cuando abres un archivo en codigo/pytorch usa raptors-pt,
+  //    cuando abres uno en codigo/tensorflow usa raptors-tf. Puedes cambiar
+  //    el intérprete activo desde la barra inferior de VS Code.
+  "python.terminal.activateEnvironment": true,
+
+  // Formato y linting
+  "python.formatting.provider": "black",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    }
+  },
+  "ruff.lint.args": ["--line-length=100"],
+  "black-formatter.args": ["--line-length=100"],
+
+  // Jupyter
+  "jupyter.askForKernelRestart": false,
+  "notebook.formatOnSave.enabled": true,
+
+  // Word, PDF, DOCX como referencia (no abrir en editor de texto)
+  "files.associations": {
+    "*.docx": "default",
+    "*.pdf": "default"
+  },
+
+  // Excluir carpetas grandes / generadas de la búsqueda
+  "files.watcherExclude": {
+    "**/datos/raw/**": true,
+    "**/datos/processed/**": true,
+    "**/__pycache__/**": true,
+    "**/.venv/**": true,
+    "**/outputs/checkpoints/**": true
+  },
+  "search.exclude": {
+    "**/datos/raw/**": true,
+    "**/datos/processed/**": true,
+    "**/__pycache__/**": true,
+    "**/outputs/**": true
+  },
+
+  // Ocultar archivos generados del explorador (opcional)
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/*.pyc": true
+  }
+}

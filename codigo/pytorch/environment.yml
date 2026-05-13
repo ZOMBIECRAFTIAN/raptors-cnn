@@ -1,0 +1,54 @@
+# Entorno conda para la implementación PyTorch del proyecto
+# Crear con:   conda env create -f environment.yml
+# Activar con: conda activate raptors-pt
+
+name: raptors-pt
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  # ----- Núcleo Python -----
+  - python=3.11
+
+  # ----- PyTorch con soporte CUDA 12.1 (NVIDIA) -----
+  - pytorch=2.3.*
+  - torchvision=0.18.*
+  - torchaudio=2.3.*
+  - pytorch-cuda=12.1
+
+  # ----- Cómputo numérico y datos -----
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - pillow
+
+  # ----- Visualización -----
+  - matplotlib
+  - seaborn
+
+  # ----- Notebook / desarrollo -----
+  - jupyter
+  - ipykernel
+  - tqdm
+  - pyyaml
+
+  # ----- Utilidades de imagen y video -----
+  - opencv
+
+  # ----- Herramientas de calidad de código -----
+  - black
+  - ruff
+
+  # ----- Pip para los paquetes que solo viven en PyPI -----
+  - pip
+  # NOTA: las dependencias pip (timm, grad-cam, albumentations, wandb, mlflow,
+  # python-dotenv) se instalan en un PASO SEPARADO con:
+  #     conda activate raptors-pt
+  #     cd C:\Users\hogwa     # o cualquier ruta corta sin acentos
+  #     pip install -r <ruta-al-proyecto>\codigo\pytorch\pip-requirements.txt
+  # Hacerlo en dos pasos evita el bug de Windows MAX_PATH=260 cuando la ruta
+  # del proyecto es larga o contiene caracteres no-ASCII.

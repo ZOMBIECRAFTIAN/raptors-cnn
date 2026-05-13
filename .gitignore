@@ -1,0 +1,115 @@
+# ============================================================================
+# .gitignore para el proyecto raptors-cnn
+# ============================================================================
+
+# ----- Python -----
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+.conda/
+conda-meta/
+
+# Notebooks (mantener .ipynb pero ignorar checkpoints)
+.ipynb_checkpoints/
+profile_default/
+ipython_config.py
+
+# ----- Datasets (no se commitean imágenes; pesan demasiado) -----
+datos/raw/
+datos/processed/
+datos/annotations/*.csv
+# Sí commitear el README y la guía de fuentes
+!datos/README.md
+!datos/FUENTES_DE_IMAGENES.md
+
+# ----- Modelos entrenados y artefactos de entrenamiento -----
+codigo/pytorch/outputs/checkpoints/
+codigo/pytorch/outputs/logs/
+codigo/pytorch/outputs/*.png
+codigo/tensorflow/outputs/checkpoints/
+codigo/tensorflow/outputs/logs/
+codigo/tensorflow/outputs/*.png
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.keras
+*.tflite
+*.onnx
+
+# Permitir que la estructura de outputs/ exista en el repo con un .gitkeep
+!codigo/pytorch/outputs/.gitkeep
+!codigo/tensorflow/outputs/.gitkeep
+
+# ----- Logs y tracking -----
+mlruns/
+wandb/
+runs/
+tb_logs/
+lightning_logs/
+*.log
+
+# ----- IDE / editores -----
+# Mantener .vscode con la configuración compartida del proyecto
+# Ignorar archivos personales del editor
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ----- Documentos temporales o externos al proyecto -----
+# Archivo viejo no relacionado con el proyecto actual
+Tesis Biologia.docx
+# Backups generados por Word, Excel, etc.
+~$*
+*.tmp
+*.bak
+
+# ----- OneDrive / Google Drive -----
+.dropbox
+.dropbox.attr
+.dropbox.cache
+
+# ----- Variables de entorno (NUNCA commit) -----
+.env
+.env.local
+*.pem
+*.key
+secrets/
+
+# ----- Construcción de documentos / LaTeX si aplica -----
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.toc
+*.bbl
+*.blg

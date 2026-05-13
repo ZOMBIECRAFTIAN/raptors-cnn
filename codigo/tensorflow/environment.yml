@@ -1,0 +1,46 @@
+# Entorno conda para la implementación TensorFlow del proyecto
+# Crear con:   conda env create -f environment.yml
+# Activar con: conda activate raptors-tf
+#
+# Notas Windows: TensorFlow >= 2.11 retiró el soporte CUDA nativo en Windows.
+# La forma recomendada en 2026 es:
+#   - Opción A (RECOMENDADA): instalar tensorflow[and-cuda] vía pip dentro de un
+#     entorno conda con Python 3.11. Esto trae las librerías CUDA y cuDNN bundled.
+#   - Opción B: usar tensorflow-cpu y entrenar en Google Colab cuando se requiera GPU.
+
+name: raptors-tf
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11
+
+  # ----- Cómputo numérico, datos, visualización -----
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - pillow
+  - matplotlib
+  - seaborn
+  - opencv
+
+  # ----- Notebook / desarrollo -----
+  - jupyter
+  - ipykernel
+  - tqdm
+  - pyyaml
+
+  # ----- Calidad de código -----
+  - black
+  - ruff
+
+  # ----- Pip: TensorFlow GPU (bundle CUDA) y librerías solo-PyPI -----
+  - pip
+  # NOTA: las dependencias pip (tensorflow, keras-cv, etc.) se instalan en un
+  # PASO SEPARADO con:
+  #     conda activate raptors-tf
+  #     cd C:\Users\hogwa     # ruta corta sin acentos
+  #     pip install -r <ruta-al-proyecto>\codigo\tensorflow\pip-requirements.txt
+  # Esto evita el bug Windows MAX_PATH=260 cuando la ruta del proyecto es larga.

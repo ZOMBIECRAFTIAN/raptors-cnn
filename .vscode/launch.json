@@ -1,0 +1,41 @@
+{
+  // Configuraciones de depuración (F5) para los principales scripts del proyecto
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "PyTorch — verify_setup",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/codigo/pytorch/verify_setup.py",
+      "cwd": "${workspaceFolder}/codigo/pytorch",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "PyTorch — generar dataset sintético",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/codigo/pytorch/make_synthetic_dataset.py",
+      "cwd": "${workspaceFolder}/codigo/pytorch",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "PyTorch — train (smoke test)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/codigo/pytorch/train.py",
+      "cwd": "${workspaceFolder}/codigo/pytorch",
+      "args": ["--arch", "resnet50", "--smoke-test"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "TensorFlow — verify_setup",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/codigo/tensorflow/verify_setup.py",
+      "cwd": "${workspaceFolder}/codigo/tensorflow",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ]
+}

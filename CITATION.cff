@@ -1,0 +1,53 @@
+# Citation File Format — describe cómo citar este proyecto académicamente.
+# GitHub lo lee automáticamente y muestra un botón "Cite this repository".
+# Especificación: https://citation-file-format.github.io/
+
+cff-version: 1.2.0
+title: >-
+  raptors-cnn: Identificación de Aves Rapaces Migratorias mediante
+  Inteligencia Artificial y Diseño de Lengua de Señas Internacional
+message: >-
+  Si usas este trabajo, por favor cita la tesis y el repositorio
+  como se indica abajo.
+type: software
+authors:
+  - given-names: Brian
+    family-names: Fernández Báez
+    email: brianferbaez@gmail.com
+    affiliation: "Tesis de Licenciatura en Biología"
+abstract: >-
+  Sistema integrado que combina (1) redes neuronales convolucionales
+  para identificar 14 especies de aves rapaces migratorias del corredor
+  de Veracruz a partir de imágenes en vuelo, y (2) un catálogo de señas
+  en International Sign (IS) que hace el conocimiento ornitológico
+  accesible a la comunidad sorda. Implementa transfer learning con
+  ResNet-50, EfficientNet-B3, MobileNetV3 y ConvNeXt-Tiny, comparados
+  entre PyTorch y TensorFlow, con explicabilidad mediante Grad-CAM.
+keywords:
+  - deep learning
+  - convolutional neural networks
+  - bird identification
+  - raptors
+  - Veracruz migratory corridor
+  - International Sign
+  - accessibility
+  - Universal Design for Learning
+  - PyTorch
+  - TensorFlow
+  - transfer learning
+  - Grad-CAM
+license: MIT
+date-released: "2026-05-08"
+url: "https://github.com/ZOMBIECRAFTIAN/raptors-cnn"
+repository-code: "https://github.com/ZOMBIECRAFTIAN/raptors-cnn"
+preferred-citation:
+  type: thesis
+  title: >-
+    Identificación de Aves Rapaces Migratorias mediante Inteligencia
+    Artificial y Diseño de Lenguaje de Señas para su Comunicación y
+    Reconocimiento
+  authors:
+    - given-names: Brian
+      family-names: Fernández Báez
+  year: 2026
+  thesis-type: "Licenciatura en Biología"
