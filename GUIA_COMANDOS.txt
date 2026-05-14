@@ -1,0 +1,390 @@
+================================================================================
+                    GUIA DE COMANDOS - PROYECTO raptors-cnn
+                    Brian Fernandez Baez - Tesis de Biologia
+================================================================================
+
+Este archivo contiene TODOS los comandos que necesitas, en orden, divididos
+en cuatro bloques:
+
+   BLOQUE 1 - INSTALACION INICIAL (una sola vez en tu computadora)
+   BLOQUE 2 - INICIO DE SESION DIARIO (cada que vuelves a trabajar)
+   BLOQUE 3 - COMANDOS DEL PROYECTO (entrenar, evaluar, descargar)
+   BLOQUE 4 - CONTROL DE VERSIONES CON GIT Y GITHUB
+
+Solo copia y pega los bloques que necesites. NO ejecutes todo seguido.
+
+
+================================================================================
+   BLOQUE 1 - INSTALACION INICIAL (UNA SOLA VEZ)
+================================================================================
+
+Solo haces este bloque la PRIMERA VEZ que configuras el proyecto en una
+computadora nueva, o si reinstalas Windows / Anaconda.
+
+--------------------------------------------------------------------------------
+PASO 1.1 - Abrir Anaconda Prompt
+--------------------------------------------------------------------------------
+   1. Presiona la tecla Windows
+   2. Escribe: anaconda prompt
+   3. Clic en "Anaconda Prompt" (icono verde)
+
+El prompt se ve asi:   (base) C:\Users\hogwa>
+
+--------------------------------------------------------------------------------
+PASO 1.2 - Verificar instalaciones basicas
+--------------------------------------------------------------------------------
+Pega cada linea y presiona Enter:
+
+   conda --version
+   python --version
+   nvidia-smi
+   git --version
+
+Esperas ver:
+   conda 24.x o superior
+   Python 3.x.x
+   Una tabla con tu GPU NVIDIA y memoria
+   git version 2.x.x
+
+Si algo falla, instala lo que falta antes de continuar.
+
+--------------------------------------------------------------------------------
+PASO 1.3 - Clonar el proyecto desde GitHub
+--------------------------------------------------------------------------------
+Si la carpeta ya existe (C:\Users\hogwa\raptors-cnn), brincate este paso.
+
+Si no existe, descarga el proyecto:
+
+   cd C:\Users\hogwa
+   git clone https://github.com/ZOMBIECRAFTIAN/raptors-cnn.git
+   cd raptors-cnn
+
+--------------------------------------------------------------------------------
+PASO 1.4 - Crear el entorno conda para PyTorch
+--------------------------------------------------------------------------------
+   cd /d C:\Users\hogwa\raptors-cnn
+   conda env create -f codigo\pytorch\environment.yml
+
+Tarda 10-20 minutos. Cuando termine veras:
+   "done"
+   Y un mensaje "To activate this environment, use: conda activate raptors-pt"
+
+--------------------------------------------------------------------------------
+PASO 1.5 - Instalar dependencias pip (importante: desde ruta corta)
+--------------------------------------------------------------------------------
+Por un bug de Windows con rutas largas, hacemos pip install desde C:\Users\hogwa:
+
+   conda activate raptors-pt
+   cd C:\Users\hogwa
+   pip install timm grad-cam albumentations wandb mlflow python-dotenv requests
+
+Tarda 2-5 minutos.
+
+--------------------------------------------------------------------------------
+PASO 1.6 - Verificar que el entorno PyTorch funciona
+--------------------------------------------------------------------------------
+   cd /d C:\Users\hogwa\raptors-cnn\codigo\pytorch
+   python verify_setup.py
+
+Esperas ver al final:
+   "Entorno PyTorch listo. Ya puedes empezar a entrenar."
+
+Si algo falla, anota el error y pidemelo en Cowork. NO sigas hasta que esto
+pase con todos los chequeos en verde.
+
+--------------------------------------------------------------------------------
+PASO 1.7 - (Opcional) Crear entorno TensorFlow
+--------------------------------------------------------------------------------
+Solo si quieres correr la comparativa PyTorch vs TensorFlow:
+
+   conda deactivate
+   cd /d C:\Users\hogwa\raptors-cnn
+   conda env create -f codigo\tensorflow\environment.yml
+   conda activate raptors-tf
+   cd C:\Users\hogwa
+   pip install tensorflow[and-cuda]==2.16.* keras-cv tensorflow-hub albumentations
+   cd /d C:\Users\hogwa\raptors-cnn\codigo\tensorflow
+   python verify_setup.py
+
+
+================================================================================
+   BLOQUE 2 - INICIO DE SESION DIARIO
+================================================================================
+
+Cada vez que vuelves a trabajar en el proyecto, abres Anaconda Prompt y
+pegas esto:
+
+--------------------------------------------------------------------------------
+PASO 2.1 - Activar el entorno y entrar al proyecto
+--------------------------------------------------------------------------------
+   conda activate raptors-pt
+   cd /d C:\Users\hogwa\raptors-cnn
+
+Verifica que el prompt diga al inicio:
+   (raptors-pt) C:\Users\hogwa\raptors-cnn>
+
+Si dice (base), el entorno NO esta activo. Repite "conda activate raptors-pt".
+
+--------------------------------------------------------------------------------
+PASO 2.2 - Actualizar el codigo desde GitHub (si trabajaste desde otra compu)
+--------------------------------------------------------------------------------
+   git pull origin main
+
+Esto baja cambios remotos a tu repo local.
+
+--------------------------------------------------------------------------------
+PASO 2.3 - Verificar que todo sigue funcionando (opcional)
+--------------------------------------------------------------------------------
+   cd codigo\pytorch
+   python verify_setup.py
+
+Si pasa, ya estas listo para trabajar.
+
+
+================================================================================
+   BLOQUE 3 - COMANDOS DEL PROYECTO
+================================================================================
+
+Asume que ya hiciste el Bloque 2 y tu prompt esta en
+   (raptors-pt) C:\Users\hogwa\raptors-cnn\codigo\pytorch>
+
+--------------------------------------------------------------------------------
+3.1 - Generar dataset sintetico (para pruebas, sin imagenes reales)
+--------------------------------------------------------------------------------
+   python make_synthetic_dataset.py
+
+Esto crea ~980 imagenes sinteticas en datos\processed\.
+
+--------------------------------------------------------------------------------
+3.2 - Descargar imagenes reales de iNaturalist
+--------------------------------------------------------------------------------
+Prueba primero con una sola especie (dry-run, no descarga nada):
+
+   python download_inaturalist.py --species TV --target 10 --dry-run
+
+Descarga real, una sola especie (50 imagenes de Turkey Vulture):
+
+   python download_inaturalist.py --species TV --target 50
+
+Descarga grande de las 14 especies (250 imgs cada una, tarda 1-2 horas):
+
+   python download_inaturalist.py --target 250 --max-pages 5
+
+--------------------------------------------------------------------------------
+3.3 - Entrenamiento rapido (smoke-test, ~5 min, solo verifica)
+--------------------------------------------------------------------------------
+   python train.py --arch resnet50 --smoke-test
+
+--------------------------------------------------------------------------------
+3.4 - Entrenamiento real (todas las epochs, requiere dataset real)
+--------------------------------------------------------------------------------
+   python train.py --arch resnet50
+
+Para cambiar la arquitectura, pasa otra:
+   python train.py --arch efficientnet_b3
+   python train.py --arch mobilenet_v3_large
+   python train.py --arch convnext_tiny
+
+--------------------------------------------------------------------------------
+3.5 - Evaluar el modelo entrenado
+--------------------------------------------------------------------------------
+   python evaluate.py --arch resnet50 --weights outputs\checkpoints\best_stage2.pt
+
+Genera:
+   - Reporte por especie (precision, recall, F1)
+   - outputs\confusion_matrix.png
+   - outputs\roc_curves.png
+
+--------------------------------------------------------------------------------
+3.6 - Mapa de calor Grad-CAM sobre una imagen
+--------------------------------------------------------------------------------
+   python gradcam.py ^
+       --image ..\..\datos\processed\test\Buteo_platypterus\BW_test_0000.jpg ^
+       --arch resnet50 ^
+       --weights outputs\checkpoints\best_stage2.pt
+
+Genera:   outputs\gradcam_BW_test_0000.png
+
+
+================================================================================
+   BLOQUE 4 - CONTROL DE VERSIONES CON GIT Y GITHUB
+================================================================================
+
+CONCEPTO BASICO:
+   - "working tree"     = los archivos en tu disco que estas editando
+   - "staging area"     = archivos preparados para commit (git add)
+   - "commit"           = snapshot en la historia local del repo
+   - "push"             = sube tus commits a GitHub
+   - "pull"             = baja commits de GitHub a tu repo local
+
+FLUJO TIPICO DE UNA SESION DE TRABAJO:
+   1. Antes de editar:   git pull origin main
+   2. Editas archivos en VS Code, corres pruebas, etc.
+   3. Cuando tengas cambios listos:  git status, git add, git commit, git push
+
+--------------------------------------------------------------------------------
+4.1 - Ver el estado del repo
+--------------------------------------------------------------------------------
+   git status
+
+Te dice:
+   - En que rama estas
+   - Que archivos cambiaste pero NO estan staged
+   - Que archivos estan staged listos para commit
+   - Si estas adelante o atras del remote
+
+Version corta y rapida:
+   git status --short
+
+--------------------------------------------------------------------------------
+4.2 - Bajar cambios remotos (ANTES de empezar a editar)
+--------------------------------------------------------------------------------
+   git pull origin main
+
+Esto evita conflictos. Hazlo siempre que vayas a empezar a trabajar.
+
+--------------------------------------------------------------------------------
+4.3 - Agregar archivos al staging area
+--------------------------------------------------------------------------------
+Agregar TODOS los archivos modificados:
+   git add .
+
+Agregar archivos especificos:
+   git add codigo\pytorch\train.py
+   git add documentacion\tesis\Capitulo4_Resultados.docx
+
+Verificar que esta staged:
+   git status
+
+--------------------------------------------------------------------------------
+4.4 - Hacer un commit con mensaje claro
+--------------------------------------------------------------------------------
+Usa Conventional Commits (estandar profesional):
+
+   git commit -m "tipo(area): descripcion corta"
+
+Tipos comunes:
+   feat:     funcionalidad nueva           (ej. feat(model): agregar EfficientNetV2)
+   fix:      correccion de bug             (ej. fix(data): orden alfabetico de clases)
+   docs:     cambios solo en documentacion (ej. docs(readme): agregar diagrama)
+   refactor: reorganizar codigo sin cambiar comportamiento
+   test:     agregar o cambiar pruebas
+   chore:    mantenimiento sin afectar codigo (ej. .gitignore, configs)
+   dataset:  cambios al dataset            (ej. dataset(inaturalist): 50 imgs nuevas)
+
+Ejemplos:
+   git commit -m "feat(model): agregar soporte para EfficientNet-B3"
+   git commit -m "fix(data_loader): ordenar SPECIES alfabeticamente"
+   git commit -m "docs(readme): actualizar tabla de las 14 especies"
+   git commit -m "dataset(inaturalist): primer batch de 250 imgs por especie"
+
+--------------------------------------------------------------------------------
+4.5 - Subir commits a GitHub
+--------------------------------------------------------------------------------
+   git push origin main
+
+La primera vez te pedira autenticarte. Despues lo recuerda.
+
+--------------------------------------------------------------------------------
+4.6 - Ver historial de commits
+--------------------------------------------------------------------------------
+Una linea por commit (mas compacto):
+   git log --oneline
+
+Con detalles completos:
+   git log
+
+Solo los ultimos 5:
+   git log --oneline -5
+
+--------------------------------------------------------------------------------
+4.7 - Deshacer cambios en archivo (ANTES de commit)
+--------------------------------------------------------------------------------
+Descartar todos los cambios no committeados de un archivo:
+   git checkout -- nombre_archivo.py
+
+Descartar archivos en staging (sin perder ediciones):
+   git reset HEAD nombre_archivo.py
+
+--------------------------------------------------------------------------------
+4.8 - Trabajar con ramas (recomendado para cambios grandes)
+--------------------------------------------------------------------------------
+Crear y cambiarte a una rama nueva:
+   git checkout -b feature/agregar-tensorflow
+
+Ver en que rama estas:
+   git branch
+
+Volver a main:
+   git checkout main
+
+Fusionar una rama a main:
+   git checkout main
+   git merge feature/agregar-tensorflow
+
+Borrar una rama ya fusionada:
+   git branch -d feature/agregar-tensorflow
+
+--------------------------------------------------------------------------------
+4.9 - Si te aparece "index file corrupt" (problema raro de Windows)
+--------------------------------------------------------------------------------
+   Remove-Item .git\index -Force -ErrorAction SilentlyContinue
+   Remove-Item .git\index.lock -Force -ErrorAction SilentlyContinue
+   git reset --mixed HEAD
+
+Esto reconstruye el index sin tocar tus archivos. Es seguro.
+
+--------------------------------------------------------------------------------
+4.10 - Cambiar la URL del remote (si hay error 'repository not found')
+--------------------------------------------------------------------------------
+Ver remote actual:
+   git remote -v
+
+Cambiar la URL (si esta mal):
+   git remote set-url origin https://github.com/ZOMBIECRAFTIAN/raptors-cnn.git
+
+
+================================================================================
+   FLUJO COMPLETO TIPICO DE UNA SESION DE TRABAJO
+================================================================================
+
+Resumen condensado para tener a la mano:
+
+   # Abrir Anaconda Prompt
+   conda activate raptors-pt
+   cd /d C:\Users\hogwa\raptors-cnn
+   git pull origin main
+
+   # ... trabajas, editas, pruebas ...
+   cd codigo\pytorch
+   python train.py --arch resnet50 --smoke-test
+
+   # Cuando tengas cambios listos para guardar:
+   cd /d C:\Users\hogwa\raptors-cnn
+   git status
+   git add .
+   git commit -m "feat(train): mejorar augmentation con mixup"
+   git push origin main
+
+
+================================================================================
+   AYUDA RAPIDA
+================================================================================
+
+Si te pierdes en algun comando:
+
+   git --help                  Ayuda general de Git
+   git status --help           Ayuda de un comando especifico
+   conda --help                Ayuda de conda
+   python --help               Ayuda de python
+
+Si todo se rompe:
+
+   1. Anota el mensaje de error
+   2. Abre Cowork (esta misma conversacion con Claude)
+   3. Pega el error y dime "esto no funciona"
+   4. Lo arreglamos juntos
+
+================================================================================
+                            FIN DE LA GUIA
+================================================================================
