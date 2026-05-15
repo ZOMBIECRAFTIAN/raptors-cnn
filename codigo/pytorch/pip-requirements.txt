@@ -4,3 +4,8 @@ albumentations
 wandb
 mlflow
 python-dotenv
+gradio>=4.40
+opencv-python-headless
+flask>=3.0
+gunicorn>=21.0
+requests

@@ -1,0 +1,57 @@
+{
+  "app": {
+    "title": "Raptors of the Veracruz Corridor",
+    "subtitle": "AI identification + International Sign Language",
+    "description": "Identify migratory raptors of the Veracruz corridor, Mexico. Integrated AI system with inclusive design for the Deaf community."
+  },
+  "nav": {
+    "identify": "Identify",
+    "species": "Species guide",
+    "data": "Data",
+    "about": "About"
+  },
+  "hero": {
+    "headline": "Identify a migratory raptor",
+    "subheadline": "Upload a photo of a bird in flight to identify the species and learn its sign in International Sign.",
+    "choose_image": "Choose image",
+    "choose_video": "Choose video",
+    "compatible": "Compatible: JPG, PNG, TIFF, WebP — Max 16 MB"
+  },
+  "result": {
+    "low_confidence_warning": "Low confidence. May be a juvenile, unusual angle, or species outside the 23 trained.",
+    "species_info": "Species information",
+    "iucn_status": "IUCN status",
+    "habitat": "Habitat",
+    "length": "Length",
+    "wingspan": "Wingspan",
+    "diagnostic": "Field diagnostic",
+    "best_months": "Best months",
+    "did_you_know": "Did you know…",
+    "sign_title": "Sign in International Sign",
+    "sign_provisional": "Provisional illustration · pending Deaf community validation",
+    "top_candidates": "Top-3 candidates",
+    "was_correct": "Was the identification correct?",
+    "yes_correct": "✓ Correct",
+    "no_incorrect": "✗ Incorrect",
+    "save_observation": "Save this observation",
+    "latitude": "Latitude (optional)",
+    "longitude": "Longitude (optional)",
+    "notes": "Notes",
+    "save_btn": "Save observation",
+    "new_id": "New identification"
+  },
+  "species_page": {
+    "title": "Field reference guide",
+    "subtitle": "Diagnostic field marks, ecology, conservation status, and IS sign description for each species the model recognises.",
+    "profile_link": "Species profile"
+  },
+  "data_page": {
+    "title": "System data",
+    "observations": "Observations",
+    "species_recorded": "Species recorded",
+    "corrections": "Corrections",
+    "download_internal": "Download internal CSV",
+    "download_dwc": "Download Darwin Core CSV",
+    "download_feedback": "Download feedback log"
+  }
+}

@@ -20,34 +20,41 @@ for d in (OUTPUT_DIR, CHECKPOINT_DIR, LOGS_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
 # -----------------------------------------------------------------------------
-# Especies (14 — orden ALFABÉTICO; coincide con tf.keras.utils.image_dataset_from_directory
-# y con el orden alfabético de las carpetas en disco)
+# Especies (23 — orden ALFABÉTICO; coincide con tf.keras.utils.image_dataset_from_directory.
+# Reclasificaciones AOS 2023: Astur cooperii, Astur atricapillus, Buteo plagiatus.
 # -----------------------------------------------------------------------------
 SPECIES = [
-    "Accipiter_striatus",       # 0 — SS — Sharp-shinned Hawk
-    "Astur_cooperii",           # 1 — CH — Cooper's Hawk (reclasificado de Accipiter por AOS 2023)
-    "Buteo_albonotatus",        # 2 — ZT — Zone-tailed Hawk
-    "Buteo_jamaicensis",        # 3 — RT — Red-tailed Hawk
-    "Buteo_lineatus",           # 4 — RS — Red-shouldered Hawk
-    "Buteo_platypterus",        # 5 — BW — Broad-winged Hawk
-    "Buteo_swainsoni",          # 6 — SW — Swainson's Hawk
-    "Cathartes_aura",           # 7 — TV — Turkey Vulture
-    "Circus_hudsonius",         # 8 — NH — Northern Harrier
-    "Falco_columbarius",        # 9 — ML — Merlin
-    "Falco_peregrinus",         # 10 — PG — Peregrine Falcon
-    "Falco_sparverius",         # 11 — AK — American Kestrel
-    "Ictinia_mississippiensis", # 12 — MK — Mississippi Kite
-    "Pandion_haliaetus",        # 13 — OS — Osprey
+    "Accipiter_striatus", "Aquila_chrysaetos", "Astur_atricapillus", "Astur_cooperii",
+    "Buteo_albonotatus", "Buteo_brachyurus", "Buteo_jamaicensis", "Buteo_lagopus",
+    "Buteo_lineatus", "Buteo_plagiatus", "Buteo_platypterus", "Buteo_regalis",
+    "Buteo_swainsoni", "Cathartes_aura", "Chondrohierax_uncinatus", "Circus_hudsonius",
+    "Elanoides_forficatus", "Falco_columbarius", "Falco_peregrinus", "Falco_sparverius",
+    "Haliaeetus_leucocephalus", "Ictinia_mississippiensis", "Pandion_haliaetus",
 ]
-NUM_CLASSES = len(SPECIES)
+NUM_CLASSES = len(SPECIES)  # = 23
 
-SPECIES_CODE = ["SS", "CH", "ZT", "RT", "RS", "BW", "SW", "TV", "NH", "ML", "PG", "AK", "MK", "OS"]
-SPECIES_COMMON = [
-    "Sharp-shinned Hawk", "Cooper's Hawk", "Zone-tailed Hawk", "Red-tailed Hawk",
-    "Red-shouldered Hawk", "Broad-winged Hawk", "Swainson's Hawk", "Turkey Vulture",
-    "Northern Harrier", "Merlin", "Peregrine Falcon", "American Kestrel",
-    "Mississippi Kite", "Osprey",
+SPECIES_CODE = [
+    "SS",  "GE",  "NG",  "CH",  "ZT",  "STH", "RT",  "RL",
+    "RS",  "GH",  "BW",  "FH",  "SW",  "TV",  "HK",  "NH",
+    "STK", "ML",  "PG",  "AK",  "BE",  "MK",  "OS",
 ]
+SPECIES_COMMON = [
+    "Sharp-shinned Hawk",  "Golden Eagle",          "Northern Goshawk",  "Cooper's Hawk",
+    "Zone-tailed Hawk",    "Short-tailed Hawk",     "Red-tailed Hawk",   "Rough-legged Hawk",
+    "Red-shouldered Hawk", "Gray Hawk",             "Broad-winged Hawk", "Ferruginous Hawk",
+    "Swainson's Hawk",     "Turkey Vulture",        "Hook-billed Kite",  "Northern Harrier",
+    "Swallow-tailed Kite", "Merlin",                "Peregrine Falcon",  "American Kestrel",
+    "Bald Eagle",          "Mississippi Kite",      "Osprey",
+]
+SPECIES_COMMON_ES = [
+    "Gavilán pecho rufo",            "Águila real",              "Gavilán azor norteño",      "Gavilán de Cooper",
+    "Aguililla aura",                "Aguililla colicorta",      "Aguililla cola roja",       "Aguililla patas ásperas",
+    "Aguililla pecho rojo",          "Aguililla gris",           "Aguililla alas anchas",     "Aguililla de Ferruginous",
+    "Aguililla de Swainson",         "Zopilote aura",            "Milano picogarfio",         "Gavilán rastrero",
+    "Milano tijereta",               "Halcón esmerejón",         "Halcón peregrino",          "Halcón cernícalo americano",
+    "Águila calva",                  "Milano de Mississippi",    "Águila pescadora",
+]
+assert len(SPECIES) == len(SPECIES_CODE) == len(SPECIES_COMMON) == len(SPECIES_COMMON_ES) == 23
 
 # -----------------------------------------------------------------------------
 # GPUs y reproducibilidad

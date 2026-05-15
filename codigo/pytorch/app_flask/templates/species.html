@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title_suffix %} · {{ t("nav.species") }}{% endblock %}
+
+{% block content %}
+<section class="species-catalog">
+  <div class="species-catalog-header">
+    <h1>{{ t("species_page.title") }}</h1>
+    <p class="muted">{{ t("species_page.subtitle") }}</p>
+    <p class="muted">{{ species|length }} especies del corredor migratorio de Veracruz</p>
+  </div>
+
+  <div class="species-grid">
+    {% for sp in species %}
+    <article class="species-card">
+      <header class="species-card-header">
+        <div class="species-code">{{ sp.code }}</div>
+        <div class="species-card-titles">
+          <strong>{{ sp.common_es }}</strong>
+          <em>{{ sp.scientific_name }}</em>
+        </div>
+      </header>
+      <div class="species-card-body">
+        <p><strong>{{ t("result.iucn_status") }}:</strong> {{ sp.iucn_status }}</p>
+        <p><strong>{{ t("result.length") }}:</strong> {{ sp.length_cm }}</p>
+        <p><strong>{{ t("result.wingspan") }}:</strong> {{ sp.wingspan_cm }}</p>
+        <p><strong>{{ t("result.diagnostic") }}:</strong> {{ sp.diagnostic }}</p>
+        <p><strong>{{ t("result.best_months") }}:</strong> {{ sp.best_months }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

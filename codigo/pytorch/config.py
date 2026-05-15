@@ -23,38 +23,67 @@ for d in (OUTPUT_DIR, CHECKPOINT_DIR, LOGS_DIR):
     d.mkdir(parents=True, exist_ok=True)
 
 # -----------------------------------------------------------------------------
-# Especies objetivo (14 — orden ALFABÉTICO por nombre científico).
+# Especies objetivo (23 — orden ALFABÉTICO por nombre científico, AOS 2023).
 # IMPORTANTE: este orden DEBE coincidir con el orden alfabético de las
 # carpetas en disco, porque torchvision.datasets.ImageFolder asigna los
-# índices de clase ordenando alfabéticamente. Cualquier otro orden romper
-# la correspondencia entre etiqueta predicha y especie real.
+# índices de clase ordenando alfabéticamente.
+#
+# Reclasificaciones AOS 2023 aplicadas:
+#   Accipiter cooperii → Astur cooperii
+#   Accipiter gentilis → Astur atricapillus  (split: nominal gentilis queda en Eurasia)
+#   Buteo nitidus      → Buteo plagiatus     (split: nominal nitidus queda en Sudamérica)
 # -----------------------------------------------------------------------------
 SPECIES = [
-    "Accipiter_striatus",       # 0 — SS — Sharp-shinned Hawk
-    "Astur_cooperii",           # 1 — CH — Cooper's Hawk (reclasificado de Accipiter por AOS 2023)
-    "Buteo_albonotatus",        # 2 — ZT — Zone-tailed Hawk
-    "Buteo_jamaicensis",        # 3 — RT — Red-tailed Hawk
-    "Buteo_lineatus",           # 4 — RS — Red-shouldered Hawk
-    "Buteo_platypterus",        # 5 — BW — Broad-winged Hawk
-    "Buteo_swainsoni",          # 6 — SW — Swainson's Hawk
-    "Cathartes_aura",           # 7 — TV — Turkey Vulture
-    "Circus_hudsonius",         # 8 — NH — Northern Harrier
-    "Falco_columbarius",        # 9 — ML — Merlin
-    "Falco_peregrinus",         # 10 — PG — Peregrine Falcon
-    "Falco_sparverius",         # 11 — AK — American Kestrel
-    "Ictinia_mississippiensis", # 12 — MK — Mississippi Kite
-    "Pandion_haliaetus",        # 13 — OS — Osprey
+    "Accipiter_striatus",       # 0  — SS  — Sharp-shinned Hawk      — Gavilán pecho rufo
+    "Aquila_chrysaetos",        # 1  — GE  — Golden Eagle            — Águila real
+    "Astur_atricapillus",       # 2  — NG  — Northern Goshawk        — Gavilán azor norteño (AOS 2023)
+    "Astur_cooperii",           # 3  — CH  — Cooper's Hawk           — Gavilán de Cooper (AOS 2023)
+    "Buteo_albonotatus",        # 4  — ZT  — Zone-tailed Hawk        — Aguililla aura
+    "Buteo_brachyurus",         # 5  — STH — Short-tailed Hawk       — Aguililla colicorta
+    "Buteo_jamaicensis",        # 6  — RT  — Red-tailed Hawk         — Aguililla cola roja
+    "Buteo_lagopus",            # 7  — RL  — Rough-legged Hawk       — Aguililla patas ásperas
+    "Buteo_lineatus",           # 8  — RS  — Red-shouldered Hawk     — Aguililla pecho rojo
+    "Buteo_plagiatus",          # 9  — GH  — Gray Hawk               — Aguililla gris (AOS split)
+    "Buteo_platypterus",        # 10 — BW  — Broad-winged Hawk       — Aguililla alas anchas
+    "Buteo_regalis",            # 11 — FH  — Ferruginous Hawk        — Aguililla de Ferruginous
+    "Buteo_swainsoni",          # 12 — SW  — Swainson's Hawk         — Aguililla de Swainson
+    "Cathartes_aura",           # 13 — TV  — Turkey Vulture          — Zopilote aura
+    "Chondrohierax_uncinatus",  # 14 — HK  — Hook-billed Kite        — Milano picogarfio
+    "Circus_hudsonius",         # 15 — NH  — Northern Harrier        — Gavilán rastrero
+    "Elanoides_forficatus",     # 16 — STK — Swallow-tailed Kite     — Milano tijereta
+    "Falco_columbarius",        # 17 — ML  — Merlin                  — Halcón esmerejón
+    "Falco_peregrinus",         # 18 — PG  — Peregrine Falcon        — Halcón peregrino
+    "Falco_sparverius",         # 19 — AK  — American Kestrel        — Halcón cernícalo americano
+    "Haliaeetus_leucocephalus", # 20 — BE  — Bald Eagle              — Águila calva
+    "Ictinia_mississippiensis", # 21 — MK  — Mississippi Kite        — Milano de Mississippi
+    "Pandion_haliaetus",        # 22 — OS  — Osprey                  — Águila pescadora
 ]
-NUM_CLASSES = len(SPECIES)
+NUM_CLASSES = len(SPECIES)  # = 23
 
-# Códigos de dos letras alineados con el orden alfabético de SPECIES
-SPECIES_CODE = ["SS", "CH", "ZT", "RT", "RS", "BW", "SW", "TV", "NH", "ML", "PG", "AK", "MK", "OS"]
-SPECIES_COMMON = [
-    "Sharp-shinned Hawk", "Cooper's Hawk", "Zone-tailed Hawk", "Red-tailed Hawk",
-    "Red-shouldered Hawk", "Broad-winged Hawk", "Swainson's Hawk", "Turkey Vulture",
-    "Northern Harrier", "Merlin", "Peregrine Falcon", "American Kestrel",
-    "Mississippi Kite", "Osprey",
+# Códigos de 2-3 letras alineados con el orden alfabético de SPECIES
+SPECIES_CODE = [
+    "SS",  "GE",  "NG",  "CH",  "ZT",  "STH", "RT",  "RL",
+    "RS",  "GH",  "BW",  "FH",  "SW",  "TV",  "HK",  "NH",
+    "STK", "ML",  "PG",  "AK",  "BE",  "MK",  "OS",
 ]
+SPECIES_COMMON = [
+    "Sharp-shinned Hawk",  "Golden Eagle",          "Northern Goshawk",  "Cooper's Hawk",
+    "Zone-tailed Hawk",    "Short-tailed Hawk",     "Red-tailed Hawk",   "Rough-legged Hawk",
+    "Red-shouldered Hawk", "Gray Hawk",             "Broad-winged Hawk", "Ferruginous Hawk",
+    "Swainson's Hawk",     "Turkey Vulture",        "Hook-billed Kite",  "Northern Harrier",
+    "Swallow-tailed Kite", "Merlin",                "Peregrine Falcon",  "American Kestrel",
+    "Bald Eagle",          "Mississippi Kite",      "Osprey",
+]
+SPECIES_COMMON_ES = [
+    "Gavilán pecho rufo",            "Águila real",              "Gavilán azor norteño",      "Gavilán de Cooper",
+    "Aguililla aura",                "Aguililla colicorta",      "Aguililla cola roja",       "Aguililla patas ásperas",
+    "Aguililla pecho rojo",          "Aguililla gris",           "Aguililla alas anchas",     "Aguililla de Ferruginous",
+    "Aguililla de Swainson",         "Zopilote aura",            "Milano picogarfio",         "Gavilán rastrero",
+    "Milano tijereta",               "Halcón esmerejón",         "Halcón peregrino",          "Halcón cernícalo americano",
+    "Águila calva",                  "Milano de Mississippi",    "Águila pescadora",
+]
+# Verificación de consistencia (siempre debe pasar)
+assert len(SPECIES) == len(SPECIES_CODE) == len(SPECIES_COMMON) == len(SPECIES_COMMON_ES) == 23
 
 # -----------------------------------------------------------------------------
 # Dispositivo
@@ -65,7 +94,15 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # Hiperparámetros — etapa 1 (feature extraction) y etapa 2 (fine-tuning)
 # -----------------------------------------------------------------------------
 INPUT_SIZE = 224  # cambia a 300 para EfficientNet-B3, 232 para ConvNeXt-Tiny
-BATCH_SIZE = 32
+BATCH_SIZE = 16   # reducido de 32 → 16 para RTX 3050 4GB. Sube a 32 si tienes ≥ 8GB.
+
+# Activar mixed precision (AMP) para reducir VRAM y acelerar. Recomendado en
+# GPUs con Tensor Cores (RTX 20/30/40 series, A100, etc.). En CPU se ignora.
+USE_AMP = True
+
+# Acumulación de gradientes: simula un batch efectivo mayor sin más VRAM.
+# Si BATCH_SIZE=16 y ACCUM_STEPS=2 → batch efectivo = 32.
+GRADIENT_ACCUM_STEPS = 2
 
 STAGE1 = dict(
     epochs=10,
@@ -90,6 +127,14 @@ STAGE2 = dict(
     warmup_epochs=3,
     early_stopping_patience=10,
 )
+
+# Para GPUs muy limitadas: arquitectura recomendada con su batch_size sugerido
+RECOMMENDED_BATCH = {
+    "resnet50":           {"4GB": 16, "8GB": 32, "16GB": 64},
+    "efficientnet_b3":    {"4GB": 8,  "8GB": 16, "16GB": 32},
+    "mobilenet_v3_large": {"4GB": 32, "8GB": 64, "16GB": 128},
+    "convnext_tiny":      {"4GB": 8,  "8GB": 16, "16GB": 32},
+}
 
 # -----------------------------------------------------------------------------
 # Reproducibilidad

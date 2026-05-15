@@ -32,17 +32,33 @@ def set_seed(seed: int = config.SEED) -> None:
     torch.backends.cudnn.benchmark = False
 
 
-def train_one_epoch(model, loader, criterion, optimizer, device):
+def train_one_epoch(model, loader, criterion, optimizer, device, scaler=None,
+                    accum_steps: int = 1):
+    """Una epoch de entrenamiento con soporte para AMP y gradient accumulation."""
     model.train()
     running_loss, correct, total = 0.0, 0, 0
-    for imgs, targets in loader:
+    optimizer.zero_grad(set_to_none=True)
+    for step, (imgs, targets) in enumerate(loader):
         imgs, targets = imgs.to(device), targets.to(device)
-        optimizer.zero_grad(set_to_none=True)
-        outputs = model(imgs)
-        loss = criterion(outputs, targets)
-        loss.backward()
-        optimizer.step()
-        running_loss += loss.item() * imgs.size(0)
+
+        if scaler is not None:
+            with torch.cuda.amp.autocast():
+                outputs = model(imgs)
+                loss = criterion(outputs, targets) / accum_steps
+            scaler.scale(loss).backward()
+            if (step + 1) % accum_steps == 0:
+                scaler.step(optimizer)
+                scaler.update()
+                optimizer.zero_grad(set_to_none=True)
+        else:
+            outputs = model(imgs)
+            loss = criterion(outputs, targets) / accum_steps
+            loss.backward()
+            if (step + 1) % accum_steps == 0:
+                optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+
+        running_loss += loss.item() * imgs.size(0) * accum_steps
         _, preds = outputs.max(1)
         correct += (preds == targets).sum().item()
         total += imgs.size(0)
@@ -80,13 +96,21 @@ def run_stage(stage_cfg, model, train_loader, val_loader, criterion, device, sta
     if stage_cfg.get("scheduler") == "cosine":
         scheduler = CosineAnnealingLR(optimizer, T_max=stage_cfg["epochs"])
 
+    # AMP (mixed precision) — usa GPU si está disponible
+    scaler = torch.cuda.amp.GradScaler() if (getattr(config, "USE_AMP", False)
+                                              and device.type == "cuda") else None
+    accum_steps = max(1, getattr(config, "GRADIENT_ACCUM_STEPS", 1))
+
     best_val_acc = 0.0
     patience = stage_cfg.get("early_stopping_patience", 0)
     epochs_no_improve = 0
 
     for epoch in range(1, stage_cfg["epochs"] + 1):
         t0 = time.time()
-        train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device)
+        train_loss, train_acc = train_one_epoch(
+            model, train_loader, criterion, optimizer, device,
+            scaler=scaler, accum_steps=accum_steps,
+        )
         val_loss, val_acc = evaluate(model, val_loader, criterion, device)
         if scheduler is not None: scheduler.step()
         print(f"[{stage_name}] epoch {epoch:03d}/{stage_cfg['epochs']}  "

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="{{ get_locale() }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ t("app.title") }}{% block title_suffix %}{% endblock %}</title>
+  <meta name="description" content="{{ t('app.description') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="{{ url_for('index') }}" class="brand">
+        <span class="brand-icon">🦅</span>
+        <span>
+          <strong>{{ t("app.title") }}</strong>
+          <small>{{ t("app.subtitle") }}</small>
+        </span>
+      </a>
+      <nav class="topnav">
+        <a href="{{ url_for('index') }}" class="{% if request.endpoint == 'index' %}active{% endif %}">{{ t("nav.identify") }}</a>
+        <a href="{{ url_for('species_page') }}" class="{% if request.endpoint == 'species_page' %}active{% endif %}">{{ t("nav.species") }}</a>
+        <a href="{{ url_for('data_page') }}" class="{% if request.endpoint == 'data_page' %}active{% endif %}">{{ t("nav.data") }}</a>
+        <div class="lang-switcher">
+          <button class="lang-current">{{ LANGUAGES[get_locale()] }} ▾</button>
+          <div class="lang-menu">
+            {% for code, name in get_languages() %}
+              <a href="{{ url_for('set_lang', code=code) }}?next={{ request.path }}">{{ name }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="sitefoot">
+    <div class="sitefoot-inner">
+      <span>raptors-cnn · Brian Fernández Báez · Tesis de Maestría · 2026</span>
+      <span class="repo-link">
+        <a href="https://github.com/ZOMBIECRAFTIAN/raptors-cnn" target="_blank" rel="noopener">github.com/ZOMBIECRAFTIAN/raptors-cnn</a>
+      </span>
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

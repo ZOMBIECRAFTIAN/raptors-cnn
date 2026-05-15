@@ -1,0 +1,57 @@
+{
+  "app": {
+    "title": "Aves Rapaces del Corredor de Veracruz",
+    "subtitle": "Identificación con IA + lenguaje de señas internacional",
+    "description": "Identifica rapaces migratorias del corredor de Veracruz, México. Sistema integrado de IA y diseño inclusivo para la comunidad sorda."
+  },
+  "nav": {
+    "identify": "Identificar",
+    "species": "Guía de especies",
+    "data": "Datos",
+    "about": "Acerca de"
+  },
+  "hero": {
+    "headline": "Identifica una rapaz migratoria",
+    "subheadline": "Sube una fotografía de un ave en vuelo para identificar la especie y aprender su seña en International Sign.",
+    "choose_image": "Elegir imagen",
+    "choose_video": "Elegir video",
+    "compatible": "Compatibles: JPG, PNG, TIFF, WebP — Máx. 16 MB"
+  },
+  "result": {
+    "low_confidence_warning": "Confianza baja. Puede ser un juvenil, un ángulo inusual o una especie fuera de las 23 entrenadas.",
+    "species_info": "Información de la especie",
+    "iucn_status": "Estado IUCN",
+    "habitat": "Hábitat",
+    "length": "Longitud",
+    "wingspan": "Envergadura",
+    "diagnostic": "Diagnóstico de campo",
+    "best_months": "Mejor época",
+    "did_you_know": "¿Sabías que…?",
+    "sign_title": "Seña en International Sign",
+    "sign_provisional": "Ilustración provisional · pendiente de validación con la comunidad sorda",
+    "top_candidates": "Top-3 candidatos",
+    "was_correct": "¿La identificación fue correcta?",
+    "yes_correct": "✓ Correcta",
+    "no_incorrect": "✗ Incorrecta",
+    "save_observation": "Guardar esta observación",
+    "latitude": "Latitud (opcional)",
+    "longitude": "Longitud (opcional)",
+    "notes": "Notas",
+    "save_btn": "Guardar observación",
+    "new_id": "Nueva identificación"
+  },
+  "species_page": {
+    "title": "Guía de referencia de campo",
+    "subtitle": "Marcas diagnósticas de campo, ecología, estado de conservación y descripción de la seña en IS para cada especie que el modelo reconoce.",
+    "profile_link": "Perfil de la especie"
+  },
+  "data_page": {
+    "title": "Datos del sistema",
+    "observations": "Observaciones",
+    "species_recorded": "Especies registradas",
+    "corrections": "Correcciones",
+    "download_internal": "Descargar CSV interno",
+    "download_dwc": "Descargar Darwin Core CSV",
+    "download_feedback": "Descargar log de correcciones"
+  }
+}

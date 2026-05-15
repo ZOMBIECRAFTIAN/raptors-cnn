@@ -34,7 +34,7 @@ Esta tesis desarrolla un sistema integrado que combina (1) una **red neuronal co
 - 🔄 **Dual framework**: implementación espejo en **PyTorch** y **TensorFlow** para análisis comparativo.
 - 🎨 **Transfer learning** en dos etapas: feature extraction + fine-tuning con augmentation rica.
 - 🔍 **Explicabilidad**: Grad-CAM verifica que el modelo atienda a los caracteres morfológicos correctos.
-- 🤟 **Inclusión**: catálogo de **14 señas en International Sign** co-creado con la comunidad sorda.
+- 🤟 **Inclusión**: catálogo de **23 señas en International Sign** co-creado con la comunidad sorda.
 - 📊 **Reproducibilidad**: seeds fijos, paths relativos, environment.yml para conda, license tracking por imagen.
 - 📑 **5 capítulos de tesis** en formato DOCX, listos para entrega académica.
 
@@ -63,26 +63,40 @@ flowchart LR
 
 ---
 
-## 🦅 Las 14 especies objetivo
+## 🦅 Las 23 especies objetivo (V1 — corredor de Veracruz)
 
-| Cód. | Nombre científico | Nombre común | Familia | Abundancia |
-|:----:|------------------|--------------|---------|-----------|
-| BW | *Buteo platypterus* | Broad-winged Hawk | Accipitridae | Extrema |
-| SW | *Buteo swainsoni* | Swainson's Hawk | Accipitridae | Muy alta |
-| TV | *Cathartes aura* | Turkey Vulture | Cathartidae | Muy alta |
-| MK | *Ictinia mississippiensis* | Mississippi Kite | Accipitridae | Alta |
-| SS | *Accipiter striatus* | Sharp-shinned Hawk | Accipitridae | Media |
-| CH | *Astur cooperii* | Cooper's Hawk | Accipitridae | Media |
-| RT | *Buteo jamaicensis* | Red-tailed Hawk | Accipitridae | Media |
-| RS | *Buteo lineatus* | Red-shouldered Hawk | Accipitridae | Baja-media |
-| ZT | *Buteo albonotatus* | Zone-tailed Hawk | Accipitridae | Baja |
-| NH | *Circus hudsonius* | Northern Harrier | Accipitridae | Baja-media |
-| PG | *Falco peregrinus* | Peregrine Falcon | Falconidae | Baja |
-| AK | *Falco sparverius* | American Kestrel | Falconidae | Media |
-| OS | *Pandion haliaetus* | Osprey | Pandionidae | Baja-media |
-| ML | *Falco columbarius* | Merlin | Falconidae | Baja |
+> **Roadmap V2:** expansión a ~49 especies (todas las rapaces de México) + análisis de vuelo (planeo, hovering, soaring, kettle) sobre videos. Ver [`documentacion/ROADMAP_V2.md`](documentacion/ROADMAP_V2.md).
 
-> **Nota taxonómica:** Cooper's Hawk fue reclasificado de *Accipiter cooperii* a *Astur cooperii* por la AOS en 2023 con base en estudios filogenómicos.
+### V1 — 23 especies del corredor migratorio
+
+| Cód. | Nombre científico (AOS 2023) | Nombre común | Familia | Abundancia |
+|:----:|------------------------------|--------------|---------|-----------|
+| BW  | *Buteo platypterus* | Broad-winged Hawk | Accipitridae | Extrema |
+| SW  | *Buteo swainsoni* | Swainson's Hawk | Accipitridae | Muy alta |
+| TV  | *Cathartes aura* | Turkey Vulture | Cathartidae | Muy alta |
+| MK  | *Ictinia mississippiensis* | Mississippi Kite | Accipitridae | Alta |
+| STK | *Elanoides forficatus* | Swallow-tailed Kite | Accipitridae | Alta (migr.) |
+| SS  | *Accipiter striatus* | Sharp-shinned Hawk | Accipitridae | Media |
+| CH  | *Astur cooperii* ⚠️ | Cooper's Hawk | Accipitridae | Media |
+| RT  | *Buteo jamaicensis* | Red-tailed Hawk | Accipitridae | Media |
+| AK  | *Falco sparverius* | American Kestrel | Falconidae | Media |
+| RS  | *Buteo lineatus* | Red-shouldered Hawk | Accipitridae | Baja-media |
+| GH  | *Buteo plagiatus* ⚠️ | Gray Hawk | Accipitridae | Baja-media |
+| NH  | *Circus hudsonius* | Northern Harrier | Accipitridae | Baja-media |
+| OS  | *Pandion haliaetus* | Osprey | Pandionidae | Baja-media |
+| ZT  | *Buteo albonotatus* | Zone-tailed Hawk | Accipitridae | Baja |
+| STH | *Buteo brachyurus* | Short-tailed Hawk | Accipitridae | Baja |
+| HK  | *Chondrohierax uncinatus* | Hook-billed Kite | Accipitridae | Baja |
+| PG  | *Falco peregrinus* | Peregrine Falcon | Falconidae | Baja |
+| ML  | *Falco columbarius* | Merlin | Falconidae | Baja |
+| BE  | *Haliaeetus leucocephalus* | Bald Eagle | Accipitridae | Muy baja (Cardel) |
+| FH  | *Buteo regalis* | Ferruginous Hawk | Accipitridae | Muy baja (juveniles) |
+| GE  | *Aquila chrysaetos* | Golden Eagle | Accipitridae | Muy baja (zona centro) |
+| NG  | *Astur atricapillus* ⚠️ | Northern Goshawk | Accipitridae | Muy baja (Chichicaxtle) |
+| RL  | *Buteo lagopus* | Rough-legged Hawk | Accipitridae | Muy baja (cruce raro) |
+
+> **Reclasificaciones AOS 2023** ⚠️:
+> `Accipiter cooperii` → `Astur cooperii` · `Accipiter gentilis` → `Astur atricapillus` · `Buteo nitidus` → `Buteo plagiatus`
 
 ---
 
@@ -114,7 +128,7 @@ raptors-cnn/
 │   └── diagramas/                 ← Mermaid del sistema
 │
 ├── lengua_de_senas/
-│   ├── catalogo_senas/            ← catálogo de 14 señas (propuesta del autor)
+│   ├── catalogo_senas/            ← catálogo de 23 señas (propuesta del autor)
 │   ├── glosario_IS_LSM.md         ← equivalencias entre lenguas de señas
 │   ├── instrumentos_validacion/   ← cuestionario Likert
 │   └── videos/                    ← grabaciones de las señas (pendiente)
@@ -169,7 +183,7 @@ python gradcam.py --image ../../datos/processed/test/Buteo_platypterus/BW_test_0
 
 ```bash
 python download_inaturalist.py --target 250 --max-pages 5
-# Descarga hasta 250 imágenes × 14 especies con licencia CC abierta
+# Descarga hasta 250 imágenes × 23 especies con licencia CC abierta
 ```
 
 ---
