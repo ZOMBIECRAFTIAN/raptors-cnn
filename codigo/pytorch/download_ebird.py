@@ -49,7 +49,7 @@ API_BASE = "https://api.ebird.org/v2"
 EBIRD_SPECIES_CODES = {
     "Accipiter_striatus":       "shshaw",   # Sharp-shinned Hawk
     "Astur_cooperii":           "coohaw",   # Cooper's Hawk
-    "Buteo_albonotatus":        "zothaw1",  # Zone-tailed Hawk
+    "Buteo_albonotatus":        "zotaw1",   # Zone-tailed Hawk (eBird usa zotaw1, no zothaw1)
     "Buteo_jamaicensis":        "rethaw",   # Red-tailed Hawk
     "Buteo_lineatus":           "reshaw",   # Red-shouldered Hawk
     "Buteo_platypterus":        "brwhaw",   # Broad-winged Hawk

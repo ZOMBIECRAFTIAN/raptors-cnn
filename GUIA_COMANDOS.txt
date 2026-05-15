@@ -1,6 +1,6 @@
 ================================================================================
                     GUIA DE COMANDOS - PROYECTO raptors-cnn
-                    Brian Fernandez Baez - Tesis de Biologia
+                    Brian Fernandez Baez - Tesis de Maestria
 ================================================================================
 
 Este archivo contiene TODOS los comandos que necesitas, en orden, divididos

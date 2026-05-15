@@ -4,7 +4,7 @@
 
 ### Identificación de Aves Rapaces Migratorias mediante Inteligencia Artificial y Diseño de Lengua de Señas Internacional
 
-*Tesis de Licenciatura en Biología — Brian Fernández Báez — 2026*
+*Tesis de Maestría — Brian Fernández Báez — 2026*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
@@ -208,7 +208,7 @@ Las contribuciones son bienvenidas — imágenes con licencia abierta, mejoras a
 
 ## 👤 Autor
 
-**Brian Fernández Báez** — Licenciatura en Biología — 2026
+**Brian Fernández Báez** — Tesis de Maestría — 2026
 📧 brianferbaez@gmail.com
 
 ## 🙏 Agradecimientos

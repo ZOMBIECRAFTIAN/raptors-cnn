@@ -14,7 +14,7 @@ authors:
   - given-names: Brian
     family-names: Fernández Báez
     email: brianferbaez@gmail.com
-    affiliation: "Tesis de Licenciatura en Biología"
+    affiliation: "Tesis de Maestría"
 abstract: >-
   Sistema integrado que combina (1) redes neuronales convolucionales
   para identificar 14 especies de aves rapaces migratorias del corredor
@@ -50,4 +50,4 @@ preferred-citation:
     - given-names: Brian
       family-names: Fernández Báez
   year: 2026
-  thesis-type: "Licenciatura en Biología"
+  thesis-type: "Maestría"
