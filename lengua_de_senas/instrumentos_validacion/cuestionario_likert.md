@@ -10,7 +10,7 @@
 
 Estimada/o participante:
 
-Le agradecemos su tiempo para evaluar las señas propuestas para 14 especies de aves rapaces migratorias. Le pediremos que vea el video de cada seña dos veces y conteste tres preguntas con una escala del 1 al 5.
+Le agradecemos su tiempo para evaluar las señas propuestas para 23 especies de aves rapaces migratorias del corredor de Veracruz. Le pediremos que vea el video de cada seña dos veces y conteste tres preguntas con una escala del 1 al 5.
 
 Sus respuestas se manejan de forma anónima y agregada. Puede dejar la pregunta abierta vacía si no desea agregar comentarios.
 
@@ -28,7 +28,7 @@ Compensación simbólica por su participación: [definir según presupuesto].
 
 ---
 
-## Por cada una de las 14 señas
+## Por cada una de las 23 señas
 
 Para cada seña, después de ver el video dos veces, responda:
 

@@ -17,7 +17,7 @@ authors:
     affiliation: "Tesis de Maestría"
 abstract: >-
   Sistema integrado que combina (1) redes neuronales convolucionales
-  para identificar 14 especies de aves rapaces migratorias del corredor
+  para identificar 23 especies de aves rapaces migratorias del corredor
   de Veracruz a partir de imágenes en vuelo, y (2) un catálogo de señas
   en International Sign (IS) que hace el conocimiento ornitológico
   accesible a la comunidad sorda. Implementa transfer learning con

@@ -1,13 +1,13 @@
 # Módulo de Lengua de Señas — International Sign para Aves Rapaces
 
-Este módulo contiene el catálogo de señas en International Sign (IS) para las 14 especies objetivo del proyecto. Es el componente social del sistema y cumple con los principios del Diseño Universal para el Aprendizaje (CAST, 2018).
+Este módulo contiene el catálogo de señas en International Sign (IS) para las 23 especies objetivo del proyecto. Es el componente social del sistema y cumple con los principios del Diseño Universal para el Aprendizaje (CAST, 2018).
 
 ## Estructura
 
 ```
 lengua_de_senas/
 ├── catalogo_senas/
-│   ├── Catalogo_de_Senas_Propuesta_Brian.md   # Diseño preliminar del autor (14 especies + adicionales)
+│   ├── Catalogo_de_Senas_Propuesta_Brian.md   # Diseño preliminar del autor (23 especies + adicionales)
 │   ├── lamina_1.jpg                           # (a digitalizar) lámina hand-drawn original
 │   ├── lamina_2.jpg                           # (a digitalizar) lámina hand-drawn original
 │   ├── ficha_<COD>.md                         # ficha por especie tras refinamiento
