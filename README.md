@@ -2,9 +2,11 @@
 
 # 🦅 raptors-cnn
 
-### Identificación de Aves Rapaces Migratorias mediante Inteligencia Artificial y Diseño de Lengua de Señas Internacional
+### Identificación de Aves Rapaces de México mediante Inteligencia Artificial y Diseño de Lengua de Señas Internacional
 
 *Tesis de Maestría — Brian Fernández Báez — 2026*
+
+*V1.1 — 53 especies (todas las rapaces diurnas de México). Sustituye el alcance V1 (23 rapaces del corredor de Veracruz).*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
@@ -20,11 +22,11 @@
 
 ## 📑 Abstract (English)
 
-This thesis develops an integrated system that combines (1) a convolutional neural network (CNN) for automated identification of 14 species of migratory raptors crossing the Veracruz corridor — the largest raptor migration bottleneck on Earth, with more than 5 million individuals per season — and (2) a catalogue of 14 signs in **International Sign (IS)** that makes ornithological knowledge accessible to the Deaf community. The project compares four state-of-the-art architectures (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implemented in both PyTorch and TensorFlow, applies Grad-CAM for interpretability validation, and follows Universal Design for Learning principles to ensure inclusive scientific communication. Code, weights and sign catalogue are released under open licenses (MIT, CC-BY).
+This thesis develops an integrated system that combines (1) a convolutional neural network (CNN) for automated identification of **53 diurnal raptor species of Mexico** (all Cathartidae, Pandionidae, Accipitridae and Falconidae documented nationally), including the migratory bottleneck of the Veracruz corridor — the largest raptor migration on Earth — but also residents like *Harpia harpyja*, *Aquila chrysaetos* and *Caracara plancus*, and (2) a catalogue of **53 signs in International Sign (IS)** that makes ornithological knowledge accessible to the Deaf community. The project compares four state-of-the-art architectures (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implemented in both PyTorch and TensorFlow, applies Grad-CAM for interpretability validation, and follows Universal Design for Learning principles to ensure inclusive scientific communication. Code, weights and sign catalogue are released under open licenses (MIT, CC-BY).
 
 ## 📜 Resumen (Español)
 
-Esta tesis desarrolla un sistema integrado que combina (1) una **red neuronal convolucional** para identificar automáticamente 14 especies de aves rapaces migratorias del corredor de Veracruz — el embudo migratorio más grande del mundo, con más de 5 millones de individuos por temporada — y (2) un **catálogo de 14 señas en International Sign (IS)** que hace accesible el conocimiento ornitológico a la comunidad sorda. El proyecto compara cuatro arquitecturas estado-del-arte (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implementadas en PyTorch y TensorFlow, aplica Grad-CAM como verificación de interpretabilidad, y sigue los principios del Diseño Universal para el Aprendizaje (DUA/UDL) para garantizar comunicación científica inclusiva. El código, pesos y catálogo de señas se liberan bajo licencias abiertas (MIT, CC-BY).
+Esta tesis desarrolla un sistema integrado que combina (1) una **red neuronal convolucional** para identificar automáticamente **53 especies de rapaces diurnas de México** (todas las Cathartidae, Pandionidae, Accipitridae y Falconidae documentadas a nivel nacional), incluyendo el embudo migratorio del corredor de Veracruz — el más grande del mundo — pero también especies residentes como *Harpia harpyja*, *Aquila chrysaetos* y *Caracara plancus*, y (2) un **catálogo de 53 señas en International Sign (IS)** que hace accesible el conocimiento ornitológico a la comunidad sorda. El proyecto compara cuatro arquitecturas estado-del-arte (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implementadas en PyTorch y TensorFlow, aplica Grad-CAM como verificación de interpretabilidad, y sigue los principios del Diseño Universal para el Aprendizaje (DUA/UDL) para garantizar comunicación científica inclusiva. El código, pesos y catálogo de señas se liberan bajo licencias abiertas (MIT, CC-BY).
 
 ---
 
@@ -34,7 +36,7 @@ Esta tesis desarrolla un sistema integrado que combina (1) una **red neuronal co
 - 🔄 **Dual framework**: implementación espejo en **PyTorch** y **TensorFlow** para análisis comparativo.
 - 🎨 **Transfer learning** en dos etapas: feature extraction + fine-tuning con augmentation rica.
 - 🔍 **Explicabilidad**: Grad-CAM verifica que el modelo atienda a los caracteres morfológicos correctos.
-- 🤟 **Inclusión**: catálogo de **23 señas en International Sign** co-creado con la comunidad sorda.
+- 🤟 **Inclusión**: catálogo de **53 señas en International Sign** co-creado con la comunidad sorda.
 - 📊 **Reproducibilidad**: seeds fijos, paths relativos, environment.yml para conda, license tracking por imagen.
 - 📑 **5 capítulos de tesis** en formato DOCX, listos para entrega académica.
 
@@ -46,7 +48,7 @@ Esta tesis desarrolla un sistema integrado que combina (1) una **red neuronal co
 flowchart LR
     A[📷 Imagen<br/>de rapaz<br/>en vuelo] --> B{Pre-procesamiento}
     B --> C[🧠 CNN<br/>ResNet-50 / EfficientNet-B3 /<br/>MobileNetV3 / ConvNeXt-Tiny]
-    C --> D[Softmax<br/>14 clases]
+    C --> D[Softmax<br/>53 clases]
     D --> E[🏷️ Especie<br/>predicha + prob.]
     C --> F[Grad-CAM]
     F --> G[🔥 Mapa de calor<br/>verificación]
@@ -63,40 +65,29 @@ flowchart LR
 
 ---
 
-## 🦅 Las 23 especies objetivo (V1 — corredor de Veracruz)
+## 🦅 Las 53 especies objetivo — todas las rapaces diurnas de México
 
-> **Roadmap V2:** expansión a ~49 especies (todas las rapaces de México) + análisis de vuelo (planeo, hovering, soaring, kettle) sobre videos. Ver [`documentacion/ROADMAP_V2.md`](documentacion/ROADMAP_V2.md).
+> El sistema reconoce **53 especies** organizadas en 4 familias (Cathartidae, Pandionidae, Accipitridae y Falconidae) según la taxonomía **AOS 2024**. La lista completa, con estatus IUCN y NOM-059, está en [`documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md`](documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md).
 
-### V1 — 23 especies del corredor migratorio
+### Por familia (resumen)
 
-| Cód. | Nombre científico (AOS 2023) | Nombre común | Familia | Abundancia |
-|:----:|------------------------------|--------------|---------|-----------|
-| BW  | *Buteo platypterus* | Broad-winged Hawk | Accipitridae | Extrema |
-| SW  | *Buteo swainsoni* | Swainson's Hawk | Accipitridae | Muy alta |
-| TV  | *Cathartes aura* | Turkey Vulture | Cathartidae | Muy alta |
-| MK  | *Ictinia mississippiensis* | Mississippi Kite | Accipitridae | Alta |
-| STK | *Elanoides forficatus* | Swallow-tailed Kite | Accipitridae | Alta (migr.) |
-| SS  | *Accipiter striatus* | Sharp-shinned Hawk | Accipitridae | Media |
-| CH  | *Astur cooperii* ⚠️ | Cooper's Hawk | Accipitridae | Media |
-| RT  | *Buteo jamaicensis* | Red-tailed Hawk | Accipitridae | Media |
-| AK  | *Falco sparverius* | American Kestrel | Falconidae | Media |
-| RS  | *Buteo lineatus* | Red-shouldered Hawk | Accipitridae | Baja-media |
-| GH  | *Buteo plagiatus* ⚠️ | Gray Hawk | Accipitridae | Baja-media |
-| NH  | *Circus hudsonius* | Northern Harrier | Accipitridae | Baja-media |
-| OS  | *Pandion haliaetus* | Osprey | Pandionidae | Baja-media |
-| ZT  | *Buteo albonotatus* | Zone-tailed Hawk | Accipitridae | Baja |
-| STH | *Buteo brachyurus* | Short-tailed Hawk | Accipitridae | Baja |
-| HK  | *Chondrohierax uncinatus* | Hook-billed Kite | Accipitridae | Baja |
-| PG  | *Falco peregrinus* | Peregrine Falcon | Falconidae | Baja |
-| ML  | *Falco columbarius* | Merlin | Falconidae | Baja |
-| BE  | *Haliaeetus leucocephalus* | Bald Eagle | Accipitridae | Muy baja (Cardel) |
-| FH  | *Buteo regalis* | Ferruginous Hawk | Accipitridae | Muy baja (juveniles) |
-| GE  | *Aquila chrysaetos* | Golden Eagle | Accipitridae | Muy baja (zona centro) |
-| NG  | *Astur atricapillus* ⚠️ | Northern Goshawk | Accipitridae | Muy baja (Chichicaxtle) |
-| RL  | *Buteo lagopus* | Rough-legged Hawk | Accipitridae | Muy baja (cruce raro) |
+| Familia | Especies | Ejemplos representativos |
+|---------|---------:|--------------------------|
+| Cathartidae | 4 | *Cathartes aura*, *Coragyps atratus*, *Sarcoramphus papa*, *Cathartes burrovianus* |
+| Pandionidae | 1 | *Pandion haliaetus* |
+| Accipitridae | 38 | *Buteo platypterus*, *B. swainsoni*, *Harpia harpyja*, *Aquila chrysaetos*, *Spizaetus ornatus*, *Astur cooperii*, *Geranospiza caerulescens*… |
+| Falconidae | 10 | *Falco peregrinus*, *F. femoralis*, *F. rufigularis*, *Caracara plancus*, *Micrastur semitorquatus*, *Daptrius americanus*… |
+| **TOTAL** | **53** | — |
 
-> **Reclasificaciones AOS 2023** ⚠️:
-> `Accipiter cooperii` → `Astur cooperii` · `Accipiter gentilis` → `Astur atricapillus` · `Buteo nitidus` → `Buteo plagiatus`
+### Cobertura geográfica
+
+- **Migratorias del corredor de Veracruz** (núcleo histórico de V1): *Buteo platypterus*, *B. swainsoni*, *Accipiter striatus*, *Astur cooperii*, *Falco peregrinus*, etc. — pico septiembre-octubre.
+- **Residentes templadas** del norte y altiplano: *Aquila chrysaetos*, *Buteo regalis*, *Parabuteo unicinctus*, *Falco femoralis*.
+- **Residentes tropicales** del sureste: *Harpia harpyja*, *Spizaetus* spp., *Buteogallus* spp., *Harpagus bidentatus*, *Pseudastur albicollis*, *Daptrius americanus*.
+- **Especialistas** de humedales y costas: *Rostrhamus sociabilis*, *Busarellus nigricollis*, *Pandion haliaetus*, *Haliaeetus leucocephalus*.
+
+> **Reclasificaciones AOS aplicadas** ⚠️ (64th–65th Supplements):
+> `Accipiter cooperii` → `Astur cooperii` · `Accipiter gentilis` → `Astur atricapillus` (American Goshawk) · `Buteo nitidus` → `Buteo plagiatus`
 
 ---
 

@@ -1,35 +1,185 @@
-{% extends "base.html" %}
-{% block title_suffix %} · {{ t("nav.data") }}{% endblock %}
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t('nav.data') }} — {{ t('app.title') }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
 
-{% block content %}
-<section class="data-page">
-  <h1>{{ t("data_page.title") }}</h1>
-
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-num">{{ total_observations }}</div>
-      <div class="stat-label">{{ t("data_page.observations") }}</div>
+<header class="header">
+    <div>
+        <h1>🦅 {{ t('app.title') }}</h1>
+        <p>{{ t('header.subtitle_data') }}</p>
     </div>
-    <div class="stat-card">
-      <div class="stat-num">{{ species_recorded }}</div>
-      <div class="stat-label">{{ t("data_page.species_recorded") }}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">{{ total_corrections }}</div>
-      <div class="stat-label">{{ t("data_page.corrections") }}</div>
-    </div>
-  </div>
+    <nav class="nav-links">
+        <a href="/">{{ t('nav.identify') }}</a>
+        <a href="/species">{{ t('nav.species_guide') }}</a>
+        <a href="/data" class="active">{{ t('nav.data') }}</a>
+        <div class="lang-picker">
+            <button class="lang-toggle" type="button"
+                    onclick="document.getElementById('langMenu').classList.toggle('open')"
+                    aria-haspopup="true" aria-label="{{ t('nav.language') }}">
+                {{ LANGUAGES[get_locale()]['flag'] }}
+                {{ LANGUAGES[get_locale()]['native'] }} ▾
+            </button>
+            <ul class="lang-menu" id="langMenu">
+                {% for code, meta in LANGUAGES.items() %}
+                <li>
+                    <a href="/set_lang/{{ code }}?next={{ request.path }}"
+                       {% if code == get_locale() %}class="active"{% endif %}>
+                        <span>{{ meta.flag }}</span>
+                        <span>{{ meta.native }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </nav>
+</header>
 
-  <h2 style="font-family: Lora, serif; color: var(--c-primary-dark);">Descargas</h2>
-  <div class="cta-row" style="justify-content: flex-start;">
-    <a href="{{ url_for('export_darwin_core') }}" class="btn btn-primary">📥 {{ t("data_page.download_dwc") }}</a>
-  </div>
+<main class="container">
 
-  <p class="muted" style="margin-top: 24px;">
-    Las observaciones se almacenan en formato Darwin Core (compatible con iNaturalist, GBIF y otras
-    plataformas de biodiversidad). Las correcciones del usuario alimentan el ciclo de
-    <em>active learning</em> — cuando acumulas ≥ 50 correcciones, corre
-    <code>python retrain_with_feedback.py</code> para mejorar el modelo.
-  </p>
-</section>
-{% endblock %}
+    <section class="data-summary">
+        <h2>{{ t('data.summary_title') }}</h2>
+        <div class="data-stats-grid">
+            <div class="stat-card stat-card--blue">
+                <span class="stat-value">{{ total_observations }}</span>
+                <span class="stat-label">{{ t('data.stat_total') }}</span>
+            </div>
+            <div class="stat-card stat-card--teal">
+                <span class="stat-value">{{ observations_by_species|length }}</span>
+                <span class="stat-label">{{ t('data.stat_species') }}</span>
+            </div>
+            <div class="stat-card stat-card--orange">
+                <span class="stat-value">{{ feedback_count }}</span>
+                <span class="stat-label">{{ t('data.stat_corrections') }}</span>
+            </div>
+        </div>
+    </section>
+
+    {% if observations_by_species %}
+    <section class="data-by-species">
+        <h3>{{ t('data.by_species_title') }}</h3>
+        <div class="species-bars">
+            {% set max_count = (observations_by_species.values()|list|max) or 1 %}
+            {% for key, info in species_info.items() %}
+                {% set count = observations_by_species.get(key, 0) %}
+                <div class="species-bar-row">
+                    <span class="species-bar-label">{{ info.common_name }}</span>
+                    <div class="species-bar-track">
+                        <div class="species-bar-fill"
+                             style="width: {{ (count / max_count * 100)|round(1) }}%;
+                                    background: {{ info.color }}">
+                        </div>
+                    </div>
+                    <span class="species-bar-count">{{ count }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="data-export">
+        <h3>{{ t('data.export_title') }}</h3>
+        <p class="data-export-intro">{{ t('data.export_intro') }}</p>
+
+        <div class="export-cards">
+            <a class="export-card" href="/export/observations.csv">
+                <span class="export-icon">📊</span>
+                <div>
+                    <h4>{{ t('data.export_internal_title') }}</h4>
+                    <p>{{ t('data.export_internal_desc') }}</p>
+                    <span class="export-badge">CSV · UTF-8</span>
+                </div>
+            </a>
+
+            <a class="export-card export-card--featured"
+               href="/export/observations_dwc.csv">
+                <span class="export-icon">🌏</span>
+                <div>
+                    <h4>{{ t('data.export_dwc_title') }}</h4>
+                    <p>{{ t('data.export_dwc_desc') }}</p>
+                    <span class="export-badge">DwC · CSV · UTF-8</span>
+                </div>
+            </a>
+
+            <a class="export-card" href="/export/feedback.csv">
+                <span class="export-icon">🛠️</span>
+                <div>
+                    <h4>{{ t('data.export_feedback_title') }}</h4>
+                    <p>{{ t('data.export_feedback_desc') }}</p>
+                    <span class="export-badge">CSV · UTF-8</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="ala-howto">
+            <h4>{{ t('data.ala_howto_title') }}</h4>
+            <ol>
+                <li>{{ t('data.ala_howto_step1') }}</li>
+                <li>{{ t('data.ala_howto_step2') }}</li>
+                <li>{{ t('data.ala_howto_step3') }}</li>
+                <li>{{ t('data.ala_howto_step4') }}</li>
+            </ol>
+            <p class="muted">{{ t('data.ala_howto_note') }}</p>
+        </div>
+    </section>
+
+    {% if recent_observations %}
+    <section class="data-recent">
+        <h3>{{ t('data.recent_title') }}</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>{{ t('data.th_when') }}</th>
+                    <th>{{ t('data.th_species') }}</th>
+                    <th>{{ t('data.th_confidence') }}</th>
+                    <th>{{ t('data.th_location') }}</th>
+                    <th>{{ t('data.th_confirmed') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in recent_observations %}
+                <tr>
+                    <td>{{ r.timestamp[:19] }}</td>
+                    <td>
+                        <strong>{{ r.common_name }}</strong>
+                        <small><em>{{ r.scientific_name }}</em></small>
+                    </td>
+                    <td>{{ r.confidence }}%</td>
+                    <td>
+                        {% if r.latitude %}
+                            {{ r.latitude }}, {{ r.longitude }}
+                        {% else %}
+                            <span class="muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if r.observer_confirmed in ['True','true','1'] %}
+                            ✅
+                        {% else %}
+                            <span class="muted">pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% else %}
+    <section class="data-empty">
+        <p>{{ t('data.no_obs_text') }}</p>
+    </section>
+    {% endif %}
+
+</main>
+
+<footer class="footer">
+    <p>{{ t('app.footer_credit') }}</p>
+    <p style="margin-top:0.3rem">{{ t('app.footer_model') }}</p>
+</footer>
+
+</body>
+</html>

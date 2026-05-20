@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero-card">
+    <div class="hero-icon">📷</div>
+    <h1>{{ t("hero.headline") }}</h1>
+    <p class="hero-sub">{{ t("hero.subheadline") }}</p>
+
+    <form id="upload-form" enctype="multipart/form-data">
+      <input type="file" id="file-input" name="image" accept="image/jpeg,image/png,image/tiff,image/webp" hidden>
+      <input type="file" id="video-input" accept="video/mp4,video/quicktime" hidden>
+      <div class="cta-row">
+        <button type="button" class="btn btn-primary" id="btn-pick-image">
+          📷 {{ t("hero.choose_image") }}
+        </button>
+        <button type="button" class="btn btn-accent" id="btn-pick-video">
+          📹 {{ t("hero.choose_video") }}
+        </button>
+      </div>
+      <p class="hero-meta">{{ t("hero.compatible") }}</p>
+    </form>
+  </div>
+</section>
+
+<!-- Preview de la imagen subida (oculto hasta upload) -->
+<section id="preview-section" class="hidden">
+  <div class="preview-wrap">
+    <img id="preview-image" alt="Imagen subida">
+    <div class="preview-actions">
+      <button class="btn btn-ghost" id="btn-cancel-preview">Cancelar</button>
+      <button class="btn btn-primary" id="btn-identify">🔍 Identificar</button>
+    </div>
+  </div>
+</section>
+
+<!-- Loading -->
+<section id="loading-section" class="hidden">
+  <div class="loading">
+    <div class="spinner"></div>
+    <p>Identificando…</p>
+  </div>
+</section>
+
+<!-- Resultado -->
+<section id="result-section" class="hidden">
+  <!-- Banner de la especie (colorizado por especie) -->
+  <header class="result-banner" id="result-banner">
+    <div class="result-banner-inner">
+      <h2 id="r-common"></h2>
+      <em id="r-scientific"></em>
+      <div class="confidence-badge" id="r-confidence"></div>
+    </div>
+  </header>
+
+  <!-- Alerta de baja confianza -->
+  <div class="alert alert-low-confidence hidden" id="alert-low-conf">
+    <span>⚠ {{ t("result.low_confidence_warning") }}</span>
+  </div>
+
+  <div class="result-grid">
+    <!-- Columna izquierda — info de la especie -->
+    <div class="info-panel">
+      <h3>{{ t("result.species_info") }}</h3>
+      <ul class="info-list">
+        <li><strong>🏷 {{ t("result.iucn_status") }}</strong><span id="r-iucn">—</span></li>
+        <li><strong>🌳 {{ t("result.habitat") }}</strong><span id="r-habitat">—</span></li>
+        <li><strong>📏 {{ t("result.length") }}</strong><span id="r-length">—</span></li>
+        <li><strong>↔ {{ t("result.wingspan") }}</strong><span id="r-wingspan">—</span></li>
+        <li><strong>🔍 {{ t("result.diagnostic") }}</strong><span id="r-diagnostic">—</span></li>
+        <li><strong>📅 {{ t("result.best_months") }}</strong><span id="r-best-months">—</span></li>
+      </ul>
+      <div class="did-you-know">
+        <strong>💡 {{ t("result.did_you_know") }}</strong>
+        <p id="r-did-you-know">—</p>
+      </div>
+    </div>
+
+    <!-- Columna derecha — seña en IS -->
+    <div class="sign-panel">
+      <h3>🤟 {{ t("result.sign_title") }}</h3>
+      <div class="sign-card" id="r-sign-card">
+        <div class="sign-card-body">
+          <div class="sign-card-header" id="r-sign-header">—</div>
+          <p class="sign-card-sub" id="r-sign-sub">—</p>
+          <div class="sign-card-icon">✋</div>
+          <p class="sign-card-desc" id="r-sign-desc">—</p>
+        </div>
+      </div>
+      <p class="sign-disclaimer">
+        {{ t("result.sign_provisional") }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Top-3 candidatos -->
+  <section class="top3">
+    <h3>📊 {{ t("result.top_candidates") }}</h3>
+    <ul class="top3-list" id="r-top3"></ul>
+  </section>
+
+  <!-- Active learning: ¿Fue correcta? -->
+  <section class="feedback-block">
+    <p class="feedback-q">{{ t("result.was_correct") }}</p>
+    <div class="feedback-buttons">
+      <button class="btn btn-success" id="btn-correct">✓ {{ t("result.yes_correct") }}</button>
+      <button class="btn btn-outline-danger" id="btn-incorrect">✗ {{ t("result.no_incorrect") }}</button>
+    </div>
+    <div id="correct-species-selector" class="hidden">
+      <p class="muted">Selecciona la especie correcta:</p>
+      <select id="select-true-species" class="big-select">
+        <option value="">— elegir —</option>
+      </select>
+      <button class="btn btn-primary" id="btn-submit-correction">📝 Enviar corrección</button>
+    </div>
+    <p class="feedback-status" id="feedback-status"></p>
+  </section>
+
+  <!-- Guardar observación -->
+  <section class="obs-block">
+    <h3>📍 {{ t("result.save_observation") }}</h3>
+    <div class="obs-grid">
+      <div>
+        <label>{{ t("result.latitude") }}</label>
+        <input type="number" step="0.000001" id="obs-lat" placeholder="19.3672">
+      </div>
+      <div>
+        <label>{{ t("result.longitude") }}</label>
+        <input type="number" step="0.000001" id="obs-lon" placeholder="-96.2103">
+      </div>
+    </div>
+    <label>{{ t("result.notes") }}</label>
+    <textarea id="obs-notes" rows="3" placeholder="Ej. Observado sobre Cardel a mediodía…"></textarea>
+    <div class="cta-row">
+      <button class="btn btn-primary" id="btn-save-obs">💾 {{ t("result.save_btn") }}</button>
+      <button class="btn btn-ghost" id="btn-new-id">🔄 {{ t("result.new_id") }}</button>
+    </div>
+    <p class="obs-status" id="obs-status"></p>
+  </section>
+</section>
+
+{% if not model_loaded %}
+<div class="banner banner-warn">
+  <strong>⚠ Modelo no cargado:</strong>
+  Entrena el modelo con <code>python train.py --smoke-test</code> antes de identificar.
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Lista de especies disponible globalmente para el selector
+  const SPECIES = [
+    {% for sci in [
+      "Accipiter_striatus","Aquila_chrysaetos","Astur_atricapillus","Astur_cooperii",
+      "Buteo_albonotatus","Buteo_brachyurus","Buteo_jamaicensis","Buteo_lagopus",
+      "Buteo_lineatus","Buteo_plagiatus","Buteo_platypterus","Buteo_regalis",
+      "Buteo_swainsoni","Cathartes_aura","Chondrohierax_uncinatus","Circus_hudsonius",
+      "Elanoides_forficatus","Falco_columbarius","Falco_peregrinus","Falco_sparverius",
+      "Haliaeetus_leucocephalus","Ictinia_mississippiensis","Pandion_haliaetus"
+    ] -%}{ "sci": "{{ sci }}" },{% endfor %}
+  ];
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

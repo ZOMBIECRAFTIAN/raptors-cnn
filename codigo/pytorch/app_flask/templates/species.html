@@ -1,33 +1,272 @@
-{% extends "base.html" %}
-{% block title_suffix %} · {{ t("nav.species") }}{% endblock %}
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t('nav.species_guide') }} — {{ t('app.title') }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
 
-{% block content %}
-<section class="species-catalog">
-  <div class="species-catalog-header">
-    <h1>{{ t("species_page.title") }}</h1>
-    <p class="muted">{{ t("species_page.subtitle") }}</p>
-    <p class="muted">{{ species|length }} especies del corredor migratorio de Veracruz</p>
-  </div>
-
-  <div class="species-grid">
-    {% for sp in species %}
-    <article class="species-card">
-      <header class="species-card-header">
-        <div class="species-code">{{ sp.code }}</div>
-        <div class="species-card-titles">
-          <strong>{{ sp.common_es }}</strong>
-          <em>{{ sp.scientific_name }}</em>
+<header class="header">
+    <div>
+        <h1>🦅 {{ t('app.title') }}</h1>
+        <p>{{ t('header.subtitle_species') }}</p>
+    </div>
+    <nav class="nav-links">
+        <a href="/">{{ t('nav.identify') }}</a>
+        <a href="/species" class="active">{{ t('nav.species_guide') }}</a>
+        <a href="/data">{{ t('nav.data') }}</a>
+        <div class="lang-picker">
+            <button class="lang-toggle" type="button"
+                    onclick="document.getElementById('langMenu').classList.toggle('open')"
+                    aria-haspopup="true" aria-label="{{ t('nav.language') }}">
+                {{ LANGUAGES[get_locale()]['flag'] }}
+                {{ LANGUAGES[get_locale()]['native'] }} ▾
+            </button>
+            <ul class="lang-menu" id="langMenu">
+                {% for code, meta in LANGUAGES.items() %}
+                <li>
+                    <a href="/set_lang/{{ code }}?next={{ request.path }}"
+                       {% if code == get_locale() %}class="active"{% endif %}>
+                        <span>{{ meta.flag }}</span>
+                        <span>{{ meta.native }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
-      </header>
-      <div class="species-card-body">
-        <p><strong>{{ t("result.iucn_status") }}:</strong> {{ sp.iucn_status }}</p>
-        <p><strong>{{ t("result.length") }}:</strong> {{ sp.length_cm }}</p>
-        <p><strong>{{ t("result.wingspan") }}:</strong> {{ sp.wingspan_cm }}</p>
-        <p><strong>{{ t("result.diagnostic") }}:</strong> {{ sp.diagnostic }}</p>
-        <p><strong>{{ t("result.best_months") }}:</strong> {{ sp.best_months }}</p>
-      </div>
-    </article>
-    {% endfor %}
-  </div>
-</section>
-{% endblock %}
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="species-intro">
+        <h2>{{ t('species_guide.title') }}</h2>
+        <p>{{ t('species_guide.subtitle') }}</p>
+        <div class="legend">
+            <span class="legend-item">
+                <span class="legend-dot" style="background:#C0392B"></span>
+                {{ t('species_guide.legend_listed') }}
+            </span>
+            <span class="legend-item">
+                <span class="legend-dot" style="background:#27AE60"></span>
+                {{ t('species_guide.legend_stable') }}
+            </span>
+        </div>
+    </section>
+
+    <section class="species-grid">
+        {% for key, info in species_info.items() %}
+        <article class="species-card"
+                 style="--card-accent: {{ info.color }}">
+
+            <div class="species-hero">
+                <img src="/static/img/species/{{ key }}.jpg"
+                     alt="{{ info.common_name }} ({{ info.scientific_name }})"
+                     loading="lazy"
+                     onerror="this.style.display='none';
+                              this.nextElementSibling
+                                  .classList.add('hero-fallback');">
+                <div class="species-hero-overlay"
+                     style="background: linear-gradient(180deg,
+                            transparent 30%,
+                            {{ info.color }}DD 100%);">
+                    <div class="species-hero-text">
+                        <h3>{{ info.common_name }}</h3>
+                        <p class="species-sci">{{ info.scientific_name }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="species-card-body">
+
+                <div class="species-row">
+                    <span class="species-label">{{ t('result.epbc_status') }}</span>
+                    <span class="species-value
+                        {% if 'Vulnerable' in info.epbc_status
+                              or 'Endangered' in info.epbc_status
+                              or 'Vulnerable' in (info.epbc_status|lower)
+                              or 'endangered' in (info.epbc_status|lower) %}
+                              status-listed
+                        {% else %}
+                              status-stable
+                        {% endif %}">
+                        {{ info.epbc_status }}
+                    </span>
+                </div>
+
+                <div class="species-row">
+                    <span class="species-label">{{ t('result.habitat') }}</span>
+                    <span class="species-value">{{ info.habitat }}</span>
+                </div>
+
+                <div class="species-row">
+                    <span class="species-label">{{ t('result.length') }}</span>
+                    <span class="species-value">{{ info.length_cm }}</span>
+                </div>
+
+                <div class="species-row">
+                    <span class="species-label">{{ t('result.wingspan') }}</span>
+                    <span class="species-value">{{ info.wingspan_cm }}</span>
+                </div>
+
+                <div class="species-block">
+                    <span class="species-label">{{ t('result.diagnostic') }}</span>
+                    <p class="species-text">{{ info.diagnostic }}</p>
+                </div>
+
+                {% set d = species_details.get(key) %}
+                {% if d %}
+                <details class="species-details" open>
+                    <summary>{{ t('species_guide.profile_title') }}</summary>
+
+                    <div class="detail-row">
+                        <span class="detail-icon">📍</span>
+                        <div>
+                            <span class="detail-label">{{ t('species_guide.distribution') }}</span>
+                            <p>{{ d.distribution }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-icon">🍴</span>
+                        <div>
+                            <span class="detail-label">{{ t('species_guide.diet') }}</span>
+                            <p>{{ d.diet }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-icon">🦅</span>
+                        <div>
+                            <span class="detail-label">{{ t('species_guide.behaviour') }}</span>
+                            <p>{{ d.behavior or d.behaviour }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-icon">✈️</span>
+                        <div>
+                            <span class="detail-label">{{ t('species_guide.migration') }}</span>
+                            <p>{{ d.migration }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-icon">🪺</span>
+                        <div>
+                            <span class="detail-label">{{ t('species_guide.nesting') }}</span>
+                            <p>{{ d.nesting }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-icon">🥚</span>
+                        <div>
+                            <span class="detail-label">{{ t('species_guide.breeding_season') }}</span>
+                            <p>{{ d.breeding_months }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-icon">👁️</span>
+                        <div>
+                            <span class="detail-label">{{ t('species_guide.best_time_to_see') }}</span>
+                            <p>{{ d.best_months }}</p>
+                        </div>
+                    </div>
+
+                    <div class="detail-fact">
+                        <span class="detail-fact-label">{{ t('species_guide.did_you_know') }}</span>
+                        <p>{{ d.did_you_know }}</p>
+                    </div>
+                </details>
+                {% endif %}
+
+                {% set bv = behavior_videos.get(key, {}) %}
+                <div class="species-media-pair">
+                    <div class="media-tile media-tile--behavior">
+                        <span class="media-tile-label">🦅 {{ t('species_guide.behavior_video') }}</span>
+                        {% if bv.exists %}
+                        <video controls preload="metadata"
+                               playsinline muted>
+                            <source src="/behavior_videos/{{ bv.filename }}"
+                                    type="video/mp4">
+                        </video>
+                        <p class="media-tile-meta">
+                            {{ bv.filename }} · {{ bv.size_mb }} MB
+                        </p>
+                        {% else %}
+                        <div class="media-tile-empty">
+                            <span class="media-tile-icon">📹</span>
+                            <p>{{ t('species_guide.no_behavior_video') }}</p>
+                            <code>gui/static/behavior_videos/{{ key }}.mp4</code>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="media-tile media-tile--auslan"
+                         style="--tile-accent: var(--teal)">
+                        <span class="media-tile-label">🤟 {{ t('result.auslan_sign') }}</span>
+                        <img src="/auslan_videos/{{ info.auslan_video }}"
+                             alt="AUSLAN sign for {{ info.common_name }}"
+                             onerror="this.style.display='none';">
+                        <p class="media-tile-text">{{ info.auslan_sign }}</p>
+                    </div>
+                </div>
+
+                {% set m = species_metrics.get(key, {}) %}
+                {% if m.get('f1') is not none %}
+                <div class="species-metrics">
+                    <div class="metric-pill">
+                        <span class="metric-label">F1</span>
+                        <span class="metric-value
+                            {% if m.f1 >= 0.85 %}m-good
+                            {% elif m.f1 >= 0.75 %}m-mid
+                            {% else %}m-low{% endif %}">
+                            {{ '%.2f' % m.f1 }}
+                        </span>
+                    </div>
+                    <div class="metric-pill">
+                        <span class="metric-label">Precision</span>
+                        <span class="metric-value">{{ '%.0f' % (m.precision*100) }}%</span>
+                    </div>
+                    <div class="metric-pill">
+                        <span class="metric-label">Recall</span>
+                        <span class="metric-value">{{ '%.0f' % (m.recall*100) }}%</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="species-train-count">
+                    {{ t('species_guide.trained_on') }}
+                    <strong>{{ m.train_count or '—' }}</strong>
+                    {{ t('species_guide.trained_on_suffix') }}
+                </div>
+
+                <a class="species-cta"
+                   href="/?focus={{ key }}">
+                    {{ t('species_guide.identify_button') }}
+                </a>
+
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+
+    <section class="species-footer-note">
+        <h3>{{ t('species_guide.footer_title') }}</h3>
+        <p>{{ t('species_guide.footer_text') }}</p>
+        <p class="muted">{{ t('species_guide.references') }}</p>
+    </section>
+
+</main>
+
+<footer class="footer">
+    <p>{{ t('app.footer_credit') }}</p>
+    <p style="margin-top:0.3rem">{{ t('app.footer_model') }}</p>
+</footer>
+
+</body>
+</html>

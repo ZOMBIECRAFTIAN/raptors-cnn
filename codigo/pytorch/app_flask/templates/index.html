@@ -1,166 +1,653 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t('app.title') }} — {{ t('nav.identify') }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
 
-{% block content %}
-<section class="hero">
-  <div class="hero-card">
-    <div class="hero-icon">📷</div>
-    <h1>{{ t("hero.headline") }}</h1>
-    <p class="hero-sub">{{ t("hero.subheadline") }}</p>
-
-    <form id="upload-form" enctype="multipart/form-data">
-      <input type="file" id="file-input" name="image" accept="image/jpeg,image/png,image/tiff,image/webp" hidden>
-      <input type="file" id="video-input" accept="video/mp4,video/quicktime" hidden>
-      <div class="cta-row">
-        <button type="button" class="btn btn-primary" id="btn-pick-image">
-          📷 {{ t("hero.choose_image") }}
-        </button>
-        <button type="button" class="btn btn-accent" id="btn-pick-video">
-          📹 {{ t("hero.choose_video") }}
-        </button>
-      </div>
-      <p class="hero-meta">{{ t("hero.compatible") }}</p>
-    </form>
-  </div>
-</section>
-
-<!-- Preview de la imagen subida (oculto hasta upload) -->
-<section id="preview-section" class="hidden">
-  <div class="preview-wrap">
-    <img id="preview-image" alt="Imagen subida">
-    <div class="preview-actions">
-      <button class="btn btn-ghost" id="btn-cancel-preview">Cancelar</button>
-      <button class="btn btn-primary" id="btn-identify">🔍 Identificar</button>
+<header class="header">
+    <div>
+        <h1>🦅 {{ t('app.title') }}</h1>
+        <p>{{ t('header.subtitle_home') }}</p>
     </div>
-  </div>
-</section>
-
-<!-- Loading -->
-<section id="loading-section" class="hidden">
-  <div class="loading">
-    <div class="spinner"></div>
-    <p>Identificando…</p>
-  </div>
-</section>
-
-<!-- Resultado -->
-<section id="result-section" class="hidden">
-  <!-- Banner de la especie (colorizado por especie) -->
-  <header class="result-banner" id="result-banner">
-    <div class="result-banner-inner">
-      <h2 id="r-common"></h2>
-      <em id="r-scientific"></em>
-      <div class="confidence-badge" id="r-confidence"></div>
-    </div>
-  </header>
-
-  <!-- Alerta de baja confianza -->
-  <div class="alert alert-low-confidence hidden" id="alert-low-conf">
-    <span>⚠ {{ t("result.low_confidence_warning") }}</span>
-  </div>
-
-  <div class="result-grid">
-    <!-- Columna izquierda — info de la especie -->
-    <div class="info-panel">
-      <h3>{{ t("result.species_info") }}</h3>
-      <ul class="info-list">
-        <li><strong>🏷 {{ t("result.iucn_status") }}</strong><span id="r-iucn">—</span></li>
-        <li><strong>🌳 {{ t("result.habitat") }}</strong><span id="r-habitat">—</span></li>
-        <li><strong>📏 {{ t("result.length") }}</strong><span id="r-length">—</span></li>
-        <li><strong>↔ {{ t("result.wingspan") }}</strong><span id="r-wingspan">—</span></li>
-        <li><strong>🔍 {{ t("result.diagnostic") }}</strong><span id="r-diagnostic">—</span></li>
-        <li><strong>📅 {{ t("result.best_months") }}</strong><span id="r-best-months">—</span></li>
-      </ul>
-      <div class="did-you-know">
-        <strong>💡 {{ t("result.did_you_know") }}</strong>
-        <p id="r-did-you-know">—</p>
-      </div>
-    </div>
-
-    <!-- Columna derecha — seña en IS -->
-    <div class="sign-panel">
-      <h3>🤟 {{ t("result.sign_title") }}</h3>
-      <div class="sign-card" id="r-sign-card">
-        <div class="sign-card-body">
-          <div class="sign-card-header" id="r-sign-header">—</div>
-          <p class="sign-card-sub" id="r-sign-sub">—</p>
-          <div class="sign-card-icon">✋</div>
-          <p class="sign-card-desc" id="r-sign-desc">—</p>
+    <nav class="nav-links">
+        <a href="/" class="active">{{ t('nav.identify') }}</a>
+        <a href="/species">{{ t('nav.species_guide') }}</a>
+        <a href="/data">{{ t('nav.data') }}</a>
+        <div class="lang-picker">
+            <button class="lang-toggle" type="button"
+                    onclick="document.getElementById('langMenu').classList.toggle('open')"
+                    aria-haspopup="true" aria-label="{{ t('nav.language') }}">
+                {{ LANGUAGES[get_locale()]['flag'] }}
+                {{ LANGUAGES[get_locale()]['native'] }} ▾
+            </button>
+            <ul class="lang-menu" id="langMenu">
+                {% for code, meta in LANGUAGES.items() %}
+                <li>
+                    <a href="/set_lang/{{ code }}?next={{ request.path }}"
+                       {% if code == get_locale() %}class="active"{% endif %}>
+                        <span>{{ meta.flag }}</span>
+                        <span>{{ meta.native }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
-      </div>
-      <p class="sign-disclaimer">
-        {{ t("result.sign_provisional") }}
-      </p>
+    </nav>
+</header>
+
+<main class="container">
+
+    <div class="focus-banner" id="focusBanner" style="display:none">
+        <span class="focus-icon">🎯</span>
+        <div class="focus-text">
+            <strong data-i18n-template="{{ t('home.focus_title') }}">
+                <span id="focusName">—</span>
+            </strong>
+            <p>{{ t('home.focus_text') }}</p>
+        </div>
+        <button class="focus-close"
+                onclick="document.getElementById('focusBanner').style.display='none'"
+                aria-label="Dismiss">×</button>
     </div>
-  </div>
 
-  <!-- Top-3 candidatos -->
-  <section class="top3">
-    <h3>📊 {{ t("result.top_candidates") }}</h3>
-    <ul class="top3-list" id="r-top3"></ul>
-  </section>
-
-  <!-- Active learning: ¿Fue correcta? -->
-  <section class="feedback-block">
-    <p class="feedback-q">{{ t("result.was_correct") }}</p>
-    <div class="feedback-buttons">
-      <button class="btn btn-success" id="btn-correct">✓ {{ t("result.yes_correct") }}</button>
-      <button class="btn btn-outline-danger" id="btn-incorrect">✗ {{ t("result.no_incorrect") }}</button>
+    <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">📸</div>
+        <h2>{{ t('home.title') }}</h2>
+        <p>{{ t('home.subtitle') }}</p>
+        <div class="upload-buttons">
+            <button class="btn-upload"
+                    onclick="document.getElementById('fileInput').click()">
+                {{ t('home.choose_image') }}
+            </button>
+            <button class="btn-upload btn-upload--video"
+                    onclick="document.getElementById('videoInput').click()">
+                🎞️ {{ t('home.choose_video') }}
+            </button>
+        </div>
+        <p style="margin-top:0.75rem; font-size:0.8rem; color:#999">
+            {{ t('home.supported') }}
+        </p>
+        <input type="file" id="fileInput" accept="image/*"
+               style="display:none"
+               onchange="handleFile(this.files[0])">
+        <input type="file" id="videoInput" accept="video/*"
+               style="display:none"
+               onchange="handleVideo(this.files[0])">
     </div>
-    <div id="correct-species-selector" class="hidden">
-      <p class="muted">Selecciona la especie correcta:</p>
-      <select id="select-true-species" class="big-select">
-        <option value="">— elegir —</option>
-      </select>
-      <button class="btn btn-primary" id="btn-submit-correction">📝 Enviar corrección</button>
+
+    <div class="video-results" id="videoResults" style="display:none">
+        <h3 id="videoResultsTitle">🎞️ {{ t('home.video_results') }}</h3>
+        <p class="video-meta" id="videoMeta"></p>
+        <div class="video-summary" id="videoSummary"></div>
+        <div class="video-timeline" id="videoTimeline"></div>
     </div>
-    <p class="feedback-status" id="feedback-status"></p>
-  </section>
 
-  <!-- Guardar observación -->
-  <section class="obs-block">
-    <h3>📍 {{ t("result.save_observation") }}</h3>
-    <div class="obs-grid">
-      <div>
-        <label>{{ t("result.latitude") }}</label>
-        <input type="number" step="0.000001" id="obs-lat" placeholder="19.3672">
-      </div>
-      <div>
-        <label>{{ t("result.longitude") }}</label>
-        <input type="number" step="0.000001" id="obs-lon" placeholder="-96.2103">
-      </div>
+    <div class="image-preview" id="imagePreview">
+        <img id="previewImg" src="" alt="Preview">
     </div>
-    <label>{{ t("result.notes") }}</label>
-    <textarea id="obs-notes" rows="3" placeholder="Ej. Observado sobre Cardel a mediodía…"></textarea>
-    <div class="cta-row">
-      <button class="btn btn-primary" id="btn-save-obs">💾 {{ t("result.save_btn") }}</button>
-      <button class="btn btn-ghost" id="btn-new-id">🔄 {{ t("result.new_id") }}</button>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>{{ t('home.analyzing') }}</p>
     </div>
-    <p class="obs-status" id="obs-status"></p>
-  </section>
-</section>
 
-{% if not model_loaded %}
-<div class="banner banner-warn">
-  <strong>⚠ Modelo no cargado:</strong>
-  Entrena el modelo con <code>python train.py --smoke-test</code> antes de identificar.
-</div>
-{% endif %}
+    <div class="results-panel" id="resultsPanel">
 
-{% endblock %}
+        <div class="result-header" id="resultHeader">
+            <div>
+                <h2 id="commonName">—</h2>
+                <p class="scientific" id="scientificName">—</p>
+            </div>
+            <div class="confidence-badge" id="confidence">—%</div>
+        </div>
 
-{% block scripts %}
+        <div class="confidence-banner" id="confidenceBanner"
+             style="display:none"></div>
+
+        <div class="result-body">
+            <div class="species-info">
+                <h3 style="color:var(--blue);margin-bottom:1rem">
+                    {{ t('result.species_information') }}
+                </h3>
+                <div class="info-row">
+                    <span class="info-label">🏷️ {{ t('result.epbc_status') }}</span>
+                    <span id="epbcStatus">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🌿 {{ t('result.habitat') }}</span>
+                    <span id="habitat">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📏 {{ t('result.length') }}</span>
+                    <span id="length">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🪽 {{ t('result.wingspan') }}</span>
+                    <span id="wingspan">—</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🔍 {{ t('result.diagnostic') }}</span>
+                    <span id="diagnostic">—</span>
+                </div>
+            </div>
+
+            <div class="auslan-module">
+                <h3>🤟 {{ t('result.auslan_sign') }}</h3>
+                <p>{{ t('species_guide.subtitle') }}</p>
+                <div class="sign-description" id="auslanSign">—</div>
+                <div class="auslan-video-container" id="auslanContainer">
+                    <div class="video-placeholder">
+                        <div class="video-icon">🎥</div>
+                        <p>{{ t('result.auslan_motion') }}</p>
+                        <p style="font-size:0.75rem;margin-top:0.5rem;opacity:0.6">
+                            {{ t('result.auslan_provisional') }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top3-section">
+            <h4>📊 {{ t('result.top3') }}</h4>
+            <div class="top3-bars" id="top3Bars"></div>
+        </div>
+
+        <div class="feedback-section" id="feedbackSection" style="display:none">
+            <div id="feedbackPrompt">
+                <p class="feedback-question">{{ t('result.feedback_question') }}</p>
+                <div class="feedback-buttons">
+                    <button class="btn-correct" onclick="markCorrect()">
+                        {{ t('result.feedback_correct') }}
+                    </button>
+                    <button class="btn-incorrect" onclick="showCorrectionPanel()">
+                        {{ t('result.feedback_incorrect') }}
+                    </button>
+                </div>
+            </div>
+
+            <div id="correctionPanel" style="display:none">
+                <p class="correction-label">🔍 {{ t('result.select_correct') }}</p>
+                <select id="correctSpeciesSelect" class="species-select"
+                        onchange="onCorrectionSelectChange()">
+                    <option value="">-- {{ t('result.select_correct') }} --</option>
+                    {% for key, info in species_info.items() %}
+                    <option value="{{ key }}">
+                        {{ info.common_name }} ({{ info.scientific_name }})
+                    </option>
+                    {% endfor %}
+                    <option value="other_not_listed">
+                        ⚠️ {{ t('result.feedback_not_in_8') }}
+                    </option>
+                </select>
+
+                <div id="otherSpeciesInput"
+                     class="other-species-input" style="display:none">
+                    <label class="other-species-label">
+                        {{ t('result.feedback_other_name_label') }}
+                    </label>
+                    <input type="text"
+                           id="otherSpeciesName"
+                           class="other-species-text"
+                           placeholder="{{ t('result.feedback_other_name_placeholder') }}"
+                           maxlength="120">
+                    <p class="other-species-hint">
+                        {{ t('result.feedback_other_name_hint') }}
+                    </p>
+                </div>
+
+                <div class="correction-actions">
+                    <button class="btn-submit-correction" onclick="submitCorrection()">
+                        {{ t('result.submit_correction') }}
+                    </button>
+                    <button class="btn-cancel-correction" onclick="cancelCorrection()">
+                        {{ t('result.cancel') }}
+                    </button>
+                </div>
+            </div>
+
+            <div id="feedbackThanks" style="display:none">
+                <div class="thanks-correct" id="thanksCorrect" style="display:none">
+                    {{ t('result.thanks_correct') }}
+                </div>
+                <div class="thanks-incorrect" id="thanksIncorrect" style="display:none">
+                    {{ t('result.thanks_incorrect') }}
+                    <span id="feedbackCounter" class="counter-badge"></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="observation-form" id="observationForm">
+        <h3>{{ t('observation.save_title') }}</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>{{ t('observation.latitude') }}</label>
+                <input type="number" id="obsLat" placeholder="-33.8688" step="any">
+            </div>
+            <div class="form-group">
+                <label>{{ t('observation.longitude') }}</label>
+                <input type="number" id="obsLon" placeholder="151.2093" step="any">
+            </div>
+            <div class="form-group" style="grid-column:1/-1">
+                <label>{{ t('observation.notes') }}</label>
+                <textarea id="obsNotes"
+                    placeholder="{{ t('observation.notes_placeholder') }}">
+                </textarea>
+            </div>
+        </div>
+        <button class="btn-save" onclick="saveObservation()">
+            {{ t('observation.save_button') }}
+        </button>
+        <button class="btn-new" onclick="resetApp()">
+            {{ t('observation.new_button') }}
+        </button>
+        <div class="success-msg" id="successMsg">
+            {{ t('observation.saved_message') }}
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <p>{{ t('app.footer_credit') }}</p>
+    <p style="margin-top:0.3rem">{{ t('app.footer_model') }}</p>
+</footer>
+
 <script>
-  // Lista de especies disponible globalmente para el selector
-  const SPECIES = [
-    {% for sci in [
-      "Accipiter_striatus","Aquila_chrysaetos","Astur_atricapillus","Astur_cooperii",
-      "Buteo_albonotatus","Buteo_brachyurus","Buteo_jamaicensis","Buteo_lagopus",
-      "Buteo_lineatus","Buteo_plagiatus","Buteo_platypterus","Buteo_regalis",
-      "Buteo_swainsoni","Cathartes_aura","Chondrohierax_uncinatus","Circus_hudsonius",
-      "Elanoides_forficatus","Falco_columbarius","Falco_peregrinus","Falco_sparverius",
-      "Haliaeetus_leucocephalus","Ictinia_mississippiensis","Pandion_haliaetus"
-    ] -%}{ "sci": "{{ sci }}" },{% endfor %}
-  ];
+let currentPrediction = null;
+
+// Species names are populated from server-side localized data so the
+// focus banner shows the user's locale-specific common name.
+const SPECIES_NAMES = {
+    {% for key, info in species_info.items() %}
+    "{{ key }}": "{{ info.common_name|escape }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+};
+const FOCUS_TPL = {{ t('home.focus_title')|tojson }};
+
+// If the user arrived from the catalogue with ?focus=<key>,
+// show a localized banner above the upload zone.
+(function showFocusBanner() {
+    const params = new URLSearchParams(window.location.search);
+    const key    = params.get("focus");
+    if (key && SPECIES_NAMES[key]) {
+        const name = SPECIES_NAMES[key];
+        document.getElementById("focusName").textContent = name;
+        const wrap = document.querySelector("#focusBanner [data-i18n-template]");
+        if (wrap) {
+            wrap.textContent = (wrap.getAttribute("data-i18n-template") || "")
+                .replace("{name}", name);
+        }
+        document.getElementById("focusBanner").style.display = "flex";
+    }
+})();
+
+const uploadZone = document.getElementById("uploadZone");
+
+uploadZone.addEventListener("dragover", e => {
+    e.preventDefault();
+    uploadZone.classList.add("dragover");
+});
+
+uploadZone.addEventListener("dragleave", () => {
+    uploadZone.classList.remove("dragover");
+});
+
+uploadZone.addEventListener("drop", e => {
+    e.preventDefault();
+    uploadZone.classList.remove("dragover");
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+});
+
+function handleFile(file) {
+    if (!file) return;
+    document.getElementById("videoResults").style.display = "none";
+    const reader = new FileReader();
+    reader.onload = e => {
+        document.getElementById("previewImg").src = e.target.result;
+        document.getElementById("imagePreview").style.display = "block";
+    };
+    reader.readAsDataURL(file);
+    uploadAndIdentify(file);
+}
+
+async function handleVideo(file) {
+    if (!file) return;
+    // Hide image-side outputs, show loading
+    document.getElementById("resultsPanel").style.display    = "none";
+    document.getElementById("observationForm").style.display = "none";
+    document.getElementById("imagePreview").style.display    = "none";
+    document.getElementById("loading").style.display         = "block";
+    document.getElementById("videoResults").style.display    = "none";
+
+    const formData = new FormData();
+    formData.append("video", file);
+    try {
+        const r = await fetch("/identify_video", {
+            method: "POST", body: formData
+        });
+        const data = await r.json();
+        if (data.error) { alert("Error: " + data.error); return; }
+        renderVideoResults(data, file.name);
+    } catch (e) {
+        alert("Connection error: " + e.message);
+    } finally {
+        document.getElementById("loading").style.display = "none";
+    }
+}
+
+function renderVideoResults(data, filename) {
+    const meta = document.getElementById("videoMeta");
+    meta.textContent =
+        `${filename} · ${data.duration_seconds}s @ ${data.video_fps} fps · `
+        + `${data.frames_sampled} frames analysed`;
+
+    // Summary cards: one per species detected
+    const sumWrap = document.getElementById("videoSummary");
+    sumWrap.innerHTML = "";
+    if (data.summary.length === 0) {
+        sumWrap.innerHTML = "<p>No birds detected in any frame.</p>";
+    } else {
+        data.summary.forEach(s => {
+            const c = document.createElement("div");
+            c.className = "video-summary-card";
+            c.style.borderLeftColor = s.color;
+            c.innerHTML = `
+                <div class="video-summary-header" style="color:${s.color}">
+                    ${s.common_name}
+                </div>
+                <em>${s.scientific}</em>
+                <div class="video-summary-count">
+                    ${s.frames_with_species} frame${s.frames_with_species===1?"":"s"}
+                </div>
+            `;
+            sumWrap.appendChild(c);
+        });
+    }
+
+    // Timeline strip — one ribbon per sampled frame
+    const tl = document.getElementById("videoTimeline");
+    tl.innerHTML = "";
+    data.timeline.forEach(frame => {
+        const cell = document.createElement("div");
+        cell.className = "video-timeline-cell";
+        cell.title = `t=${frame.t_seconds}s — ${frame.n_birds} bird(s)`;
+        if (frame.n_birds === 0) {
+            cell.style.background = "#dcdcdc";
+        } else {
+            // pick the highest-confidence species in this frame as the colour
+            const best = frame.detections.reduce(
+                (a,b) => a.confidence>b.confidence?a:b);
+            cell.style.background = best.color;
+            cell.textContent = frame.n_birds > 1 ? `×${frame.n_birds}` : "";
+        }
+        tl.appendChild(cell);
+    });
+
+    document.getElementById("videoResults").style.display = "block";
+    document.getElementById("videoResults").scrollIntoView({
+        behavior: "smooth", block: "start"
+    });
+}
+
+async function uploadAndIdentify(file) {
+    document.getElementById("resultsPanel").style.display    = "none";
+    document.getElementById("observationForm").style.display = "none";
+    document.getElementById("successMsg").style.display      = "none";
+    document.getElementById("loading").style.display         = "block";
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+        const response = await fetch("/identify", {
+            method: "POST",
+            body:   formData
+        });
+        const result = await response.json();
+        if (result.error) { alert("Error: " + result.error); return; }
+        currentPrediction = result;
+        displayResults(result);
+    } catch (error) {
+        alert("Connection error: " + error.message);
+    } finally {
+        document.getElementById("loading").style.display = "none";
+    }
+}
+
+function displayResults(result) {
+    document.getElementById("resultHeader").style.background = result.color;
+    document.getElementById("commonName").textContent        = result.common_name;
+    document.getElementById("scientificName").textContent    = result.scientific_name;
+    document.getElementById("confidence").textContent        = result.confidence + "%";
+    document.getElementById("epbcStatus").textContent        = result.epbc_status;
+    document.getElementById("habitat").textContent           = result.habitat;
+    document.getElementById("length").textContent            = result.length_cm;
+    document.getElementById("wingspan").textContent          = result.wingspan_cm;
+    document.getElementById("diagnostic").textContent        = result.diagnostic;
+    document.getElementById("auslanSign").textContent        = result.auslan_sign;
+
+    // Merlin Bird ID-style confidence banner.
+    //   ≥ 85 % top-1            → certain         (no banner)
+    //   70-85 %                  → probable
+    //   60-70 %  OR top1−top2<10 → uncertain
+    //   < 60 %                   → out-of-domain warning
+    const top1 = result.confidence;
+    const top2 = (result.top3 && result.top3[1])
+                  ? result.top3[1].confidence : 0;
+    const banner = document.getElementById("confidenceBanner");
+    if (banner) {
+        banner.classList.remove("conf-probable", "conf-uncertain",
+                                "conf-ood");
+        let label = "", cls = "", show = false;
+        if (top1 < 60) {
+            label = {{ t('result.conf_ood')|tojson }};
+            cls = "conf-ood"; show = true;
+        } else if (top1 < 70 || (top1 - top2) < 10) {
+            label = {{ t('result.conf_uncertain')|tojson }};
+            cls = "conf-uncertain"; show = true;
+        } else if (top1 < 85) {
+            label = {{ t('result.conf_probable')|tojson }};
+            cls = "conf-probable"; show = true;
+        }
+        if (show) {
+            banner.classList.add(cls);
+            banner.textContent = label
+                .replace("{species}", result.common_name)
+                .replace("{conf}",    top1.toFixed(1));
+            banner.style.display = "block";
+        } else {
+            banner.style.display = "none";
+        }
+    }
+
+    const container  = document.getElementById("auslanContainer");
+    const mediaPath  = `/auslan_videos/${result.auslan_video}`;
+    const isSvg      = result.auslan_video.endsWith(".svg");
+    const fallbackHtml =
+        `<div class=\'video-placeholder\'><div class=\'video-icon\'>🤟</div>` +
+        `<p>AUSLAN sign for<br><strong>${result.common_name}</strong></p>` +
+        `<p style=\'font-size:0.75rem;opacity:0.7;margin-top:0.5rem\'>` +
+        `Add ${result.auslan_video} to static/auslan_videos/</p></div>`;
+    const mediaTag = isSvg
+        ? `<img src="${mediaPath}"
+                alt="AUSLAN sign motion for ${result.common_name}"
+                style="max-width:100%;max-height:240px;
+                       border-radius:8px;background:rgba(0,0,0,0.15)"
+                onerror="this.parentElement.innerHTML=\`${fallbackHtml}\`">`
+        : `<video controls autoplay muted loop
+                  style="max-width:100%;max-height:240px;border-radius:8px"
+                  onerror="this.parentElement.innerHTML=\`${fallbackHtml}\`">
+              <source src="${mediaPath}" type="video/mp4">
+           </video>`;
+    container.innerHTML = `
+        <div style="text-align:center">
+            ${mediaTag}
+            <p style="color:rgba(255,255,255,0.78);font-size:0.8rem;
+                      margin-top:0.5rem">
+                AUSLAN sign motion — ${result.common_name}
+            </p>
+            <p style="color:rgba(255,255,255,0.55);font-size:0.7rem;
+                      font-style:italic;margin-top:0.2rem">
+                Provisional illustration · pending Deaf community validation
+            </p>
+        </div>`;
+
+    const top3Container = document.getElementById("top3Bars");
+    top3Container.innerHTML = "";
+    result.top3.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "top3-item";
+        div.innerHTML = `
+            <span class="top3-name">
+                ${i===0?"🥇":i===1?"🥈":"🥉"} ${item.common_name}
+            </span>
+            <div class="top3-bar-wrap">
+                <div class="top3-bar-fill"
+                     style="width:${item.confidence}%;background:${item.color}">
+                </div>
+            </div>
+            <span class="top3-pct">${item.confidence}%</span>`;
+        top3Container.appendChild(div);
+    });
+
+    document.getElementById("resultsPanel").style.display    = "block";
+    document.getElementById("observationForm").style.display = "block";
+    document.getElementById("feedbackSection").style.display = "block";
+    document.getElementById("feedbackPrompt").style.display  = "block";
+    document.getElementById("correctionPanel").style.display = "none";
+    document.getElementById("feedbackThanks").style.display  = "none";
+    document.getElementById("thanksCorrect").style.display   = "none";
+    document.getElementById("thanksIncorrect").style.display = "none";
+
+    document.getElementById("resultsPanel").scrollIntoView({
+        behavior: "smooth", block: "start"
+    });
+}
+
+async function saveObservation() {
+    if (!currentPrediction) return;
+    const data = {
+        species_key:     currentPrediction.species_key,
+        common_name:     currentPrediction.common_name,
+        scientific_name: currentPrediction.scientific_name,
+        confidence:      currentPrediction.confidence,
+        latitude:        document.getElementById("obsLat").value,
+        longitude:       document.getElementById("obsLon").value,
+        notes:           document.getElementById("obsNotes").value,
+        confirmed:       true
+    };
+    try {
+        await fetch("/save_observation", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+        document.getElementById("successMsg").style.display = "block";
+    } catch (error) {
+        alert("Error saving: " + error.message);
+    }
+}
+
+function resetApp() {
+    currentPrediction = null;
+    document.getElementById("imagePreview").style.display    = "none";
+    document.getElementById("resultsPanel").style.display    = "none";
+    document.getElementById("observationForm").style.display = "none";
+    document.getElementById("successMsg").style.display      = "none";
+    document.getElementById("feedbackSection").style.display = "none";
+    document.getElementById("feedbackPrompt").style.display  = "block";
+    document.getElementById("correctionPanel").style.display = "none";
+    document.getElementById("feedbackThanks").style.display  = "none";
+    document.getElementById("thanksCorrect").style.display   = "none";
+    document.getElementById("thanksIncorrect").style.display = "none";
+    document.getElementById("previewImg").src               = "";
+    document.getElementById("obsLat").value                 = "";
+    document.getElementById("obsLon").value                 = "";
+    document.getElementById("obsNotes").value               = "";
+    document.getElementById("fileInput").value              = "";
+    document.getElementById("correctSpeciesSelect").value   = "";
+    window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function markCorrect() {
+    document.getElementById("feedbackPrompt").style.display = "none";
+    document.getElementById("feedbackThanks").style.display = "block";
+    document.getElementById("thanksCorrect").style.display  = "block";
+}
+
+function showCorrectionPanel() {
+    document.getElementById("feedbackPrompt").style.display  = "none";
+    document.getElementById("correctionPanel").style.display = "block";
+}
+
+function cancelCorrection() {
+    document.getElementById("correctionPanel").style.display = "none";
+    document.getElementById("feedbackPrompt").style.display  = "block";
+}
+
+function onCorrectionSelectChange() {
+    // Reveal the free-text input only for "other_not_listed".
+    const sel  = document.getElementById("correctSpeciesSelect").value;
+    const wrap = document.getElementById("otherSpeciesInput");
+    wrap.style.display = (sel === "other_not_listed") ? "block" : "none";
+}
+
+async function submitCorrection() {
+    if (!currentPrediction) return;
+    const select     = document.getElementById("correctSpeciesSelect");
+    const correctKey = select.value;
+    if (!correctKey) { alert("Please select the correct species."); return; }
+
+    // For out-of-domain reports, capture the free-text species name.
+    let correctName = SPECIES_NAMES[correctKey] || "";
+    if (correctKey === "other_not_listed") {
+        correctName = document.getElementById("otherSpeciesName")
+                              .value.trim();
+        if (!correctName) {
+            alert("Please type the species name you recognise.");
+            return;
+        }
+    }
+
+    const data = {
+        predicted_key:  currentPrediction.species_key,
+        predicted_name: currentPrediction.common_name,
+        correct_key:    correctKey,
+        correct_name:   correctName,
+        confidence:     currentPrediction.confidence
+    };
+
+    try {
+        await fetch("/feedback", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(data)
+        });
+
+        document.getElementById("correctionPanel").style.display = "none";
+        document.getElementById("feedbackThanks").style.display  = "block";
+        document.getElementById("thanksIncorrect").style.display = "block";
+
+        const statsResp = await fetch("/feedback_stats");
+        const stats     = await statsResp.json();
+        const counter   = document.getElementById("feedbackCounter");
+        counter.textContent = stats.total_corrections + " corrections recorded";
+        if (stats.ready_to_retrain) {
+            counter.textContent += " — ⚡ Ready to retrain model!";
+            counter.style.background = "#E67E22";
+        }
+    } catch (error) {
+        alert("Error submitting feedback: " + error.message);
+    }
+}
 </script>
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
-{% endblock %}
+
+</body>
+</html>

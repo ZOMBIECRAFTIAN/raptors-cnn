@@ -2,13 +2,16 @@
 
 **Autor del diseño:** Brian Fernández Báez
 **Fecha de captura inicial:** mayo 2026 (14 especies)
-**Última actualización:** mayo 2026 (expansión a 23 especies con AOS 2023)
-**Origen:** Dibujos a mano sobre papel — fotografías en `lamina_1.jpg` y `lamina_2.jpg`.
+**Iteración intermedia:** mayo 2026 — expansión a 23 especies con AOS 2023.
+**Última actualización:** mayo 2026 (V1.1 — **expansión a las 53 rapaces diurnas de México**).
+**Origen:** Dibujos a mano sobre papel — fotografías en `lamina_1.jpg` y `lamina_2.jpg`. Lámina 3 (pendiente) cubrirá las 30 especies nuevas.
 **Estado:** Diseño preliminar, base para iteración con la comunidad sorda.
+
+> **V1.1 (mayo 2026):** Las 23 señas de la sección 2 fueron diseñadas durante V1; permanecen exactamente igual y serán validadas con el grupo focal. Las **30 señas nuevas** del anexo §5 son propuestas iniciales del autor sobre las 30 especies adicionales del catálogo mexicano y requieren co-diseño con la comunidad sorda. La lista taxonómica completa está en [`documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md`](../../documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md).
 
 ---
 
-## 1. Especies objetivo del modelo CNN (23 especies — alcance VRR completo)
+## 1. Núcleo histórico V1 (23 especies — alcance original)
 
 A cada especie se asigna un código de 2-3 letras útil tanto para anotación rápida en campo
 como para etiquetar archivos de video, capturas y referencias del modelo.
@@ -179,4 +182,122 @@ Se recomienda al autor:
 
 ---
 
-*Este documento es el insumo formal del módulo de lengua de señas y sirve como base para la validación con la comunidad sorda.*
+---
+
+## 5. Anexo V1.1 — Señas propuestas para las 30 especies nuevas (México completo)
+
+Estas señas son propuestas iniciales del autor para integrar las 30 especies adicionales del catálogo nacional (todas las rapaces diurnas residentes y de tierras tropicales bajas que no figuraban en la lista original VRR). Cada propuesta se basa en un **rasgo morfológico o de comportamiento diagnóstico** que la haga icónica y memorable. **Todas requieren co-diseño y validación con la comunidad sorda.**
+
+### 5.1 Cathartidae adicionales (3)
+
+#### LYHV — *Cathartes burrovianus* — Zopilote sabanero
+Variante de TUVU: brazos en V abierta + dedo índice tocando la mejilla (cabeza amarilla en lugar de roja) + altura baja del vuelo (mano a la altura del pecho, no arriba).
+
+#### BLVU — *Coragyps atratus* — Zopilote común
+Manos descendiendo en círculo amplio (kettle) + balanceo lateral más rígido que TUVU. Refuerzo: dedos juntos en punta (cola corta cuadrada).
+
+#### KIVU — *Sarcoramphus papa* — Zopilote rey
+Manos abiertas en V amplia + coronas con dedos extendidos sobre la cabeza (multicolor + carúncula) + planeo elevado lento.
+
+### 5.2 Accipitridae — milanos tropicales (5)
+
+#### SNKI — *Rostrhamus sociabilis* — Caracolero
+Mano en pinza curvada extrayendo (pico curvo extrayendo caracol) + movimiento lento sobre superficie horizontal de la otra mano (humedal).
+
+#### DTKI — *Harpagus bidentatus* — Gavilán bidentado
+Dos dedos índice extendidos junto a los labios (los dos "dientes" del pico) + mirada lateral (sigue a tropas de monos).
+
+#### PLKI — *Ictinia plumbea* — Milano plomizo
+Igual a MIKI pero con dedos índice y meñique extendidos (cola con dos bandas en lugar de una). Refuerzo: muñeca girando ligeramente hacia adelante (primarias rufas).
+
+#### GHKI — *Leptodon cayanensis* — Milano cabecigris
+Mano sobre la cabeza con palma plana gris (capucha gris) + descenso vertical rápido del antebrazo (cortejo aéreo espectacular).
+
+#### WTKI — *Elanus leucurus* — Milano coliblanco
+Mano cernida estática (hovering) + dedos índice y medio formando un punto blanco sobre la cola (parche blanco de cola). Postura "hombros elevados".
+
+### 5.3 Accipitridae — Buteonines tropicales (8)
+
+#### BCHA — *Busarellus nigricollis* — Aguililla canela
+Mano canela (palma plana orientada hacia el observador) + dedo índice cruzando el cuello horizontalmente (collar negro distintivo).
+
+#### COBH — *Buteogallus anthracinus* — Aguililla negra menor
+Manos negras (palmas hacia abajo) + ÚNICA banda blanca en la cola (dedo índice de la mano libre apuntando al centro de la cola).
+
+#### GBHA — *Buteogallus urubitinga* — Aguililla negra mayor
+Igual a COBH pero con DOS dedos índice (dos bandas blancas) y tamaño aumentado (manos más separadas).
+
+#### SOEA — *Buteogallus solitarius* — Águila solitaria
+Manos cerradas en V muy ancha (alas extremadamente anchas y cortas, sobresalen mucho del cuerpo) + una banda blanca en la cola corta.
+
+#### WTHA — *Geranoaetus albicaudatus* — Aguililla cola blanca
+Cola completamente blanca (palma plana hacia el observador) + hombro tocado con el dedo (parche canela en el hombro) + soaring elegante.
+
+#### CRHA — *Geranospiza caerulescens* — Gavilán zancón
+Dos dedos índice apuntando hacia arriba muy altos (tarsos extremadamente largos) + movimiento de palpar/extraer (caza en cavidades).
+
+#### WHHA — *Pseudastur albicollis* — Aguililla blanca
+Plumaje blanco enfatizado (manos extendidas, palmas blancas hacia adelante) + banda terminal negra en la cola (dedo dibujando línea horizontal en el borde inferior).
+
+#### ROHA — *Rupornis magnirostris* — Aguililla caminera
+Mano en planeo sobre un poste imaginario (postura típica al borde del camino) + cabeza inclinada (presencia humana tolerada).
+
+### 5.4 Accipitridae — Águilas tropicales grandes (5)
+
+#### HAEA — *Harpia harpyja* — Águila arpía
+Manos en forma de garras EXAGERADAMENTE grandes y robustas (las más grandes del catálogo) + doble cresta erguida sobre la cabeza (dos manos con dedos extendidos hacia arriba). Refuerzo: tamaño/poder dominante.
+
+#### CREA — *Morphnus guianensis* — Águila monera
+Similar a HAEA pero con UNA sola cresta puntiaguda y manos menos robustas (más esbelta). Pecho atravesado por banda canela (dedo trazando línea).
+
+#### ORHE — *Spizaetus ornatus* — Águila elegante
+Cresta larga erecta (mano extendida puntiaguda sobre la cabeza) + pecho rufo (mano sobre el pecho) + cola con bandas (movimiento lateral de la mano libre).
+
+#### BLHE — *Spizaetus tyrannus* — Águila tirana
+Mano sobre el pecho en negro + grito largo (mano abriéndose desde la boca) + cresta corta. Énfasis en la vocalización dominante.
+
+#### BAWE — *Spizaetus melanoleucus* — Águila blanquinegra
+Manos contrastantes blanco/negro al frente del torso + cresta corta + soaring muy elevado (manos suben).
+
+### 5.5 Falconidae adicionales (8)
+
+#### CRCA — *Caracara plancus* — Caracara quebrantahuesos
+Dedos caminando (camina en el suelo) + cabeza arriba (cresta negra + cara roja). Movimiento mixto: caminar + breve vuelo bajo.
+
+#### RTCA — *Daptrius americanus* — Caracara comecacao
+Mano abriendo (saqueando avispero) + risa fuerte estilizada con la otra mano cerca de la boca (vocalización risueña inconfundible). Grupo (3 dedos: comportamiento social en grupos).
+
+#### LAFA — *Herpetotheres cachinnans* — Halcón guaco
+Mano cerca de la boca abriéndose en risa (su llamado característico) + mano abajo serpenteando (su presa principal: serpientes).
+
+#### BFFA — *Micrastur ruficollis* — Halcón selvático barrado
+Cola larga señalada por movimiento vertical de la mano + barreteo (dedos paralelos sobre el pecho).
+
+#### CFFA — *Micrastur semitorquatus* — Halcón selvático de collar
+Similar a BFFA pero con collar marcado (dedo índice cruzando el cuello) + tamaño aumentado.
+
+#### APFA — *Falco femoralis* — Halcón fajado
+Banda ventral negra (dedo índice horizontal cruzando el vientre) + muslos canela + dos manos persiguiendo (caza en pareja).
+
+#### BAFA — *Falco rufigularis* — Halcón murcielaguero
+Vuelo crepuscular bajo (mano descendente al atardecer) + murciélago atrapado (dedos cerrándose en el aire). Compacto y rápido.
+
+#### OBFA — *Falco deiroleucus* — Halcón pechirrufo
+Pecho rufo destacado (mano sobre el pecho) + cabeza grande robusta (mano grande sobre el rostro) + picada potente (mano descendiendo). Rareza enfatizada con una "X" en el aire al final (especie en peligro).
+
+---
+
+## 6. Iconicidad y criterios de diseño
+
+Cada propuesta de seña sigue cinco principios para maximizar la **iconicidad icónica** y la memorabilidad para personas sordas no especialistas en ornitología:
+
+1. **Rasgo diagnóstico inequívoco** — el rasgo elegido es el que un observador de campo entrenado usaría como primer criterio (cola roja en RTHA, hovering en AMKE, vuelo en V en TUVU).
+2. **Movimiento sobre forma estática** — siempre que sea posible, la seña incluye un movimiento del cuerpo del ave en vez de solo una forma (un kestrel no se firma por su tamaño sino por su hovering).
+3. **Contraste con especies similares** — el diseño contempla el par de especies más confundibles para diferenciarse claramente (SS vs COHA, COBH vs GBHA, ORHE vs BLHE, MIKI vs PLKI).
+4. **Mano dominante + no dominante** — para todas las señas se especifica qué mano hace qué, siguiendo convenciones de International Sign.
+5. **Variantes inclusivas** — para personas con motricidad limitada se diseñan variantes simplificadas (mano única) sin perder iconicidad.
+
+---
+
+*Este documento es el insumo formal del módulo de lengua de señas y sirve como base para la validación con la comunidad sorda.
+V1.1 — mayo 2026 — Brian Fernández Báez.*

@@ -4,7 +4,7 @@
 
 cff-version: 1.2.0
 title: >-
-  raptors-cnn: Identificación de Aves Rapaces Migratorias mediante
+  raptors-cnn: Identificación de Aves Rapaces de México mediante
   Inteligencia Artificial y Diseño de Lengua de Señas Internacional
 message: >-
   Si usas este trabajo, por favor cita la tesis y el repositorio
@@ -17,17 +17,25 @@ authors:
     affiliation: "Tesis de Maestría"
 abstract: >-
   Sistema integrado que combina (1) redes neuronales convolucionales
-  para identificar 23 especies de aves rapaces migratorias del corredor
-  de Veracruz a partir de imágenes en vuelo, y (2) un catálogo de señas
-  en International Sign (IS) que hace el conocimiento ornitológico
-  accesible a la comunidad sorda. Implementa transfer learning con
-  ResNet-50, EfficientNet-B3, MobileNetV3 y ConvNeXt-Tiny, comparados
-  entre PyTorch y TensorFlow, con explicabilidad mediante Grad-CAM.
+  para identificar 53 especies de rapaces diurnas de México (todas las
+  Cathartidae, Pandionidae, Accipitridae y Falconidae documentadas a
+  nivel nacional, incluyendo migratorias del corredor de Veracruz y
+  residentes tropicales como Harpia harpyja y Spizaetus spp.) a partir
+  de imágenes en vuelo, y (2) un catálogo de señas en International
+  Sign (IS) que hace el conocimiento ornitológico accesible a la
+  comunidad sorda. Implementa transfer learning con ResNet-50,
+  EfficientNet-B3, MobileNetV3 y ConvNeXt-Tiny, comparados entre
+  PyTorch y TensorFlow, con explicabilidad mediante Grad-CAM y
+  taxonomía AOS 2024 (incluye reclasificaciones de Astur cooperii,
+  Astur atricapillus y Buteo plagiatus).
 keywords:
   - deep learning
   - convolutional neural networks
   - bird identification
-  - raptors
+  - raptors of Mexico
+  - Falconiformes
+  - Accipitriformes
+  - Cathartiformes
   - Veracruz migratory corridor
   - International Sign
   - accessibility
@@ -36,14 +44,15 @@ keywords:
   - TensorFlow
   - transfer learning
   - Grad-CAM
+  - AOS 2024
 license: MIT
-date-released: "2026-05-08"
+date-released: "2026-05-17"
 url: "https://github.com/ZOMBIECRAFTIAN/raptors-cnn"
 repository-code: "https://github.com/ZOMBIECRAFTIAN/raptors-cnn"
 preferred-citation:
   type: thesis
   title: >-
-    Identificación de Aves Rapaces Migratorias mediante Inteligencia
+    Identificación de Aves Rapaces de México mediante Inteligencia
     Artificial y Diseño de Lenguaje de Señas para su Comunicación y
     Reconocimiento
   authors:

@@ -1,0 +1,300 @@
+═══════════════════════════════════════════════════════════════════════════════
+   GUIA DE COMANDOS — raptors-cnn V1.1 (53 rapaces de Mexico)
+   Brian Fernandez Baez · mayo 2026
+═══════════════════════════════════════════════════════════════════════════════
+
+Este documento te lleva del estado actual (53 especies en config, pero datos
+incompletos) hasta tener el modelo entrenado y la GUI Flask corriendo.
+
+Ruta del proyecto:  C:\Users\hogwa\raptors-cnn
+Entorno conda:      raptors-pt  (PyTorch 2.3 + CUDA 12.1)
+
+Estado inicial:
+  - datos/raw/         : 14 carpetas con imagenes V1 (~10,250 imagenes)
+  - datos/processed/   : 53 carpetas pero solo split V1 (~1,610 imagenes)
+  - Faltan descargar imagenes para 39 especies (las 23 originales V1 mas
+    16 que no estaban en raw/, ya que solo 14 estaban descargadas).
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 0 - VERIFICACION DEL SETUP
+───────────────────────────────────────────────────────────────────────────────
+
+# Abrir Anaconda Prompt (no PowerShell normal). Activar el entorno:
+conda activate raptors-pt
+
+# Ir a la raiz del proyecto:
+cd C:\Users\hogwa\raptors-cnn
+
+# Verifica que todo este bien instalado:
+python codigo\pytorch\verify_setup.py
+
+# Esperado: imprime "Device: cuda:0 (NVIDIA GeForce RTX 3050)" y "OK".
+# Si falla: revisa `environment.yml` y reinstala con
+#   conda env update -f codigo\pytorch\environment.yml --prune
+
+# Verifica las 53 especies del config:
+cd codigo\pytorch
+python -c "import config; print(f'{len(config.SPECIES)} especies cargadas')"
+# Esperado: 53 especies cargadas
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 1 - DESCARGAR IMAGENES (la parte que mas tarda - 6-12 horas)
+───────────────────────────────────────────────────────────────────────────────
+
+# El script descarga imagenes de iNaturalist research-grade con licencias
+# abiertas (CC0, CC-BY, CC-BY-SA). Itera sobre las 53 especies del config.
+# Si una carpeta ya tiene imagenes, las conserva y solo agrega nuevas.
+
+# A) Descarga "amable" - 200 imagenes objetivo por especie, hasta 5 paginas:
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+python download_inaturalist.py --target 200 --max-pages 5
+
+# B) Si quieres mas imagenes para especies comunes:
+python download_inaturalist.py --target 400 --max-pages 10 --species RTHA
+python download_inaturalist.py --target 400 --max-pages 10 --species TUVU
+python download_inaturalist.py --target 400 --max-pages 10 --species BWHA
+
+# C) Para especies raras donde 200 es objetivo MAXIMO realista:
+python download_inaturalist.py --target 100 --max-pages 5 --species HAEA   # Harpia
+python download_inaturalist.py --target 100 --max-pages 5 --species CREA   # Crested Eagle
+python download_inaturalist.py --target 100 --max-pages 5 --species OBFA   # Orange-breasted Falcon
+python download_inaturalist.py --target 100 --max-pages 5 --species SOEA   # Solitary Eagle
+python download_inaturalist.py --target 100 --max-pages 5 --species RTCA   # Red-throated Caracara
+
+# D) (Opcional) Tambien usa eBird/Macaulay Library para completar. Requiere
+#    EBIRD_API_KEY en .env (ya esta configurado):
+python download_ebird.py --target 100
+
+# E) Si quieres probar antes con un dry-run que no descarga nada:
+python download_inaturalist.py --target 200 --dry-run --species AMKE
+
+# Tiempo esperado total: 6-12 horas dependiendo de tu conexion. La API de
+# iNat permite ~60 req/min y el script respeta el rate-limit (0.6s entre fotos).
+
+# Verifica que tienes imagenes:
+cd C:\Users\hogwa\raptors-cnn
+python -c "import os; total=sum(len(os.listdir(f'datos/raw/{d}')) for d in os.listdir('datos/raw') if os.path.isdir(f'datos/raw/{d}')); print(f'Total raw: {total} imagenes')"
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 2 - CURACION AUTOMATICA DE CALIDAD (15-30 min)
+───────────────────────────────────────────────────────────────────────────────
+
+# Filtra imagenes muy borrosas, muy oscuras o de baja resolucion.
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+
+# A) Modo "solo reporte" (no mueve archivos):
+python curate.py
+
+# Revisa el reporte:
+#   notepad ..\..\datos\annotations\curation_report.csv
+
+# B) Cuando estes conforme, aplica las decisiones:
+python curate.py --apply
+# Esto mueve los archivos rechazados a datos/raw/<especie>/_review/
+# Tus imagenes "KEEP" se quedan en datos/raw/<especie>/.
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 3 - DOBLE ANOTACION (opcional pero recomendado para tesis)
+───────────────────────────────────────────────────────────────────────────────
+
+# Genera Cohen's kappa entre dos anotadores. Te tomara 2-4 horas para 200 imgs.
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+
+# Anotador 1:
+python annotate.py --annotator brian
+
+# Anotador 2 (idealmente otra persona):
+python annotate.py --annotator helper
+
+# Calcula kappa (debe ser >= 0.85 para nivel de tesis):
+python annotate.py --compute-kappa
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 4 - SPLIT TRAIN / VAL / TEST (1 min)
+───────────────────────────────────────────────────────────────────────────────
+
+# Divide datos/raw/ -> datos/processed/{train,val,test} (70/15/15).
+# Respeta el split V1 ya existente para imagenes que ya estaban splitteadas.
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+
+# A) Dry-run primero para ver el resultado:
+python split_dataset.py --dry-run
+
+# B) Si todo se ve bien, aplica:
+python split_dataset.py
+
+# C) Alternativa con hardlinks (no duplica disco, mas rapido):
+python split_dataset.py --link
+
+# Verifica el resultado:
+cd C:\Users\hogwa\raptors-cnn
+python -c "import os; \
+  total=lambda s: sum(len(os.listdir(f'datos/processed/{s}/{d}')) for d in os.listdir(f'datos/processed/{s}') if os.path.isdir(f'datos/processed/{s}/{d}')); \
+  print(f'train={total(\"train\")}  val={total(\"val\")}  test={total(\"test\")}')"
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 5 - SMOKE TEST DEL PIPELINE (5 min)
+───────────────────────────────────────────────────────────────────────────────
+
+# Antes de invertir horas entrenando, verifica que TODO el pipeline corre
+# end-to-end con 1 epoch por etapa. Si pasa esto, el entrenamiento real
+# casi seguro corre sin problemas.
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+
+python train.py --arch resnet50 --smoke-test
+
+# Esperado: completa stage1 (1 epoch) + stage2 (1 epoch) sin errores
+# y guarda outputs/checkpoints/best_stage2.pt
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 6 - ENTRENAMIENTO REAL (4-12 horas dependiendo de GPU)
+───────────────────────────────────────────────────────────────────────────────
+
+# ResNet-50 con transfer learning: stage1 (10 epochs feature extraction) +
+# stage2 (80 epochs fine-tuning con AMP, cosine schedule, class weighting).
+# RTX 3050 4GB: usa BATCH_SIZE=16 + GRADIENT_ACCUM_STEPS=2 ya en config.
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+
+# A) Entrenamiento principal:
+python train.py --arch resnet50
+
+# B) Si quieres comparar arquitecturas (para tesis):
+python train.py --arch efficientnet_b3
+python train.py --arch mobilenet_v3_large
+python train.py --arch convnext_tiny
+
+# Los pesos del mejor modelo quedan en:
+#   outputs/checkpoints/best_stage2.pt
+
+# Si Windows va a apagar la PC por inactividad, abre Configuracion de Energia
+# y poner "Nunca apagar pantalla" mientras entrenas.
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 7 - EVALUACION (10 min)
+───────────────────────────────────────────────────────────────────────────────
+
+# Calcula metricas sobre el conjunto de test: accuracy, F1-macro, matriz de
+# confusion 53x53, F1 por especie. Guarda reporte_final.json para la GUI.
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+
+python evaluate.py --arch resnet50
+
+# Genera Grad-CAM para visualizar atencion del modelo:
+python gradcam.py --image datos/processed/test/Harpia_harpyja/<imagen>.jpg
+
+
+───────────────────────────────────────────────────────────────────────────────
+   PASO 8 - LANZAR LA GUI FLASK (clon de la interfaz Australia)
+───────────────────────────────────────────────────────────────────────────────
+
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch\app_flask
+
+# Lanza el servidor:
+python -m flask --app app run --host 0.0.0.0 --port 5000 --debug
+
+# O equivalente:
+python app.py
+
+# Abre el navegador en:
+#   http://localhost:5000
+
+# Rutas disponibles:
+#   /                       -> Home con drag-drop de imagen + video
+#   /species                -> Catalogo de 53 especies con perfiles Merlin
+#   /data                   -> Dashboard de observaciones + export
+#   /export/observations_dwc.csv  -> Darwin Core CSV para iNaturalist/GBIF
+#   /set_lang/en            -> Cambia idioma a ingles (cookie)
+#   /set_lang/es            -> Cambia idioma a espanol (default)
+
+
+───────────────────────────────────────────────────────────────────────────────
+   COMANDOS RAPIDOS DE DIAGNOSTICO
+───────────────────────────────────────────────────────────────────────────────
+
+# Cuantas imagenes hay por especie en raw?
+cd C:\Users\hogwa\raptors-cnn
+python -c "import os; \
+  d='datos/raw'; \
+  rows=sorted([(s, len(os.listdir(f'{d}/{s}'))) for s in os.listdir(d) if os.path.isdir(f'{d}/{s}')], key=lambda x: -x[1]); \
+  [print(f'{s:34s} {n:5d}') for s,n in rows]"
+
+# Cuantas especies tienen menos de 50 imagenes (insuficiente para entrenar)?
+python -c "import os; \
+  d='datos/raw'; \
+  pobres=[s for s in os.listdir(d) if os.path.isdir(f'{d}/{s}') and len(os.listdir(f'{d}/{s}'))<50]; \
+  print(f'{len(pobres)} especies con <50 imagenes:'); \
+  [print('  -', s) for s in pobres]"
+
+# Tamaño del dataset en disco
+du -sh datos/
+
+# Ver el .env (asegurate de que tu API key de eBird esta presente):
+type .env
+
+# Logs de entrenamiento (cuando este corriendo):
+tail -f codigo/pytorch/outputs/logs/train.log
+
+
+───────────────────────────────────────────────────────────────────────────────
+   TROUBLESHOOTING
+───────────────────────────────────────────────────────────────────────────────
+
+PROBLEMA: "CUDA out of memory" durante train.py
+SOLUCION: Reduce BATCH_SIZE en codigo/pytorch/config.py de 16 a 8, y
+         aumenta GRADIENT_ACCUM_STEPS de 2 a 4 para mantener batch efectivo.
+
+PROBLEMA: "ImageFolder: found 0 files in subfolders"
+SOLUCION: split_dataset.py no copio nada porque raw/<especie>/ esta vacio.
+         Verifica con: ls datos/raw/<especie>/ -- si esta vacio,
+         re-corre download_inaturalist.py --species <CODE>.
+
+PROBLEMA: "No tengo torch instalado"
+SOLUCION: conda env update -f codigo/pytorch/environment.yml --prune
+         O recrea: conda env remove -n raptors-pt; conda env create -f codigo/pytorch/environment.yml
+
+PROBLEMA: Las imagenes de Harpia/Morphnus/F. deiroleucus son MUY pocas (<30)
+SOLUCION: Es esperado - son especies muy raras. Estrategias:
+         1) Aumenta --max-pages a 10 en download_inaturalist.py.
+         2) Activa USE_CLASS_WEIGHTS=True en config.py (ya esta).
+         3) Considera combinar Macaulay Library: download_ebird.py
+         4) En ultima instancia, descarta esas especies del modelo (deja en
+            species_data.py como referencia educativa).
+
+PROBLEMA: Quiero re-entrenar solo con las imagenes del feedback de usuarios
+SOLUCION: python codigo/pytorch/retrain_with_feedback.py
+
+PROBLEMA: Quiero usar Google Colab (no tengo GPU local fuerte)
+SOLUCION: notebook backup en colab/raptors_cnn_train.ipynb (sube tu dataset
+         a Drive y monta).
+
+
+───────────────────────────────────────────────────────────────────────────────
+   FLUJO COMPLETO EN ORDEN (resumen para copiar)
+───────────────────────────────────────────────────────────────────────────────
+
+conda activate raptors-pt
+cd C:\Users\hogwa\raptors-cnn\codigo\pytorch
+
+python verify_setup.py
+python download_inaturalist.py --target 200 --max-pages 5
+python curate.py
+python curate.py --apply
+python split_dataset.py
+python train.py --arch resnet50 --smoke-test
+python train.py --arch resnet50
+python evaluate.py --arch resnet50
+
+cd ..\..\codigo\pytorch\app_flask
+python app.py
+
+
+═══════════════════════════════════════════════════════════════════════════════
+   Documento generado: 2026-05-17 · Compatible con V1.1 (53 especies de Mexico)
+═══════════════════════════════════════════════════════════════════════════════

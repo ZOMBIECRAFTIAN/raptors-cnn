@@ -1,57 +1,130 @@
 {
+  "_meta": {
+    "name": "Español",
+    "native": "Español (México)",
+    "code": "es"
+  },
   "app": {
-    "title": "Aves Rapaces del Corredor de Veracruz",
-    "subtitle": "Identificación con IA + lenguaje de señas internacional",
-    "description": "Identifica rapaces migratorias del corredor de Veracruz, México. Sistema integrado de IA y diseño inclusivo para la comunidad sorda."
+    "title": "Rapaces de México — raptors-cnn",
+    "footer_credit": "raptors-cnn + International Sign | Brian Fernández Báez | Tesis de Maestría — 53 rapaces diurnas de México",
+    "footer_model": "Modelo: ResNet-50 (transfer learning, AMP + cosine schedule) · Taxonomía AOS 2024 · Catálogo de 53 especies · Capas explicativas Grad-CAM"
   },
   "nav": {
     "identify": "Identificar",
-    "species": "Guía de especies",
+    "species_guide": "Guía de especies",
     "data": "Datos",
-    "about": "Acerca de"
+    "language": "Idioma"
   },
-  "hero": {
-    "headline": "Identifica una rapaz migratoria",
-    "subheadline": "Sube una fotografía de un ave en vuelo para identificar la especie y aprender su seña en International Sign.",
+  "header": {
+    "subtitle_home": "Identificación de rapaces de México con IA + International Sign",
+    "subtitle_species": "Guía de especies — 53 rapaces diurnas de México",
+    "subtitle_data": "Panel de observaciones y exportación"
+  },
+  "home": {
+    "title": "Identifica una rapaz mexicana",
+    "subtitle": "Sube una fotografía de un ave en vuelo para identificar la especie y aprender su seña en International Sign.",
     "choose_image": "Elegir imagen",
     "choose_video": "Elegir video",
-    "compatible": "Compatibles: JPG, PNG, TIFF, WebP — Máx. 16 MB"
+    "supported": "Compatibles: JPG, PNG, TIFF, WebP — Máx. 16 MB · video MP4/MOV/WEBM Máx. 32 MB",
+    "analyzing": "Analizando con el modelo CNN…",
+    "focus_title": "¿Buscas {name}?",
+    "focus_text": "Sube una foto y confirmamos si el modelo reconoce esta especie.",
+    "video_results": "Análisis de video"
   },
   "result": {
-    "low_confidence_warning": "Confianza baja. Puede ser un juvenil, un ángulo inusual o una especie fuera de las 23 entrenadas.",
-    "species_info": "Información de la especie",
-    "iucn_status": "Estado IUCN",
+    "species_information": "Información de la especie",
+    "epbc_status": "Estatus IUCN / NOM-059",
     "habitat": "Hábitat",
     "length": "Longitud",
     "wingspan": "Envergadura",
     "diagnostic": "Diagnóstico de campo",
-    "best_months": "Mejor época",
-    "did_you_know": "¿Sabías que…?",
-    "sign_title": "Seña en International Sign",
-    "sign_provisional": "Ilustración provisional · pendiente de validación con la comunidad sorda",
-    "top_candidates": "Top-3 candidatos",
-    "was_correct": "¿La identificación fue correcta?",
-    "yes_correct": "✓ Correcta",
-    "no_incorrect": "✗ Incorrecta",
-    "save_observation": "Guardar esta observación",
+    "auslan_sign": "Seña en International Sign",
+    "auslan_motion": "Movimiento de la seña IS",
+    "auslan_provisional": "Ilustración provisional · pendiente de validación con la comunidad sorda",
+    "top3": "Top-3 candidatos",
+    "feedback_question": "¿La identificación fue correcta?",
+    "feedback_correct": "✓ Correcta",
+    "feedback_incorrect": "✗ Incorrecta",
+    "thanks_correct": "🎉 ¡Excelente! Gracias por confirmar.",
+    "thanks_incorrect": "🙏 ¡Gracias por la corrección! Esto ayuda a mejorar el modelo.",
+    "select_correct": "Selecciona la especie correcta:",
+    "submit_correction": "Enviar corrección",
+    "cancel": "Cancelar",
+    "feedback_not_in_8": "Otra — no está entre las 53 especies entrenadas",
+    "feedback_other_name_label": "¿Qué especie reconoces?",
+    "feedback_other_name_placeholder": "p. ej. Spizaetus tyrannus",
+    "feedback_other_name_hint": "Estos reportes se guardan aparte para expandir el modelo con especies fuera de catálogo en un ciclo futuro de entrenamiento.",
+    "conf_probable": "Probablemente {species} ({conf}%). Confirma con marcas de campo antes de registrar.",
+    "conf_uncertain": "Identificación incierta. La primera opción es {species} ({conf}%) pero la segunda está muy cerca — revisa el Top-3.",
+    "conf_ood": "⚠️ Confianza baja ({conf}%). Puede ser un juvenil, un ángulo inusual o una especie fuera de las 53 entrenadas."
+  },
+  "observation": {
+    "save_title": "📍 Guardar esta observación",
     "latitude": "Latitud (opcional)",
     "longitude": "Longitud (opcional)",
     "notes": "Notas",
-    "save_btn": "Guardar observación",
-    "new_id": "Nueva identificación"
+    "notes_placeholder": "Comportamiento de vuelo, clima, hábitat…",
+    "save_button": "💾 Guardar observación",
+    "new_button": "🔄 Nueva identificación",
+    "saved_message": "✅ Observación guardada exitosamente"
   },
-  "species_page": {
+  "species_guide": {
     "title": "Guía de referencia de campo",
-    "subtitle": "Marcas diagnósticas de campo, ecología, estado de conservación y descripción de la seña en IS para cada especie que el modelo reconoce.",
-    "profile_link": "Perfil de la especie"
+    "subtitle": "Marcas diagnósticas, ecología, estatus de conservación y descripción de la seña en International Sign para cada especie que el modelo reconoce. Las tarjetas siguen el orden alfabético del catálogo AOS 2024.",
+    "legend_listed": "En peligro (P) o amenazada (A) — NOM-059 / IUCN",
+    "legend_stable": "Preocupación menor (LC)",
+    "trained_on": "📸 Entrenada con",
+    "trained_on_suffix": "imágenes",
+    "identify_button": "Identifica esta especie →",
+    "footer_title": "Cómo el modelo reconoce estas especies",
+    "footer_text": "La CNN se entrena con transfer learning sobre ResNet-50 (ImageNet pretrained) y fine-tuning sobre ~10,000 imágenes curadas de iNaturalist, Macaulay Library, eBird y CONABIO. Usa AMP, cosine annealing y class weighting para mitigar el desbalance entre especies abundantes (Buteo jamaicensis, Cathartes aura) y especies raras (Harpia harpyja, Morphnus guianensis, Falco deiroleucus). Cada predicción incluye un mapa Grad-CAM que muestra qué región de la imagen impulsó la decisión.",
+    "references": "Referencias: Howell & Webb (1995); Berlanga et al. (2019); Bildstein (2006); Liguori (2005, 2011); AOS Check-list (64th–65th Supp.); IUCN Red List (2025); NOM-059-SEMARNAT-2010.",
+    "profile_title": "📖 Perfil de la especie",
+    "distribution": "Distribución",
+    "diet": "Dieta",
+    "behaviour": "Comportamiento",
+    "migration": "Migración",
+    "nesting": "Nidación",
+    "breeding_season": "Temporada reproductiva",
+    "best_time_to_see": "Mejor época para observar",
+    "did_you_know": "💡 ¿Sabías que…?",
+    "behavior_video": "Vuelo y comportamiento",
+    "no_behavior_video": "Aún no hay video de comportamiento — déjalo aquí:"
   },
-  "data_page": {
-    "title": "Datos del sistema",
-    "observations": "Observaciones",
-    "species_recorded": "Especies registradas",
-    "corrections": "Correcciones",
-    "download_internal": "Descargar CSV interno",
-    "download_dwc": "Descargar Darwin Core CSV",
-    "download_feedback": "Descargar log de correcciones"
+  "data": {
+    "summary_title": "Resumen de observaciones",
+    "stat_total": "Total de observaciones",
+    "stat_species": "Especies registradas",
+    "stat_corrections": "Correcciones al modelo",
+    "by_species_title": "Observaciones por especie",
+    "export_title": "Exportar datos",
+    "export_intro": "Descarga tus observaciones para uso personal, análisis científico o envío a iNaturalist, GBIF y plataformas globales de biodiversidad.",
+    "export_internal_title": "CSV de observaciones internas",
+    "export_internal_desc": "Todas tus observaciones guardadas en el formato nativo de la app. Útil para registros personales y análisis local.",
+    "export_dwc_title": "CSV Darwin Core (para iNaturalist / GBIF)",
+    "export_dwc_desc": "Formato estandarizado de biodiversidad TDWG Darwin Core. Listo para subir a iNaturalist, GBIF o cualquier publisher de datos abiertos.",
+    "export_feedback_title": "Log de correcciones del modelo",
+    "export_feedback_desc": "Cada corrección enviada por el botón de feedback. Es el insumo del próximo ciclo de re-entrenamiento.",
+    "ala_howto_title": "Cómo subir tus observaciones a iNaturalist / GBIF",
+    "ala_howto_step1": "Inicia sesión (o crea una cuenta gratuita) en www.inaturalist.org.",
+    "ala_howto_step2": "Ve a Observaciones → Importar → Subir CSV.",
+    "ala_howto_step3": "Sube el archivo raptors_mx_observations_dwc.csv que acabas de descargar.",
+    "ala_howto_step4": "iNaturalist validará los registros y los integrará en la red global de biodiversidad (típico 24-72 horas para revisión).",
+    "ala_howto_note": "La columna identifiedBy declara explícitamente que la identificación fue asistida por IA, para que la comunidad pueda darles el peso apropiado.",
+    "recent_title": "Observaciones recientes",
+    "th_when": "Cuándo",
+    "th_species": "Especie",
+    "th_confidence": "Confianza",
+    "th_location": "Ubicación",
+    "th_confirmed": "Confirmada",
+    "no_obs_text": "Aún no hay observaciones. Identifica una rapaz desde la página principal y guarda tu primera observación para poblar este panel."
+  },
+  "errors": {
+    "no_image": "No se subió imagen",
+    "no_file": "No se seleccionó archivo",
+    "format": "Formato no soportado: {ext}",
+    "connection": "Error de conexión",
+    "save_error": "Error al guardar",
+    "select_species": "Selecciona la especie correcta."
   }
 }

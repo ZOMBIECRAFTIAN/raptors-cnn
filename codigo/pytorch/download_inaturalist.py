@@ -42,21 +42,58 @@ DEFAULT_LICENSES = ["cc0", "cc-by", "cc-by-sa"]
 # fuente de verdad)
 CODE_TO_SCI = dict(zip(config.SPECIES_CODE, config.SPECIES))
 
+# Sinónimos en iNaturalist cuando el nombre AOS 2023/2024 no coincide con el
+# nombre actual del taxon en iNat. iNat tarda en adoptar splits/reclasificaciones.
+# El lookup probará TODOS los nombres en orden hasta encontrar uno válido.
+INAT_SYNONYMS: dict[str, list[str]] = {
+    "Astur_cooperii":           ["Accipiter cooperii", "Astur cooperii"],
+    "Astur_atricapillus":       ["Accipiter atricapillus", "Accipiter gentilis", "Astur atricapillus"],
+    "Buteo_plagiatus":          ["Buteo plagiatus", "Buteo nitidus", "Asturina nitida"],
+    "Daptrius_americanus":      ["Ibycter americanus", "Daptrius americanus"],
+    "Geranoaetus_albicaudatus": ["Geranoaetus albicaudatus", "Buteo albicaudatus"],
+    "Rupornis_magnirostris":    ["Rupornis magnirostris", "Buteo magnirostris"],
+    "Pseudastur_albicollis":    ["Pseudastur albicollis", "Leucopternis albicollis"],
+    "Caracara_plancus":         ["Caracara plancus", "Caracara cheriway"],
+    "Circus_hudsonius":         ["Circus hudsonius", "Circus cyaneus"],
+}
+
 
 def lookup_taxon_id(scientific_name: str) -> int:
-    """Resuelve un nombre científico a su taxon_id en iNaturalist."""
-    name_query = scientific_name.replace("_", " ")
-    r = requests.get(
-        f"{API}/taxa",
-        params={"q": name_query, "rank": "species", "per_page": 5},
-        headers=HEADERS,
-        timeout=30,
+    """Resuelve un nombre científico a su taxon_id en iNaturalist.
+
+    Si el nombre AOS 2024 no se encuentra, prueba sinónimos del mapeo
+    INAT_SYNONYMS (útil para taxones recientemente reclasificados).
+    """
+    candidates = INAT_SYNONYMS.get(scientific_name, [scientific_name.replace("_", " ")])
+    # Asegura que el nombre AOS primario esté en la lista de intentos
+    primary = scientific_name.replace("_", " ")
+    if primary not in candidates:
+        candidates = [primary] + candidates
+
+    last_error = None
+    for name_query in candidates:
+        try:
+            r = requests.get(
+                f"{API}/taxa",
+                params={"q": name_query, "rank": "species", "per_page": 5},
+                headers=HEADERS,
+                timeout=30,
+            )
+            r.raise_for_status()
+            for taxon in r.json().get("results", []):
+                if taxon.get("name", "").lower() == name_query.lower():
+                    if name_query != primary:
+                        print(f"    [sinonimo] {scientific_name} ↦ '{name_query}' (taxon_id={taxon['id']})")
+                    return int(taxon["id"])
+        except Exception as e:
+            last_error = e
+            continue
+
+    raise ValueError(
+        f"No se encontró taxon_id para {scientific_name} "
+        f"(probé: {', '.join(candidates)}). "
+        f"Último error: {last_error}"
     )
-    r.raise_for_status()
-    for taxon in r.json().get("results", []):
-        if taxon.get("name", "").lower() == name_query.lower():
-            return int(taxon["id"])
-    raise ValueError(f"No se encontró taxon_id para {scientific_name}")
 
 
 def search_observations(taxon_id: int, page: int, per_page: int, licenses: list[str]) -> dict:
