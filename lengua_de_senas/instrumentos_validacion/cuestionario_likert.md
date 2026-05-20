@@ -1,6 +1,6 @@
 # Cuestionario de Validación de Señas — Escala Likert
 
-**Proyecto:** Identificación de Aves Rapaces de México mediante IA y Lenguaje de Señas Internacional
+**Proyecto:** Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento de Vuelo Utilizando IA y Diseño de Lenguaje de Señas para su Comunicación y Reconocimiento
 **Investigador responsable:** Brian Fernández Báez
 **Versión:** 1.1 — mayo 2026
 

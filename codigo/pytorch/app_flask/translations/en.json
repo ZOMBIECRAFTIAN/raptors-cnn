@@ -5,9 +5,10 @@
     "code": "en"
   },
   "app": {
-    "title": "Mexican Raptors — raptors-cnn",
-    "footer_credit": "raptors-cnn + International Sign | Brian Fernández Báez | Master's Thesis — 53 diurnal raptors of Mexico",
-    "footer_model": "Model: ResNet-50 (transfer learning, AMP + cosine schedule) · AOS 2024 taxonomy · 53-species catalogue · Grad-CAM explainability"
+    "title": "Mexican Raptors — Silhouette & Flight ID + IS",
+    "title_long": "Raptor Identification System based on Silhouette and Flight Behaviour using AI + Sign Language Design",
+    "footer_credit": "Silhouette + Flight Identification + International Sign | Brian Fernández Báez | Master's Thesis — 53 diurnal raptors of Mexico",
+    "footer_model": "Model: ResNet-50 on silhouette (transfer learning, AMP + cosine schedule) · AOS 2024 taxonomy · 53-species catalogue · Flight behaviour analysis (soaring, kettle, stoop) · Grad-CAM explainability"
   },
   "nav": {
     "identify": "Identify",

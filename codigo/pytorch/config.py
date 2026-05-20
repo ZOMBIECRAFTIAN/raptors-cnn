@@ -1,6 +1,10 @@
 """
 Configuración del proyecto — implementación PyTorch.
 
+Proyecto: Sistema de Identificación de Aves Rapaces por Silueta y
+Comportamiento de Vuelo Utilizando IA y Diseño de Lenguaje de Señas
+para su Comunicación y Reconocimiento (raptors-cnn).
+
 Centraliza las constantes del experimento. Modificar aquí evita tocar el resto
 del código y mantiene la trazabilidad de los hiperparámetros.
 

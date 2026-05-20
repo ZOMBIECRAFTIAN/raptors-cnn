@@ -1,6 +1,10 @@
 """
 raptors-cnn — Perfiles enriquecidos por especie (estilo Merlin Bird ID)
 
+Proyecto: Sistema de Identificación de Aves Rapaces por Silueta y
+Comportamiento de Vuelo Utilizando IA y Diseño de Lenguaje de Señas
+para su Comunicación y Reconocimiento.
+
 Adaptado de raptor_australia/gui/species_data.py para las 53 rapaces
 diurnas documentadas en México (todas las Cathartidae, Pandionidae,
 Accipitridae y Falconidae nacionales).

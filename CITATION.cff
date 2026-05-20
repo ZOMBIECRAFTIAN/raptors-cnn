@@ -4,8 +4,9 @@
 
 cff-version: 1.2.0
 title: >-
-  raptors-cnn: Identificación de Aves Rapaces de México mediante
-  Inteligencia Artificial y Diseño de Lengua de Señas Internacional
+  raptors-cnn: Sistema de Identificación de Aves Rapaces por Silueta
+  y Comportamiento de Vuelo Utilizando Inteligencia Artificial y
+  Diseño de Lenguaje de Señas para su Comunicación y Reconocimiento
 message: >-
   Si usas este trabajo, por favor cita la tesis y el repositorio
   como se indica abajo.
@@ -33,6 +34,11 @@ keywords:
   - convolutional neural networks
   - bird identification
   - raptors of Mexico
+  - silhouette recognition
+  - flight behaviour analysis
+  - kettle detection
+  - hovering
+  - soaring
   - Falconiformes
   - Accipitriformes
   - Cathartiformes
@@ -45,6 +51,8 @@ keywords:
   - transfer learning
   - Grad-CAM
   - AOS 2024
+  - video classification
+  - 3D CNN
 license: MIT
 date-released: "2026-05-17"
 url: "https://github.com/ZOMBIECRAFTIAN/raptors-cnn"
@@ -52,9 +60,9 @@ repository-code: "https://github.com/ZOMBIECRAFTIAN/raptors-cnn"
 preferred-citation:
   type: thesis
   title: >-
-    Identificación de Aves Rapaces de México mediante Inteligencia
-    Artificial y Diseño de Lenguaje de Señas para su Comunicación y
-    Reconocimiento
+    Sistema de Identificación de Aves Rapaces por Silueta y
+    Comportamiento de Vuelo Utilizando Inteligencia Artificial y
+    Diseño de Lenguaje de Señas para su Comunicación y Reconocimiento
   authors:
     - given-names: Brian
       family-names: Fernández Báez

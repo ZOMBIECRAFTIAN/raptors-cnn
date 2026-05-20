@@ -1,6 +1,8 @@
 # Lista oficial de rapaces diurnas de México (V1.1)
 
-> **Documento maestro de especies del proyecto raptors-cnn.**
+> **Documento maestro de especies del proyecto** *Sistema de Identificación de
+> Aves Rapaces por Silueta y Comportamiento de Vuelo Utilizando IA y Diseño
+> de Lenguaje de Señas para su Comunicación y Reconocimiento* (raptors-cnn).
 > Reemplaza el alcance previo de "23 rapaces del corredor de Veracruz" por
 > **todas las rapaces diurnas documentadas en México** (Cathartiformes,
 > Accipitriformes y Falconiformes). Esta lista es la fuente de verdad para

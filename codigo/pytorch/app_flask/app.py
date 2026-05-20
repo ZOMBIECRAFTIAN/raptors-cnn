@@ -2,6 +2,9 @@
 raptors-cnn — Flask Web Application
 ====================================
 
+Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento
+de Vuelo Utilizando IA y Diseño de Lenguaje de Señas.
+
 Backend Flask con inferencia del modelo entrenado, catálogo de 53 rapaces
 diurnas de México y módulo de vocabulario en International Sign (IS).
 

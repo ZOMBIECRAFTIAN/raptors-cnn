@@ -5,9 +5,10 @@
     "code": "es"
   },
   "app": {
-    "title": "Rapaces de México — raptors-cnn",
-    "footer_credit": "raptors-cnn + International Sign | Brian Fernández Báez | Tesis de Maestría — 53 rapaces diurnas de México",
-    "footer_model": "Modelo: ResNet-50 (transfer learning, AMP + cosine schedule) · Taxonomía AOS 2024 · Catálogo de 53 especies · Capas explicativas Grad-CAM"
+    "title": "Rapaces de México — IA por Silueta y Vuelo + IS",
+    "title_long": "Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento de Vuelo Utilizando IA y Diseño de Lenguaje de Señas",
+    "footer_credit": "Identificación de Rapaces por Silueta y Vuelo + International Sign | Brian Fernández Báez | Tesis de Maestría — 53 rapaces diurnas de México",
+    "footer_model": "Modelo: ResNet-50 sobre silueta (transfer learning, AMP + cosine schedule) · Taxonomía AOS 2024 · Catálogo de 53 especies · Análisis de vuelo (planeo, kettle, stoop) · Grad-CAM"
   },
   "nav": {
     "identify": "Identificar",

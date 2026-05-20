@@ -1,7 +1,8 @@
 # Auditoría de incongruencias — Migración V1 → V1.1
 
+**Proyecto:** Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento de Vuelo Utilizando IA y Diseño de Lenguaje de Señas para su Comunicación y Reconocimiento.
 **Fecha:** 17 de mayo de 2026
-**Detonante:** Decisión de **cambiar el alcance del proyecto** de las 23 rapaces migratorias del corredor de Veracruz (VRR) a las **53 rapaces diurnas de todo México**.
+**Detonante:** Decisión de **cambiar el alcance del proyecto** de las 23 rapaces migratorias del corredor de Veracruz (VRR) a las **53 rapaces diurnas de todo México**, e incorporar análisis de **silueta + comportamiento de vuelo** como ejes diagnósticos principales.
 **Autor:** Brian Fernández Báez (con asistencia técnica de IA).
 
 ---

@@ -2,11 +2,11 @@
 
 # 🦅 raptors-cnn
 
-### Identificación de Aves Rapaces de México mediante Inteligencia Artificial y Diseño de Lengua de Señas Internacional
+### Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento de Vuelo Utilizando IA y Diseño de Lenguaje de Señas para su Comunicación y Reconocimiento
 
 *Tesis de Maestría — Brian Fernández Báez — 2026*
 
-*V1.1 — 53 especies (todas las rapaces diurnas de México). Sustituye el alcance V1 (23 rapaces del corredor de Veracruz).*
+*V1.1 — 53 especies de rapaces diurnas de México. El sistema combina visión por computadora sobre **silueta en vuelo** + análisis de **comportamiento (planeo, hovering, kettle, stoop)** + catálogo de señas en International Sign para inclusión de la comunidad sorda.*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
@@ -22,11 +22,11 @@
 
 ## 📑 Abstract (English)
 
-This thesis develops an integrated system that combines (1) a convolutional neural network (CNN) for automated identification of **53 diurnal raptor species of Mexico** (all Cathartidae, Pandionidae, Accipitridae and Falconidae documented nationally), including the migratory bottleneck of the Veracruz corridor — the largest raptor migration on Earth — but also residents like *Harpia harpyja*, *Aquila chrysaetos* and *Caracara plancus*, and (2) a catalogue of **53 signs in International Sign (IS)** that makes ornithological knowledge accessible to the Deaf community. The project compares four state-of-the-art architectures (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implemented in both PyTorch and TensorFlow, applies Grad-CAM for interpretability validation, and follows Universal Design for Learning principles to ensure inclusive scientific communication. Code, weights and sign catalogue are released under open licenses (MIT, CC-BY).
+This thesis develops a **Raptor Identification System based on Silhouette and Flight-Behaviour Analysis using AI**, combined with Sign Language design for inclusive scientific communication. The system (1) uses a convolutional neural network (CNN) trained on the **silhouette in flight** of **53 diurnal raptor species of Mexico** (all Cathartidae, Pandionidae, Accipitridae and Falconidae documented nationally), and complements it with **flight-behaviour analysis** (soaring, flap-glide, hovering, kettle, stoop) extracted from short videos to refine identification of confusable taxa; (2) it includes a catalogue of **53 signs in International Sign (IS)** that makes ornithological knowledge accessible to the Deaf community. The project compares four state-of-the-art architectures (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implemented in both PyTorch and TensorFlow, applies Grad-CAM for interpretability validation, and follows Universal Design for Learning principles to ensure inclusive scientific communication. Code, weights and sign catalogue are released under open licenses (MIT, CC-BY).
 
 ## 📜 Resumen (Español)
 
-Esta tesis desarrolla un sistema integrado que combina (1) una **red neuronal convolucional** para identificar automáticamente **53 especies de rapaces diurnas de México** (todas las Cathartidae, Pandionidae, Accipitridae y Falconidae documentadas a nivel nacional), incluyendo el embudo migratorio del corredor de Veracruz — el más grande del mundo — pero también especies residentes como *Harpia harpyja*, *Aquila chrysaetos* y *Caracara plancus*, y (2) un **catálogo de 53 señas en International Sign (IS)** que hace accesible el conocimiento ornitológico a la comunidad sorda. El proyecto compara cuatro arquitecturas estado-del-arte (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implementadas en PyTorch y TensorFlow, aplica Grad-CAM como verificación de interpretabilidad, y sigue los principios del Diseño Universal para el Aprendizaje (DUA/UDL) para garantizar comunicación científica inclusiva. El código, pesos y catálogo de señas se liberan bajo licencias abiertas (MIT, CC-BY).
+Esta tesis desarrolla un **Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento de Vuelo** mediante inteligencia artificial, combinado con diseño de lenguaje de señas para comunicación científica inclusiva. El sistema (1) emplea una **red neuronal convolucional** entrenada sobre la **silueta en vuelo** de **53 especies de rapaces diurnas de México** (todas las Cathartidae, Pandionidae, Accipitridae y Falconidae documentadas a nivel nacional), y la complementa con **análisis del comportamiento de vuelo** (planeo, flap-glide, hovering, kettle, stoop) extraído de videos cortos para resolver pares confusos; (2) incluye un **catálogo de 53 señas en International Sign (IS)** que hace accesible el conocimiento ornitológico a la comunidad sorda. El proyecto compara cuatro arquitecturas estado-del-arte (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implementadas en PyTorch y TensorFlow, aplica Grad-CAM como verificación de interpretabilidad, y sigue los principios del Diseño Universal para el Aprendizaje (DUA/UDL) para garantizar comunicación científica inclusiva. El código, pesos y catálogo de señas se liberan bajo licencias abiertas (MIT, CC-BY).
 
 ---
 
