@@ -93,6 +93,20 @@ Tesis Biologia.docx
 *.tmp
 *.bak
 
+# ----- Archivos huerfanos creados accidentalmente desde la consola -----
+# (ej: cuando un comando 'python X | Ibycter' tipea mal y crea archivos vacios)
+/Ibycter
+/Astur
+/Daptrius
+/Pseudastur
+/Geranoaetus
+/Rupornis
+/Buteogallus
+/Spizaetus
+/Falco
+/Harpagus
+/Morphnus
+
 # ----- OneDrive / Google Drive -----
 .dropbox
 .dropbox.attr

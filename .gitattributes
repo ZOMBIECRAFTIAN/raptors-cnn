@@ -1,0 +1,67 @@
+# ===========================================================================
+# .gitattributes - Normalizacion consistente de line endings entre Windows/Linux
+# ===========================================================================
+# Resuelve el problema de "modified" en archivos sin cambios reales causado
+# por CRLF en Windows vs LF en Linux/Mac/Colab.
+#
+# Estrategia:
+#   - Archivos texto -> normalizados a LF en el repo
+#   - Archivos binarios -> nunca tocados
+#   - .bat / .cmd / .ps1 -> CRLF (porque Windows los necesita)
+# ===========================================================================
+
+# Auto-detect text files y normaliza a LF al guardar en el repo
+* text=auto eol=lf
+
+# ----- Archivos de texto explicitos (LF) -----
+*.py        text eol=lf
+*.md        text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+*.json      text eol=lf
+*.txt       text eol=lf
+*.csv       text eol=lf
+*.html      text eol=lf
+*.css       text eol=lf
+*.js        text eol=lf
+*.ipynb     text eol=lf
+*.cff       text eol=lf
+*.toml      text eol=lf
+*.ini       text eol=lf
+*.cfg       text eol=lf
+*.gitignore text eol=lf
+*.gitattributes text eol=lf
+Dockerfile  text eol=lf
+Makefile    text eol=lf
+
+# ----- Scripts Windows (CRLF obligatorio) -----
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# ----- Binarios - nunca tocar -----
+*.docx      binary
+*.pdf       binary
+*.pptx      binary
+*.xlsx      binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.webp      binary
+*.svg       binary
+*.ico       binary
+*.mp4       binary
+*.mov       binary
+*.webm      binary
+*.zip       binary
+*.tar.gz    binary
+*.pt        binary
+*.pth       binary
+*.ckpt      binary
+*.h5        binary
+*.keras     binary
+*.tflite    binary
+*.onnx      binary
+*.npy       binary
+*.npz       binary

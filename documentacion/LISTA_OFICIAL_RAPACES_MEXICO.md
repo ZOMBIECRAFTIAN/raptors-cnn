@@ -181,4 +181,4 @@ Spizaetus_tyrannus            BLHE  Black Hawk-Eagle
 ---
 
 *Documento creado: 2026-05-17. Autor: Brian Fernández Báez.
-Sucede al alcance V1 limitado a 23 especies del VRR.*
+Sucede al alcance V1, que estaba limitado a 23 especies del corredor migratorio del VRR (Veracruz River of Raptors).*

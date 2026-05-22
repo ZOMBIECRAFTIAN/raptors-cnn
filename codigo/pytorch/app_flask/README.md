@@ -7,7 +7,7 @@ App Flask profesional adaptada de [raptor_australia](C:\Projects\raptor_australi
 ```
 app_flask/
 ├── app.py                    Backend Flask con inferencia + endpoints
-├── species_data.py           Perfiles enriquecidos de las 23 especies
+├── species_data.py           Perfiles enriquecidos de las 53 especies
 ├── i18n.py                   Sistema de internacionalización (es + en)
 ├── translations/
 │   ├── es.json               Traducciones español
@@ -15,7 +15,7 @@ app_flask/
 ├── templates/
 │   ├── base.html             Layout base con topbar + footer
 │   ├── index.html            Página principal (hero + resultado)
-│   ├── species.html          Catálogo de las 23 especies
+│   ├── species.html          Catálogo de las 53 especies
 │   └── data.html             Dashboard de observaciones + descargas
 ├── static/
 │   ├── css/style.css         Stylesheet (Inter + Lora, paleta teal/terracotta)

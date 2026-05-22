@@ -1,6 +1,6 @@
-# Glosario IS ↔ LSM ↔ ASL — Aves Rapaces (23 especies VRR)
+# Glosario IS ↔ LSM ↔ ASL — Aves Rapaces (53 especies de México)
 
-Tabla de equivalencias para las 23 especies objetivo. International Sign (IS) es la propuesta principal; LSM y ASL se documentan como referencia para implementaciones locales en México y Estados Unidos.
+Tabla de equivalencias para las 53 especies diurnas de rapaces de México (AOS 2024). International Sign (IS) es la propuesta principal; LSM y ASL se documentan como referencia para implementaciones locales en México y Estados Unidos. El núcleo histórico de 23 especies del corredor de Veracruz (V1) se conserva en su posición alfabética dentro de este catálogo ampliado.
 
 > **Estado:** las columnas LSM y ASL se completan tras los talleres con la comunidad sorda. Por ahora documentan la propuesta inicial del autor en IS y dejan abiertas las versiones específicas de cada lengua local. Las 9 especies nuevas (BE, FH, GE, GH, HK, NG, RL, STH, STK) tienen señas IS preliminares que requieren validación formal.
 

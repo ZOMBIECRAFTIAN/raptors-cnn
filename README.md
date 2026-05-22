@@ -174,7 +174,7 @@ python gradcam.py --image ../../datos/processed/test/Buteo_platypterus/BW_test_0
 
 ```bash
 python download_inaturalist.py --target 250 --max-pages 5
-# Descarga hasta 250 imágenes × 23 especies con licencia CC abierta
+# Descarga hasta 250 imágenes × 53 especies con licencia CC abierta
 ```
 
 ---
