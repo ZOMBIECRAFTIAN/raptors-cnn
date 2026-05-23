@@ -91,6 +91,29 @@ flowchart LR
 
 ---
 
+## 🧠 Comparativa de arquitecturas CNN
+
+El proyecto evalúa cuatro arquitecturas estado-del-arte sobre las 53 especies, con el mismo split, las mismas augmentaciones y el mismo esquema de entrenamiento en dos etapas.
+
+| Arquitectura | Params | Input | FLOPs (G) | Acc. ImageNet | VRAM (train, 4GB) | Latencia GPU | Latencia CPU | Caso de uso |
+|---|---|---|---|---|---|---|---|---|
+| **MobileNetV3-Large** | 5.5 M | 224 × 224 | 0.22 | 75.2 % | OK batch 32 | 4 ms | 28 ms | Móvil / edge / Raspberry Pi |
+| **EfficientNet-B3** | 12.2 M | 300 × 300 | 1.8 | 81.6 % | Justo batch 8 | 12 ms | 95 ms | Mejor acc-por-param |
+| **ResNet-50** *(baseline)* | 25.6 M | 224 × 224 | 4.1 | 80.4 % | Justo batch 16 | 9 ms | 110 ms | Producción / servidor |
+| **ConvNeXt-Tiny** | 28.6 M | 232 × 232 | 4.5 | 82.1 % | Justo batch 8 | 14 ms | 175 ms | Investigación / SOTA |
+
+Las métricas reales sobre las 53 rapaces (accuracy, F1-macro, top-3, matriz de confusión, latencia de inferencia, VRAM máxima) se calculan automáticamente con:
+
+```bash
+cd codigo/comparacion
+python comparar_arquitecturas.py --all       # entrena las 4, evalúa, genera CSV + figuras
+python comparar_arquitecturas.py --report    # solo regenerar figuras si ya hay datos
+```
+
+Resultados completos, justificación de la elección y referencias en [`codigo/comparacion/README.md`](codigo/comparacion/README.md).
+
+---
+
 ## 📂 Estructura del repositorio
 
 ```
@@ -134,31 +157,32 @@ raptors-cnn/
 ### Requisitos previos
 
 - **Windows 10/11**, macOS o Linux
-- **NVIDIA GPU** con drivers ≥ 535 (para CUDA 12.1)
+- Opcional: **NVIDIA GPU** con drivers ≥ 535 (para CUDA 12.1). Sin GPU también funciona — ver más abajo.
 - **Anaconda** o **Miniconda**
 - **Git**
 
 ### Instalación (resumida)
+
+Elige el entorno según tu hardware:
 
 ```bash
 # 1. Clonar el repositorio
 git clone https://github.com/ZOMBIECRAFTIAN/raptors-cnn.git
 cd raptors-cnn
 
-# 2. Crear el entorno PyTorch
-conda env create -f codigo/pytorch/environment.yml
-conda activate raptors-pt
+# 2. Crear el entorno PyTorch (elige UNA opción)
+conda env create -f codigo/pytorch/environment.yml         # NVIDIA CUDA (Windows/Linux)
+conda env create -f codigo/pytorch/environment-cpu.yml     # CPU-only (cualquier OS)
+conda env create -f codigo/pytorch/environment-mps.yml     # macOS Apple Silicon (M1/M2/M3/M4)
 
-# 3. Instalar dependencias pip (desde ruta corta para evitar bug MAX_PATH en Windows)
-cd C:\Users\<tu_usuario>
-pip install -r <ruta_al_repo>/codigo/pytorch/pip-requirements.txt
-cd <ruta_al_repo>/codigo/pytorch
+conda activate raptors-pt        # o raptors-pt-cpu / raptors-pt-mps según corresponda
+pip install -r codigo/pytorch/pip-requirements.txt
 
-# 4. Verificar
-python verify_setup.py
+# 3. Verificar
+python codigo/pytorch/verify_setup.py
 ```
 
-> Guía completa paso a paso con troubleshooting en [`SETUP.md`](SETUP.md).
+> Guía completa paso a paso con troubleshooting en [`MANUAL_INSTALACION.md`](MANUAL_INSTALACION.md).
 
 ### Smoke-test (verifica que todo corre, sin necesidad de dataset real)
 
