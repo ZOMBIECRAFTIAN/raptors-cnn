@@ -1,0 +1,58 @@
+# Entorno conda para PyTorch en macOS Apple Silicon (M1/M2/M3/M4) con MPS.
+# MPS = Metal Performance Shaders. Es la aceleración por GPU integrada de Apple.
+# Funciona en macOS >= 12.3.
+#
+# Crear con:   conda env create -f environment-mps.yml
+# Activar con: conda activate raptors-pt-mps
+#
+# Notas:
+#   - PyTorch detectará MPS automáticamente vía config.py (torch.backends.mps).
+#   - MPS es ~3-10x más rápido que CPU pero ~2-4x más lento que una RTX 3050.
+#   - Algunas operaciones aún caen a CPU como fallback (mixup, ciertos kernels).
+#   - Para usar Intel Mac (sin Apple Silicon), instala environment-cpu.yml.
+
+name: raptors-pt-mps
+
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11
+
+  # ----- PyTorch con soporte MPS (Apple Silicon) -----
+  - pytorch=2.3.*
+  - torchvision=0.18.*
+  - torchaudio=2.3.*
+  # En Apple Silicon NO se instala pytorch-cuda ni cpuonly.
+  # PyTorch detecta MPS al runtime con torch.backends.mps.is_available().
+
+  # ----- Cómputo numérico y datos -----
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - pillow
+
+  # ----- Visualización -----
+  - matplotlib
+  - seaborn
+
+  # ----- Notebook / desarrollo -----
+  - jupyter
+  - ipykernel
+  - tqdm
+  - pyyaml
+
+  # ----- Utilidades de imagen y video -----
+  - opencv
+
+  # ----- Herramientas de calidad de código -----
+  - black
+  - ruff
+
+  - pip
+  # Después de crear el env, en una segunda pasada:
+  #   conda activate raptors-pt-mps
+  #   pip install -r codigo/pytorch/pip-requirements.txt

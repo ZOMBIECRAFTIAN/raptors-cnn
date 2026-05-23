@@ -178,9 +178,19 @@ assert SPECIES == sorted(SPECIES), \
     "SPECIES debe estar en orden alfabético para coincidir con ImageFolder."
 
 # -----------------------------------------------------------------------------
-# Dispositivo
+# Dispositivo (auto-detección multiplataforma)
+#   - cuda   → NVIDIA con CUDA instalado (Windows / Linux)
+#   - mps    → Apple Silicon (M1/M2/M3/M4) en macOS 12.3+
+#   - cpu    → fallback universal (mucho más lento)
 # -----------------------------------------------------------------------------
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def _detect_device() -> torch.device:
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        return torch.device("mps")
+    return torch.device("cpu")
+
+DEVICE = _detect_device()
 
 # -----------------------------------------------------------------------------
 # Hiperparámetros — etapa 1 (feature extraction) y etapa 2 (fine-tuning)
