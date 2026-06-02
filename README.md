@@ -1,257 +1,281 @@
 <div align="center">
 
-# 🦅 raptors-cnn
+# raptors-cnn
 
-### Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento de Vuelo Utilizando IA y Diseño de Lenguaje de Señas para su Comunicación y Reconocimiento
+### A reproducible AI pipeline for raptor identification using silhouette, flight behaviour and deep learning
 
-*Tesis de Maestría — Brian Fernández Báez — 2026*
-
-*V1.1 — 53 especies de rapaces diurnas de México. El sistema combina visión por computadora sobre **silueta en vuelo** + análisis de **comportamiento (planeo, hovering, kettle, stoop)** + catálogo de señas en International Sign para inclusión de la comunidad sorda.*
+**Master's research proposal — work in progress — Brian Fernandez Baez — 2026**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch 2.3](https://img.shields.io/badge/PyTorch-2.3-EE4C2C.svg?logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![TensorFlow 2.16](https://img.shields.io/badge/TensorFlow-2.16-FF6F00.svg?logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)
 [![CUDA 12.1](https://img.shields.io/badge/CUDA-12.1-76B900.svg?logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+[![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
+[![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
+
+[Español](README_ES.md) · [Interview notes](INTERVIEW_NOTES.md) · [Installation manual](MANUAL_INSTALACION.md)
 
 </div>
 
----
-
-## 📑 Abstract (English)
-
-This thesis develops a **Raptor Identification System based on Silhouette and Flight-Behaviour Analysis using AI**, combined with Sign Language design for inclusive scientific communication. The system (1) uses a convolutional neural network (CNN) trained on the **silhouette in flight** of **53 diurnal raptor species of Mexico** (all Cathartidae, Pandionidae, Accipitridae and Falconidae documented nationally), and complements it with **flight-behaviour analysis** (soaring, flap-glide, hovering, kettle, stoop) extracted from short videos to refine identification of confusable taxa; (2) it includes a catalogue of **53 signs in International Sign (IS)** that makes ornithological knowledge accessible to the Deaf community. The project compares four state-of-the-art architectures (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implemented in both PyTorch and TensorFlow, applies Grad-CAM for interpretability validation, and follows Universal Design for Learning principles to ensure inclusive scientific communication. Code, weights and sign catalogue are released under open licenses (MIT, CC-BY).
-
-## 📜 Resumen (Español)
-
-Esta tesis desarrolla un **Sistema de Identificación de Aves Rapaces por Silueta y Comportamiento de Vuelo** mediante inteligencia artificial, combinado con diseño de lenguaje de señas para comunicación científica inclusiva. El sistema (1) emplea una **red neuronal convolucional** entrenada sobre la **silueta en vuelo** de **53 especies de rapaces diurnas de México** (todas las Cathartidae, Pandionidae, Accipitridae y Falconidae documentadas a nivel nacional), y la complementa con **análisis del comportamiento de vuelo** (planeo, flap-glide, hovering, kettle, stoop) extraído de videos cortos para resolver pares confusos; (2) incluye un **catálogo de 53 señas en International Sign (IS)** que hace accesible el conocimiento ornitológico a la comunidad sorda. El proyecto compara cuatro arquitecturas estado-del-arte (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) implementadas en PyTorch y TensorFlow, aplica Grad-CAM como verificación de interpretabilidad, y sigue los principios del Diseño Universal para el Aprendizaje (DUA/UDL) para garantizar comunicación científica inclusiva. El código, pesos y catálogo de señas se liberan bajo licencias abiertas (MIT, CC-BY).
+> **About this repository.** This is an **ongoing research project**, not a finished thesis. The code, the dataset specification, the model architectures, the evaluation protocol and the planned experiments are public so the work can be reviewed and reproduced from scratch. Results sections marked *"to be filled after training"* are placeholders that will be replaced as experiments complete. Where numbers do appear, they are explicitly labelled with their source and date.
 
 ---
 
-## 🎯 Características clave
+## 1. Project summary
 
-- 🧠 **Modelo CNN**: 4 arquitecturas comparadas (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny).
-- 🔄 **Dual framework**: implementación espejo en **PyTorch** y **TensorFlow** para análisis comparativo.
-- 🎨 **Transfer learning** en dos etapas: feature extraction + fine-tuning con augmentation rica.
-- 🔍 **Explicabilidad**: Grad-CAM verifica que el modelo atienda a los caracteres morfológicos correctos.
-- 🤟 **Inclusión**: catálogo de **53 señas en International Sign** co-creado con la comunidad sorda.
-- 📊 **Reproducibilidad**: seeds fijos, paths relativos, environment.yml para conda, license tracking por imagen.
-- 📑 **5 capítulos de tesis** en formato DOCX, listos para entrega académica.
+`raptors-cnn` is a research-grade computer-vision prototype for identifying the **53 diurnal raptor species of Mexico** (American Ornithological Society 2024 check-list) from photographs and short videos. The system is designed as a **reproducible AI pipeline**: a curated dataset, four CNN architectures benchmarked head-to-head, two-stage transfer learning, Grad-CAM interpretability validation, a Flask web GUI, and an open International Sign vocabulary that makes the tool accessible to Deaf naturalists.
 
----
+The project is being developed as the basis of a master's research proposal in artificial intelligence applied to wildlife conservation. It is intentionally **open from day one**: code is MIT-licensed, data and signs are CC-BY, and the development log is public.
 
-## 🗺️ Pipeline del sistema
+## 2. Scientific problem
 
-```mermaid
-flowchart LR
-    A[📷 Imagen<br/>de rapaz<br/>en vuelo] --> B{Pre-procesamiento}
-    B --> C[🧠 CNN<br/>ResNet-50 / EfficientNet-B3 /<br/>MobileNetV3 / ConvNeXt-Tiny]
-    C --> D[Softmax<br/>53 clases]
-    D --> E[🏷️ Especie<br/>predicha + prob.]
-    C --> F[Grad-CAM]
-    F --> G[🔥 Mapa de calor<br/>verificación]
-    E --> H[🤟 Video seña<br/>en International Sign]
-    E --> I[📋 Ficha técnica<br/>nombre cient. + común]
+Raptor identification in the field is dominated by **flight observations**: the bird is far, often backlit, and plumage colour is not visible. Existing AI tools such as **Merlin Bird ID** and **iNaturalist Computer Vision** train predominantly on **perched birds with rich colour photographs**, and their predictions rely heavily on plumage features that are unavailable in typical raptor sightings.
 
-    style A fill:#FFE5B4
-    style C fill:#B4D7FF
-    style E fill:#C8E6C9
-    style H fill:#F8BBD0
-```
+A trained ornithologist relies instead on **silhouette** (wing chord ratio, wingtip shape, tail outline, head proportion) and on **flight behaviour** (soaring, flap-glide, hovering, kettle formation, stoop). No published open-source identifier explicitly targets these cues.
 
-> Diagrama completo de arquitectura, flujo de usuaria sorda y estrategia de entrenamiento: [`documentacion/diagramas/arquitectura.md`](documentacion/diagramas/arquitectura.md).
+## 3. Research objective
 
----
+To design, build and evaluate a reproducible computer-vision pipeline that:
 
-## 🦅 Las 53 especies objetivo — todas las rapaces diurnas de México
+- identifies the 53 diurnal raptor species of Mexico from flight-silhouette photographs;
+- complements the visual classifier with a temporal flight-behaviour module integrated as a Bayesian prior;
+- validates interpretability through Grad-CAM analysis on a held-out test set;
+- ships as an installable, multi-platform (CUDA / CPU / Apple Silicon MPS) software package.
 
-> El sistema reconoce **53 especies** organizadas en 4 familias (Cathartidae, Pandionidae, Accipitridae y Falconidae) según la taxonomía **AOS 2024**. La lista completa, con estatus IUCN y NOM-059, está en [`documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md`](documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md).
+**Secondary objective (Section 9 — separated on purpose):** co-design with the Deaf community a 53-sign vocabulary in International Sign that mirrors the species catalogue, so that the same scientific knowledge is accessible without an audio channel. This is an inclusion deliverable; it is *not* a core AI contribution.
 
-### Por familia (resumen)
+## 4. Why raptor identification matters
 
-| Familia | Especies | Ejemplos representativos |
-|---------|---------:|--------------------------|
-| Cathartidae | 4 | *Cathartes aura*, *Coragyps atratus*, *Sarcoramphus papa*, *Cathartes burrovianus* |
-| Pandionidae | 1 | *Pandion haliaetus* |
-| Accipitridae | 38 | *Buteo platypterus*, *B. swainsoni*, *Harpia harpyja*, *Aquila chrysaetos*, *Spizaetus ornatus*, *Astur cooperii*, *Geranospiza caerulescens*… |
-| Falconidae | 10 | *Falco peregrinus*, *F. femoralis*, *F. rufigularis*, *Caracara plancus*, *Micrastur semitorquatus*, *Daptrius americanus*… |
-| **TOTAL** | **53** | — |
+Raptors are **apex predators** and recognised **bioindicators** of ecosystem health (Sergio et al., *Ecological Letters*, 2008). Their populations are sensitive to habitat loss, pesticide accumulation and climate change. Mexico hosts the largest raptor migration corridor in the Americas — over **five million birds** transit the Veracruz River of Raptors corridor each autumn (Pronatura Veracruz, 2020). Scaling field monitoring beyond what trained ornithologists can do manually requires automated identification tools that work under realistic field conditions, including high-altitude flight against bright sky.
 
-### Cobertura geográfica
+Accurate, scalable raptor ID directly supports:
 
-- **Migratorias del corredor de Veracruz** (núcleo histórico de V1): *Buteo platypterus*, *B. swainsoni*, *Accipiter striatus*, *Astur cooperii*, *Falco peregrinus*, etc. — pico septiembre-octubre.
-- **Residentes templadas** del norte y altiplano: *Aquila chrysaetos*, *Buteo regalis*, *Parabuteo unicinctus*, *Falco femoralis*.
-- **Residentes tropicales** del sureste: *Harpia harpyja*, *Spizaetus* spp., *Buteogallus* spp., *Harpagus bidentatus*, *Pseudastur albicollis*, *Daptrius americanus*.
-- **Especialistas** de humedales y costas: *Rostrhamus sociabilis*, *Busarellus nigricollis*, *Pandion haliaetus*, *Haliaeetus leucocephalus*.
+- post-disturbance monitoring (fire, drought, deforestation);
+- citizen-science contributions to **iNaturalist**, **eBird**, **CONABIO**, **GBIF**;
+- conservation status assessment for IUCN and NOM-059-SEMARNAT-2010 listings.
 
-> **Reclasificaciones AOS aplicadas** ⚠️ (64th–65th Supplements):
-> `Accipiter cooperii` → `Astur cooperii` · `Accipiter gentilis` → `Astur atricapillus` (American Goshawk) · `Buteo nitidus` → `Buteo plagiatus`
+## 5. Dataset
 
----
+| Property | Specification |
+|---|---|
+| Source platforms | iNaturalist (research-grade), Macaulay Library, eBird, CONABIO |
+| Licence filter | CC0 / CC-BY / CC-BY-SA only |
+| Target images per species | 200 (rare species: best-effort) |
+| Resolution floor | long side ≥ 800 px (post-curation) |
+| Curation script | `codigo/pytorch/curate.py` — 0-100 score (resolution + Laplacian sharpness + brightness + perceptual hash) |
+| Annotation quality | Double annotation on borderline images; Cohen's κ ≥ 0.85 required |
+| Split | 70 / 15 / 15 train / val / test, stratified by species, seed = 42 |
+| Provenance | SHA-256 of every image logged in `datos/annotations/` |
 
-## 🧠 Comparativa de arquitecturas CNN
+Dataset construction is described in detail in `documentacion/WORKFLOW_DATASET_REAL.md`.
 
-El proyecto evalúa cuatro arquitecturas estado-del-arte sobre las 53 especies, con el mismo split, las mismas augmentaciones y el mismo esquema de entrenamiento en dos etapas.
+## 6. Target species
 
-| Arquitectura | Params | Input | FLOPs (G) | Acc. ImageNet | VRAM (train, 4GB) | Latencia GPU | Latencia CPU | Caso de uso |
-|---|---|---|---|---|---|---|---|---|
-| **MobileNetV3-Large** | 5.5 M | 224 × 224 | 0.22 | 75.2 % | OK batch 32 | 4 ms | 28 ms | Móvil / edge / Raspberry Pi |
-| **EfficientNet-B3** | 12.2 M | 300 × 300 | 1.8 | 81.6 % | Justo batch 8 | 12 ms | 95 ms | Mejor acc-por-param |
-| **ResNet-50** *(baseline)* | 25.6 M | 224 × 224 | 4.1 | 80.4 % | Justo batch 16 | 9 ms | 110 ms | Producción / servidor |
-| **ConvNeXt-Tiny** | 28.6 M | 232 × 232 | 4.5 | 82.1 % | Justo batch 8 | 14 ms | 175 ms | Investigación / SOTA |
+**53 diurnal raptors of Mexico** following AOS 2024 (Cathartidae × 4 · Pandionidae × 1 · Accipitridae × 38 · Falconidae × 10). The full list with scientific names, 4-letter codes, IUCN status and NOM-059 status is in `documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md`. Three AOS 2023 reclassifications are applied: *Accipiter cooperii* → *Astur cooperii*, *Accipiter gentilis* → *Astur atricapillus*, *Buteo nitidus* → *Buteo plagiatus*.
 
-Las métricas reales sobre las 53 rapaces (accuracy, F1-macro, top-3, matriz de confusión, latencia de inferencia, VRAM máxima) se calculan automáticamente con:
+## 7. AI methodology
+
+The pipeline applies standard **transfer-learning** on backbones pre-trained on ImageNet, with augmentations specifically tuned to force the model to learn **silhouette and shape** rather than plumage colour:
+
+- saturation jitter up to 0.4
+- random conversion to grayscale, p = 0.2
+- `RandomErasing` on plumage regions
+- standard set: `RandomResizedCrop`, `HorizontalFlip`, mild rotation, `ColorJitter`, Normalize, **Mixup** α=0.2, **CutMix** α=1.0
+
+A complementary **video module** (Section 8) is planned to add a Bayesian prior from short clips. The current code-base implements the prior as a placeholder and the full multimodal V2 is reserved for doctoral work.
+
+## 8. Model architectures
+
+Four backbones are benchmarked head-to-head under the same split, the same augmentations and the same training protocol. Comparative results will be reported in `results/METRICS_TEMPLATE.md` after training.
+
+| Architecture | Parameters | Input | ImageNet top-1 (ref.) | Intended role |
+|---|---|---|---|---|
+| MobileNetV3-Large | 5.5 M | 224×224 | 75.2 % | Edge / mobile / Raspberry Pi |
+| EfficientNet-B3 | 12.2 M | 300×300 | 81.6 % | Accuracy-per-parameter |
+| ResNet-50 | 25.6 M | 224×224 | 80.4 % | **Baseline** |
+| ConvNeXt-Tiny | 28.6 M | 232×232 | 82.1 % | SOTA challenger |
+
+ImageNet numbers are reference top-1 accuracy from the corresponding original papers / torchvision model zoo; they are *not* this project's results.
+
+## 9. Training pipeline
+
+Two-stage transfer learning, following Howard & Ruder (2018, ULMFiT):
+
+**Stage 1 — feature extraction** (10 epochs)
+Adam, lr = 1e-3. Backbone frozen, only the classifier head trains. Purpose: stabilise the head before risking the pre-trained weights.
+
+**Stage 2 — fine-tuning** (≤ 80 epochs, early-stopping patience 15)
+AdamW, lr = 1e-4, weight decay = 5e-4. Cosine annealing scheduler with 3 warm-up epochs. Label smoothing 0.1, Mixup α = 0.2, CutMix α = 1.0. Weighted cross-entropy to mitigate class imbalance.
+
+Hardware-aware defaults in `config.py`: `BATCH_SIZE = 16`, `GRADIENT_ACCUM_STEPS = 2`, `USE_AMP = True`. Multi-platform device detection (NVIDIA CUDA, Apple MPS, CPU fallback).
+
+## 10. Evaluation metrics
+
+- **Accuracy** (global, on 53-class test set)
+- **F1-macro** (unweighted average across species — primary metric for imbalanced classes)
+- **F1 per species** (53 values)
+- **Top-3 accuracy**
+- **53 × 53 confusion matrix** (CSV + PNG)
+- **Inference latency** (ms per image, batch size 1)
+- **Trained-model size** (MB on disk)
+
+All scripts that compute these live in `codigo/pytorch/evaluate.py`. Reporting templates are in `results/`.
+
+## 11. Explainability with Grad-CAM
+
+`codigo/pytorch/gradcam.py` produces gradient-weighted class activation maps for any image given a trained checkpoint. The validation protocol is described in `results/GRADCAM_EXAMPLES.md`:
+
+- at least 20 maps per class are reviewed by the author;
+- any image where the activation peak falls on background (sky / canopy) instead of on the bird is flagged for audit;
+- this catches a well-known failure mode called **shortcut learning** (Geirhos et al., *Nature Machine Intelligence*, 2020) — see `results/SHORTCUT_LEARNING_FINDING.md`.
+
+## 12. Current status
+
+| Component | Status | Notes |
+|---|---|---|
+| Dataset acquisition (53 species) | **In progress** | Scripts ready; download is incremental |
+| Curation pipeline (`curate.py`) | **Working** | Tested on the V1 (23-species) subset |
+| Four-architecture training | **Pending full run** | Smoke test passes; full benchmark scheduled |
+| Evaluation scripts | **Working** | Same scripts used for the predecessor Australian project (F1-macro 0.85 on 8 species) |
+| Grad-CAM module | **Working** | Demo on synthetic data validated |
+| Flask web GUI | **Working in demo mode** | Loads trained weights when present |
+| Behaviour module (V1 prior) | **Prototype** | Bayesian combination implemented as placeholder; full multimodal V2 is doctoral work |
+| International Sign vocabulary | **Proposal stage** | 53 signs drafted; focus-group validation scheduled |
+| Reproducibility infrastructure | **Working** | Seeds, environment files (CUDA / CPU / MPS), Git tags |
+
+## 13. Limitations
+
+- **Class imbalance.** *Cathartes aura* has > 1000 images available, while *Harpia harpyja* and *Morphnus guianensis* have fewer than 100. Weighted cross-entropy, Mixup, CutMix help; partnership with The Peregrine Fund and CONABIO is required for rare-species data.
+- **iNaturalist photographic bias.** Most uploads are clear-sky soaring birds. The model is expected to under-perform on canopy backgrounds typical of *Spizaetus* and *Harpagus*.
+- **Temporal resolution of the behaviour module.** The current V1 prior operates at ~1 fps and cannot resolve fast events such as the *Falco peregrinus* stoop. V2 is planned with a 3D-CNN at 8-16 fps.
+- **Geographic prior risk.** Range-by-coordinates priors can introduce confirmation bias. V2 will weight the prior by visual-classifier uncertainty.
+- **No peer-reviewed publication yet.** This is a research project under development.
+
+## 14. Future work
+
+1. Complete the four-architecture benchmark and publish the Pareto curve (accuracy vs latency vs VRAM).
+2. Replace the V1 placeholder prior with a 3D-CNN behaviour module (SlowFast or ResNet3D-18).
+3. Add DeepSORT for per-individual tracking and time-aggregation across frames.
+4. Validate the International Sign catalogue with the Deaf community using a Likert protocol (clarity, naturalness, memorability).
+5. Multi-modal Bayesian fusion: vision + behaviour + phenology + geography at the posterior level.
+6. Extension to Strigiformes (owls), which introduces audio and night-vision modalities.
+
+## 15. How to install
+
+A complete multi-platform manual is in [`MANUAL_INSTALACION.md`](MANUAL_INSTALACION.md). Quick start:
 
 ```bash
-cd codigo/comparacion
-python comparar_arquitecturas.py --all       # entrena las 4, evalúa, genera CSV + figuras
-python comparar_arquitecturas.py --report    # solo regenerar figuras si ya hay datos
-```
-
-Resultados completos, justificación de la elección y referencias en [`codigo/comparacion/README.md`](codigo/comparacion/README.md).
-
----
-
-## 📂 Estructura del repositorio
-
-```
-raptors-cnn/
-├── README.md                      ← este archivo
-├── SETUP.md                       ← guía de instalación paso a paso
-├── LICENSE                        ← MIT
-├── CITATION.cff                   ← cómo citar el proyecto
-├── CONTRIBUTING.md                ← cómo colaborar
-├── .gitignore                     ← qué NO se versiona
-│
-├── codigo/
-│   ├── pytorch/                   ← implementación principal (PyTorch + CUDA)
-│   ├── tensorflow/                ← implementación espejo (TensorFlow + CUDA)
-│   └── comparacion/               ← scripts y figuras de la comparativa
-│
-├── datos/                         ← (vacío en repo, llenado localmente)
-│   ├── raw/                       ← imágenes originales
-│   ├── processed/                 ← train/val/test
-│   ├── annotations/               ← metadatos CSV
-│   ├── README.md                  ← estructura esperada
-│   └── FUENTES_DE_IMAGENES.md     ← iNaturalist, Macaulay, Pronatura
-│
-├── documentacion/
-│   ├── tesis/                     ← Capítulos 1-5 en DOCX
-│   └── diagramas/                 ← Mermaid del sistema
-│
-├── lengua_de_senas/
-│   ├── catalogo_senas/            ← catálogo de 23 señas (propuesta del autor)
-│   ├── glosario_IS_LSM.md         ← equivalencias entre lenguas de señas
-│   ├── instrumentos_validacion/   ← cuestionario Likert
-│   └── videos/                    ← grabaciones de las señas (pendiente)
-│
-└── referencias/                   ← bibliografía consolidada + plantillas
-```
-
----
-
-## ⚡ Inicio rápido
-
-### Requisitos previos
-
-- **Windows 10/11**, macOS o Linux
-- Opcional: **NVIDIA GPU** con drivers ≥ 535 (para CUDA 12.1). Sin GPU también funciona — ver más abajo.
-- **Anaconda** o **Miniconda**
-- **Git**
-
-### Instalación (resumida)
-
-Elige el entorno según tu hardware:
-
-```bash
-# 1. Clonar el repositorio
 git clone https://github.com/ZOMBIECRAFTIAN/raptors-cnn.git
 cd raptors-cnn
 
-# 2. Crear el entorno PyTorch (elige UNA opción)
-conda env create -f codigo/pytorch/environment.yml         # NVIDIA CUDA (Windows/Linux)
-conda env create -f codigo/pytorch/environment-cpu.yml     # CPU-only (cualquier OS)
-conda env create -f codigo/pytorch/environment-mps.yml     # macOS Apple Silicon (M1/M2/M3/M4)
+# Pick the environment that matches your hardware
+conda env create -f codigo/pytorch/environment.yml          # NVIDIA CUDA
+# conda env create -f codigo/pytorch/environment-cpu.yml    # CPU only
+# conda env create -f codigo/pytorch/environment-mps.yml    # Apple Silicon
 
-conda activate raptors-pt        # o raptors-pt-cpu / raptors-pt-mps según corresponda
+conda activate raptors-pt
 pip install -r codigo/pytorch/pip-requirements.txt
-
-# 3. Verificar
 python codigo/pytorch/verify_setup.py
 ```
 
-> Guía completa paso a paso con troubleshooting en [`MANUAL_INSTALACION.md`](MANUAL_INSTALACION.md).
-
-### Smoke-test (verifica que todo corre, sin necesidad de dataset real)
+## 16. How to train
 
 ```bash
-python make_synthetic_dataset.py        # crea ~980 imágenes sintéticas
+# 1. Download a small dataset
+cd codigo/pytorch
+python download_inaturalist.py --target 50 --max-pages 1
+
+# 2. Curate and split
+python curate.py --apply
+python split_dataset.py
+
+# 3. Smoke test (1 epoch, ~5 min)
 python train.py --arch resnet50 --smoke-test
-python evaluate.py --arch resnet50 --weights outputs/checkpoints/best_stage2.pt
-python gradcam.py --image ../../datos/processed/test/Buteo_platypterus/BW_test_0000.jpg \
-                  --arch resnet50 --weights outputs/checkpoints/best_stage2.pt
+
+# 4. Full training (4-8 h on RTX 3050; CPU not recommended)
+python train.py --arch resnet50
+
+# 5. Evaluate
+python evaluate.py --arch resnet50 \
+                   --weights outputs/checkpoints/best_stage2.pt
 ```
 
-### Descargar dataset real desde iNaturalist
+## 17. How to run inference
 
 ```bash
-python download_inaturalist.py --target 250 --max-pages 5
-# Descarga hasta 250 imágenes × 53 especies con licencia CC abierta
+# Flask web GUI
+cd codigo/pytorch/app_flask
+python app.py
+# open http://localhost:5000
+
+# Grad-CAM on a single image
+cd codigo/pytorch
+python gradcam.py --image path/to/image.jpg \
+                  --arch resnet50 \
+                  --weights outputs/checkpoints/best_stage2.pt
+```
+
+## 18. How to cite
+
+If you reference this work in academic writing, please cite the CITATION file:
+
+```bibtex
+@misc{fernandezbaez_raptors_cnn_2026,
+  author = {Brian Fernandez Baez},
+  title  = {raptors-cnn: a reproducible AI pipeline for raptor identification using silhouette and flight behaviour},
+  year   = {2026},
+  url    = {https://github.com/ZOMBIECRAFTIAN/raptors-cnn},
+  note   = {Master's research proposal, work in progress}
+}
+```
+
+Full machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
+
+---
+
+## Repository layout
+
+```
+raptors-cnn/
+├── README.md                       This file
+├── README_ES.md                    Spanish version
+├── INTERVIEW_NOTES.md              Talking points for graduate-admissions interviews
+├── MANUAL_INSTALACION.md           Multi-platform install manual
+├── LICENSE  ·  CITATION.cff
+│
+├── codigo/pytorch/                 Main implementation
+│   ├── config.py                   Single source of truth for hyperparameters + device
+│   ├── train.py · evaluate.py · gradcam.py
+│   ├── curate.py · split_dataset.py · download_inaturalist.py
+│   ├── environment.yml · environment-cpu.yml · environment-mps.yml
+│   ├── pip-requirements.txt
+│   └── app_flask/                  Flask GUI (separate module)
+│
+├── codigo/comparacion/             Four-architecture benchmark scripts
+├── datos/                          Dataset folders (gitignored content)
+│
+├── results/                        Result templates — see Section 10
+│   ├── METRICS_TEMPLATE.md
+│   ├── CONFUSION_MATRIX_TEMPLATE.md
+│   ├── GRADCAM_EXAMPLES.md
+│   ├── TRAINING_CURVES.md
+│   └── SHORTCUT_LEARNING_FINDING.md
+│
+├── documentacion/                  Methodology docs and thesis chapter drafts
+├── lengua_de_senas/                International Sign extension (Section 9)
+└── referencias/                    Bibliography
 ```
 
 ---
 
-## 📖 Documentación de la tesis
+## 19. International Sign extension (secondary deliverable)
 
-Los 5 capítulos en formato DOCX (listos para revisión académica):
-
-| Capítulo | Archivo | Tamaño |
-|----------|---------|--------|
-| 1 — Introducción | [`Capitulo1_Introduccion.docx`](documentacion/tesis/Capitulo1_Introduccion.docx) | ~22 KB |
-| 2 — Marco Teórico | [`Capitulo2_MarcoTeorico.docx`](documentacion/tesis/Capitulo2_MarcoTeorico.docx) | ~27 KB |
-| 3 — Metodología | [`Capitulo3_Metodologia.docx`](documentacion/tesis/Capitulo3_Metodologia.docx) | ~23 KB |
-| 4 — Resultados (estructura) | [`Capitulo4_Resultados.docx`](documentacion/tesis/Capitulo4_Resultados.docx) | ~15 KB |
-| 5 — Conclusiones (estructura) | [`Capitulo5_Conclusiones.docx`](documentacion/tesis/Capitulo5_Conclusiones.docx) | ~14 KB |
+A complementary inclusion deliverable: a proposed **53-sign vocabulary in International Sign**, co-designed with the Deaf community. This sits in `lengua_de_senas/` and follows the [World Federation of the Deaf](https://wfdeaf.org) manifesto and the CAST framework for Universal Design for Learning. **It is reported as a separate contribution and is not part of the AI evaluation.**
 
 ---
 
-## 🔍 Hallazgo destacado durante la fase de verificación
+## Contact
 
-Durante el smoke-test con dataset sintético, **Grad-CAM detectó shortcut learning**: el modelo alcanzó 100% accuracy aprendiendo a leer el texto de las etiquetas burned-in, no las formas geométricas que las representaban. Esto valida empíricamente la importancia de la **interpretabilidad como criterio de validación** incluso cuando las métricas son perfectas — discusión detallada en el Capítulo 4.5 de la tesis.
+Brian Fernandez Baez · brianferbaez@gmail.com · [GitHub](https://github.com/ZOMBIECRAFTIAN)
 
----
-
-## 🤝 Contribuir
-
-Las contribuciones son bienvenidas — imágenes con licencia abierta, mejoras al código, traducciones del catálogo de señas a otras lenguas de señas, etc. Ver [`CONTRIBUTING.md`](CONTRIBUTING.md).
-
-## 📄 Licencia y citación
-
-- **Código**: MIT (ver [`LICENSE`](LICENSE))
-- **Pesos del modelo**: CC-BY 4.0 (al publicarse)
-- **Catálogo de señas**: CC-BY-SA 4.0 (co-creación con comunidad sorda)
-- **Capítulos de tesis**: CC-BY-NC 4.0
-- **Citación académica**: ver [`CITATION.cff`](CITATION.cff) o usar el botón *"Cite this repository"* en la barra lateral de GitHub.
-
-## 👤 Autor
-
-**Brian Fernández Báez** — Tesis de Maestría — 2026
-📧 brianferbaez@gmail.com
-
-## 🙏 Agradecimientos
-
-A Pronatura Veracruz por tres décadas de monitoreo del Río de Rapaces, al Hawk Mountain Sanctuary por compartir su metodología, al Cornell Lab of Ornithology por BirdNET y la Macaulay Library, y especialmente a los miembros de la comunidad sorda que aportan su conocimiento lingüístico para la co-creación de las señas.
-
----
-
-<div align="center">
-
-*"Si los entregables de esta tesis llegan a manos de un solo joven sordo apasionado por las aves
-y le permiten nombrar, por primera vez, en su lengua, al ave que vuela sobre su cabeza,
-el proyecto habrá cumplido su propósito profundo."*
-
-— Reflexión final, Capítulo 5
-
-</div>
+**Licences:** code MIT · data and signs CC-BY 4.0

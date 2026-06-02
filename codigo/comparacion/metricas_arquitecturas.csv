@@ -1,0 +1,5 @@
+arch,params_M,input,flops_G,imagenet_acc,accuracy,f1_macro,top3_acc,train_status,train_hours,vram_GB,model_size_MB,latency_ms,eval_status
+resnet50,25.6,224,4.1,80.4,,,,OK,3.09,,,,
+efficientnet_b3,12.2,300,1.8,81.6,,,,OK,3.12,,,,
+mobilenet_v3_large,5.5,224,0.22,75.2,,,,OK,2.69,,,,
+convnext_tiny,28.6,232,4.5,82.1,,,,,,,,,
