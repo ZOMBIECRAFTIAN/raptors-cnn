@@ -34,7 +34,7 @@ Talking points for graduate-admissions interviews, research-fit conversations an
 
 ### Q1. "How do you know your model isn't memorising the dataset?"
 
-> "Three layers. First, the test split is 15 % held out and stratified by species, never touched during training or hyperparameter selection. Second, I run a Grad-CAM audit — for each class I inspect at least 20 maps and any image where attention falls on background is logged. Third, the pipeline includes an augmentation ablation: removing the silhouette-targeted augmentations should *increase* training accuracy but *decrease* test accuracy. If it doesn't, the model is exploiting plumage as a shortcut. This protocol is documented in `results/SHORTCUT_LEARNING_FINDING.md`."
+> "Three layers. First, the test split is 15 % held out and stratified by species, never touched during training or hyperparameter selection. Second, I run a Grad-CAM audit — for each class I inspect at least 20 maps and any image where attention falls on background is logged. Third, the pipeline includes an augmentation ablation: removing the silhouette-targeted augmentations should *increase* training accuracy but *decrease* test accuracy. If it doesn't, the model is exploiting plumage as a shortcut. This protocol is documented in `documentacion/resultados/SHORTCUT_LEARNING_FINDING.md`."
 
 ### Q2. "Why didn't you use a Vision Transformer?"
 
@@ -125,7 +125,7 @@ Any of these is better than guessing wrong.
 
 ### P1. "¿Cómo sabe que su modelo no está memorizando el dataset?"
 
-> "Tres capas. Primero, la partición de prueba es 15 % retenido, estratificado por especie, nunca tocado durante entrenamiento o selección de hiperparámetros. Segundo, hago una auditoría Grad-CAM — para cada clase reviso al menos 20 mapas y cualquier imagen donde la atención cae en fondo queda registrada. Tercero, el pipeline incluye una ablación de augmentaciones: quitar las augmentaciones de silueta debería *aumentar* la accuracy de entrenamiento pero *disminuir* la de prueba. Si no lo hace, el modelo está explotando plumaje como atajo. El protocolo está en `results/SHORTCUT_LEARNING_FINDING.md`."
+> "Tres capas. Primero, la partición de prueba es 15 % retenido, estratificado por especie, nunca tocado durante entrenamiento o selección de hiperparámetros. Segundo, hago una auditoría Grad-CAM — para cada clase reviso al menos 20 mapas y cualquier imagen donde la atención cae en fondo queda registrada. Tercero, el pipeline incluye una ablación de augmentaciones: quitar las augmentaciones de silueta debería *aumentar* la accuracy de entrenamiento pero *disminuir* la de prueba. Si no lo hace, el modelo está explotando plumaje como atajo. El protocolo está en `documentacion/resultados/SHORTCUT_LEARNING_FINDING.md`."
 
 ### P2. "¿Por qué no usó un Vision Transformer?"
 

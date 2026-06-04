@@ -16,7 +16,7 @@ Each slide section has:
 2. **(ES)** a Spanish translation so you can verify you understand what you are saying.
 3. **(Tip)** a short stage direction (when to pause, what to emphasise).
 
-Pronunciation guide for hard scientific names is in `Pronunciation_Guide.md` (sibling file).
+Pronunciation guide for hard scientific names is in `Pronunciation_Guide_EN.md` (sibling file).
 
 ---
 
@@ -96,7 +96,7 @@ Pronunciation guide for hard scientific names is in `Pronunciation_Guide.md` (si
 
 **(ES)** Las 53 son todas las rapaces diurnas de México según el AOS 2024. Cuatro familias: 38 Accipitridae, 10 Falconidae, 4 Cathartidae, 1 Pandionidae. Incluye 3 reclasificaciones AOS 2023 y 5 especies en estatus de conservación.
 
-**(Tip)** Pronounce the scientific names slowly. If unsure, see Pronunciation_Guide.md.
+**(Tip)** Pronounce the scientific names slowly. If unsure, see `Pronunciation_Guide_EN.md`.
 
 ---
 

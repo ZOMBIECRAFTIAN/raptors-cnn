@@ -7,13 +7,13 @@ REM Es incremental: respeta lo ya descargado.
 REM
 REM Uso:
 REM   1) Doble-clic                       -> descarga 200 por especie
-REM   2) descargar_v1_1.bat raras         -> descargas focales para las raras (HAEA, CREA, OBFA, SOEA, RTCA)
-REM   3) descargar_v1_1.bat <CODE>        -> solo una especie por codigo (ej: BWHA, HAEA)
+REM   2) scripts\windows\descargar_v1_1.bat raras   -> descargas focales para raras
+REM   3) scripts\windows\descargar_v1_1.bat <CODE>  -> solo una especie (ej: BWHA)
 REM ===========================================================================
 
 setlocal
 
-cd /d "%~dp0"
+cd /d "%~dp0..\.."
 
 call %USERPROFILE%\anaconda3\Scripts\activate.bat raptors-pt
 if errorlevel 1 (

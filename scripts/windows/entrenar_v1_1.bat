@@ -7,17 +7,17 @@ REM raiz del proyecto (sin tener que recordar el cd codigo\pytorch).
 REM
 REM Uso:
 REM   1) Doble-clic en el archivo
-REM   2) O desde CMD:  entrenar_v1_1.bat
+REM   2) O desde CMD:  scripts\windows\entrenar_v1_1.bat
 REM   3) Opciones:
-REM        entrenar_v1_1.bat smoke   -> solo smoke test (1 epoch)
-REM        entrenar_v1_1.bat real    -> entrenamiento completo
-REM        entrenar_v1_1.bat all     -> arquitecturas comparativas
+REM        scripts\windows\entrenar_v1_1.bat smoke   -> solo smoke test (1 epoch)
+REM        scripts\windows\entrenar_v1_1.bat real    -> entrenamiento completo
+REM        scripts\windows\entrenar_v1_1.bat all     -> arquitecturas comparativas
 REM ===========================================================================
 
 setlocal
 
 REM Ir a la raiz del proyecto
-cd /d "%~dp0"
+cd /d "%~dp0..\.."
 
 REM Activar el entorno conda (asume Anaconda en %USERPROFILE%\anaconda3)
 call %USERPROFILE%\anaconda3\Scripts\activate.bat raptors-pt
@@ -58,7 +58,7 @@ if "%MODO%"=="all" (
 )
 
 echo ERROR: modo invalido '%MODO%'.
-echo Usa: entrenar_v1_1.bat [smoke^|real^|all]
+echo Usa: scripts\windows\entrenar_v1_1.bat [smoke^|real^|all]
 
 :fin
 echo.

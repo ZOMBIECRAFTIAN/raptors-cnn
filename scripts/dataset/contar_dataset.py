@@ -2,15 +2,16 @@
 contar_dataset.py - cuenta imagenes por split y por especie
 
 Uso:
-    python contar_dataset.py
-    python contar_dataset.py --por-especie       # detalle por especie
-    python contar_dataset.py --base datos/processed
+    python scripts/dataset/contar_dataset.py
+    python scripts/dataset/contar_dataset.py --por-especie
+    python scripts/dataset/contar_dataset.py --base datos/processed
 """
 import argparse
 import os
 from pathlib import Path
 
 EXT = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif"}
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def contar(split_dir: Path) -> tuple[int, dict[str, int]]:
@@ -36,6 +37,8 @@ def main() -> None:
     args = ap.parse_args()
 
     base = Path(args.base)
+    if not base.is_absolute():
+        base = ROOT / base
     if not base.exists():
         print(f"ERROR: la carpeta {base.resolve()} no existe.")
         return

@@ -37,7 +37,7 @@ A. *"The combination. Each project has merit alone: Australia is a clean reprodu
 ## Section B - Construction process questions
 
 **Q8. Walk me through the Mexico pipeline from a fresh user.**
-A. *"They run descargar_v1_1.bat which downloads images from iNaturalist. Then pipeline_completo_v1_1.bat curates with curate.py, splits 70/15/15, runs a smoke test, then trains ResNet-50 in two stages. Finally they run python app.py from app_flask and drag a photo in the browser. End-to-end on a fresh machine: about ten hours including download."*
+A. *"They run scripts/windows/descargar_v1_1.bat which downloads images from iNaturalist. Then scripts/windows/pipeline_completo_v1_1.bat curates with curate.py, splits 70/15/15, runs a smoke test, then trains ResNet-50 in two stages. Finally they run python app.py from app_flask and drag a photo in the browser. End-to-end on a fresh machine: about ten hours including download."*
 
 **Q9. Why ResNet-50 as baseline and not something newer?**
 A. *"ResNet-50 is the most reported model in the ornithological AI literature since 2018. Choosing it as baseline lets me compare against published numbers directly. ConvNeXt-Tiny is my SOTA challenger in the same benchmark. The full comparison is in codigo/comparacion/comparar_arquitecturas.py."*

@@ -13,7 +13,8 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[English](README.md) · [Notas de entrevista](INTERVIEW_NOTES.md) · [Manual de instalación](MANUAL_INSTALACION.md)
+[English](README.md) · [Notas de entrevista](documentacion/presentacion_en/INTERVIEW_NOTES.md) · [Manual de instalación](documentacion/guias/MANUAL_INSTALACION.md)
+· [Documentación completa](documentacion/guias/DOCUMENTACION_COMPLETA_ES.md)
 
 </div>
 
@@ -86,7 +87,7 @@ Un **módulo de video** complementario (Sección 8) está planificado para añad
 
 ## 8. Arquitecturas comparadas
 
-Cuatro backbones se comparan en igualdad de condiciones: misma partición, mismas augmentaciones, mismo protocolo. Los resultados comparativos se reportarán en `results/METRICS_TEMPLATE.md` tras el entrenamiento.
+Cuatro backbones se comparan en igualdad de condiciones: misma partición, mismas augmentaciones, mismo protocolo. Los resultados comparativos se reportarán en `documentacion/resultados/METRICS_TEMPLATE.md` tras el entrenamiento.
 
 | Arquitectura | Parámetros | Input | ImageNet top-1 (referencia) | Rol previsto |
 |---|---|---|---|---|
@@ -119,15 +120,15 @@ Defaults sensibles al hardware en `config.py`: `BATCH_SIZE = 16`, `GRADIENT_ACCU
 - **Latencia de inferencia** (ms por imagen, batch size 1)
 - **Tamaño del modelo entrenado** (MB en disco)
 
-Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate.py`. Las plantillas de reporte están en `results/`.
+Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate.py`. Las plantillas de reporte están en `documentacion/resultados/`.
 
 ## 11. Explicabilidad con Grad-CAM
 
-`codigo/pytorch/gradcam.py` produce mapas de activación ponderados por gradiente para cualquier imagen dado un checkpoint entrenado. El protocolo de validación se describe en `results/GRADCAM_EXAMPLES.md`:
+`codigo/pytorch/gradcam.py` produce mapas de activación ponderados por gradiente para cualquier imagen dado un checkpoint entrenado. El protocolo de validación se describe en `documentacion/resultados/GRADCAM_EXAMPLES.md`:
 
 - se revisan al menos 20 mapas por clase manualmente;
 - cualquier imagen donde el pico de activación caiga sobre fondo (cielo / dosel) en lugar de sobre el ave se marca para auditoría;
-- esto detecta un modo de falla conocido como **shortcut learning** (Geirhos et al., *Nature Machine Intelligence*, 2020) — ver `results/SHORTCUT_LEARNING_FINDING.md`.
+- esto detecta un modo de falla conocido como **shortcut learning** (Geirhos et al., *Nature Machine Intelligence*, 2020) — ver `documentacion/resultados/SHORTCUT_LEARNING_FINDING.md`.
 
 ## 12. Estado actual
 
@@ -162,7 +163,7 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 
 ## 15. Cómo instalar
 
-Manual multiplataforma completo en [`MANUAL_INSTALACION.md`](MANUAL_INSTALACION.md). Inicio rápido:
+Manual multiplataforma completo en [`documentacion/guias/MANUAL_INSTALACION.md`](documentacion/guias/MANUAL_INSTALACION.md). Inicio rápido:
 
 ```bash
 git clone https://github.com/ZOMBIECRAFTIAN/raptors-cnn.git
@@ -230,6 +231,30 @@ Si referencias este trabajo en escritura académica, por favor cita el archivo C
 ```
 
 Metadata completa legible por máquina en [`CITATION.cff`](CITATION.cff).
+
+---
+
+## Estructura del repositorio
+
+```
+raptors-cnn/
+├── README.md / README_ES.md        Descripción general del proyecto
+├── LICENSE · CITATION.cff          Licencia y cita académica
+├── codigo/                         Implementaciones PyTorch, TensorFlow y Flask
+├── datos/                          Dataset local; imágenes y videos pesados ignorados por Git
+├── documentacion/
+│   ├── tesis/                       Capítulos de tesis en .docx
+│   ├── guias/                       Instalación, comandos y setup
+│   ├── resultados/                  Plantillas de métricas, Grad-CAM y curvas
+│   ├── presentacion_en/             Material de entrevista/presentación en inglés
+│   ├── auditorias/                  Reportes de auditoría del proyecto
+│   └── diagramas/                   Diagramas de arquitectura
+├── scripts/
+│   ├── windows/                     Atajos .bat para Windows
+│   └── dataset/                     Utilidades para conteo y selección de imágenes
+├── lengua_de_senas/                 Entregable secundario de accesibilidad
+└── referencias/                     Bibliografía y plantillas
+```
 
 ---
 

@@ -16,7 +16,7 @@ REM ===========================================================================
 
 setlocal
 
-cd /d "%~dp0"
+cd /d "%~dp0..\.."
 
 echo.
 echo === Limpieza de archivos viejos del proyecto ===
@@ -60,7 +60,7 @@ echo   OK - carpetas __pycache__ eliminadas
 echo.
 echo ===========================================================================
 echo   LIMPIEZA COMPLETA
-echo   Siguiente paso: commit_v1_1.bat para subir los cambios a GitHub
+echo   Siguiente paso: scripts\windows\commit_v1_1.bat para subir los cambios a GitHub
 echo ===========================================================================
 echo.
 pause

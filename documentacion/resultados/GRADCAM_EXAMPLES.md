@@ -35,7 +35,7 @@ Accipiter striatus — PASS · PASS · PASS · PASS
 ...
 ```
 
-A mosaic figure (`results/gradcam_mosaic_53.png`) will be the headline interpretability figure of the thesis.
+A mosaic figure (`documentacion/resultados/gradcam_mosaic_53.png`) will be the headline interpretability figure of the thesis.
 
 ## References
 

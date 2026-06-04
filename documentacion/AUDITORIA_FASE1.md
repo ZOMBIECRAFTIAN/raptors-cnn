@@ -12,7 +12,7 @@
 |---|---------|--------------------|--------|
 | A1 | `README.md` | "Tesis de Licenciatura en Biología" (2 menciones) | Cambiar a "Tesis de Maestría" |
 | A2 | `CITATION.cff` | `affiliation: "Tesis de Licenciatura en Biología"` y `thesis-type: "Licenciatura en Biología"` | Cambiar a Maestría |
-| A3 | `GUIA_COMANDOS.txt` | "Brian Fernandez Baez - Tesis de Biologia" | Actualizar |
+| A3 | `documentacion/guias/GUIA_COMANDOS_V1_1.txt` | "Brian Fernandez Baez - Tesis de Biologia" | Actualizar |
 | A4 | Capítulo 1 (cap1.js) | Portada dice "Tesis de Licenciatura en Biología" | Regenerar |
 | A5 | `documentacion/RESUMEN_CHAT_PROYECTO_IA_AVES_RAPACES.md` | Doc histórico del chat anterior — opcional actualizar | Marcar como histórico |
 

@@ -24,7 +24,7 @@ This folder contains **reporting templates and current results** for the `raptor
 3. `python codigo/pytorch/gradcam.py --image <IMG> --weights <CKPT>` produces a Grad-CAM PNG.
 4. `python codigo/comparacion/comparar_arquitecturas.py --all` runs all 4 architectures, aggregates the JSONs into `metricas_arquitecturas.csv`, and produces 3 comparison figures in `figures/`.
 
-This `results/` folder receives **summaries and figures**; raw outputs stay under `codigo/pytorch/outputs/` (gitignored beyond size limits).
+This `documentacion/resultados/` folder receives **summaries and figures**; raw outputs stay under `codigo/pytorch/outputs/` (gitignored beyond size limits).
 
 ## Naming convention
 

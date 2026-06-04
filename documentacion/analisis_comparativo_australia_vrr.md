@@ -115,7 +115,7 @@
 | **Glosario unificado de 3 dominios** | ✅ glosario.md | ❌ |
 | **Presentación PowerPoint** | ✅ 18 slides | ❌ |
 | **Workflow de dataset real documentado** | ✅ WORKFLOW_DATASET_REAL.md | ❌ |
-| **Guía de comandos paso a paso** | ✅ GUIA_COMANDOS.txt | ❌ |
+| **Guía de comandos paso a paso** | ✅ `documentacion/guias/GUIA_COMANDOS_V1_1.txt` | ❌ |
 | **Auditoría de coherencia** | ✅ AUDITORIA_FASE1.md | ❌ |
 | **Comparativa estadística entre 4 archs × 2 frameworks** | 📋 Planificada (McNemar + t-test) | ❌ Solo 1 arch (EfficientNetB4) |
 | **Mixed Precision + Gradient Accumulation** | ✅ Para RTX 3050 4 GB | ⚠️ Asume RTX 3060+ |
@@ -216,7 +216,7 @@ raptors-cnn/
 │   ├── raw/, processed/, raw_archive/, feedback/, metadata/
 │
 ├── models/
-├── results/                ← NUEVO — reporte_final.json, métricas
+├── documentacion/resultados/ ← plantillas de reporte, métricas y Grad-CAM
 │
 ├── documentacion/
 │   ├── tesis/              ← lo que ya tenemos

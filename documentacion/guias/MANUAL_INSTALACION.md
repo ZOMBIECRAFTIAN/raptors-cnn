@@ -188,7 +188,7 @@ Con el entorno activado:
 **Windows:**
 
 ```cmd
-entrenar_v1_1.bat smoke
+scripts\windows\entrenar_v1_1.bat smoke
 ```
 
 **Linux/macOS:**
@@ -218,7 +218,7 @@ El proyecto no incluye las imágenes (pesan demasiado para git). Las descarga de
 **Windows:**
 
 ```cmd
-descargar_v1_1.bat
+scripts\windows\descargar_v1_1.bat
 ```
 
 **Linux/macOS:**
@@ -231,13 +231,13 @@ python download_inaturalist.py --target 200 --max-pages 5
 Esto baja hasta 200 imágenes por especie (~10 600 imágenes en total, ~3 GB). Puedes dejarlo corriendo de noche y mirar el avance con:
 
 ```bash
-python contar_dataset.py --por-especie
+python scripts/dataset/contar_dataset.py --por-especie
 ```
 
 Si quieres reforzar especies raras (Harpia harpyja, Crested Eagle):
 
 ```cmd
-descargar_v1_1.bat raras
+scripts\windows\descargar_v1_1.bat raras
 ```
 
 ---
@@ -247,7 +247,7 @@ descargar_v1_1.bat raras
 **Windows (pipeline automático completo, 5-10 horas):**
 
 ```cmd
-pipeline_completo_v1_1.bat
+scripts\windows\pipeline_completo_v1_1.bat
 ```
 
 **Linux/macOS (manual):**
@@ -300,7 +300,7 @@ Olvidaste activar el entorno conda. Corre `conda activate raptors-pt` antes de c
 Tu batch es muy grande para tu GPU. En `codigo/pytorch/config.py` baja `BATCH_SIZE` a 8 o 4 y aumenta `GRADIENT_ACCUM_STEPS` proporcionalmente.
 
 ### "ImageFolder found 0 files"
-Te falta correr la descarga o el split. Revisa con `python contar_dataset.py`. Si hay especies en 0, usa `python codigo/pytorch/exclude_empty_species.py` que crea placeholders.
+Te falta correr la descarga o el split. Revisa con `python scripts/dataset/contar_dataset.py`. Si hay especies en 0, usa `python codigo/pytorch/exclude_empty_species.py` que crea placeholders.
 
 ### Windows: "The system cannot find the path specified"
 Tu ruta tiene tildes, eñes o pasa de 260 caracteres. Mueve el proyecto a `C:\raptors-cnn`.
@@ -343,7 +343,10 @@ Y borra la carpeta del proyecto manualmente.
 ```
 raptors-cnn/
 ├── README.md                       Documentación general
-├── MANUAL_INSTALACION.md           Este archivo
+├── documentacion/guias/
+│   ├── MANUAL_INSTALACION.md       Este archivo
+│   ├── GUIA_COMANDOS_V1_1.txt      Comandos paso a paso
+│   └── SETUP.md                    Setup resumido
 ├── LICENSE                          MIT
 ├── CITATION.cff                     Cómo citar el proyecto
 │
@@ -378,13 +381,16 @@ raptors-cnn/
 │   ├── glosario_IS_LSM.md           Equivalencias IS/LSM/ASL
 │   └── videos/                      Grabaciones (ignorado por git)
 │
-├── descargar_v1_1.bat               Atajo Windows
-├── entrenar_v1_1.bat                Atajo Windows
-├── pipeline_completo_v1_1.bat       Atajo Windows
-├── commit_v1_1.bat                  Atajo Windows
-├── contar_dataset.py                Cuántas imágenes hay
-├── seleccionar_imagenes_galeria.py  Galería automática
-└── selector_galeria_gui.py          Galería con selección manual
+├── scripts/
+│   ├── windows/
+│   │   ├── descargar_v1_1.bat       Atajo Windows
+│   │   ├── entrenar_v1_1.bat        Atajo Windows
+│   │   ├── pipeline_completo_v1_1.bat
+│   │   └── commit_v1_1.bat
+│   └── dataset/
+│       ├── contar_dataset.py
+│       ├── seleccionar_imagenes_galeria.py
+│       └── selector_galeria_gui.py
 ```
 
 ---

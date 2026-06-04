@@ -32,7 +32,7 @@
    git checkout -b feature/agregar-mobilenet-v4
    ```
    Prefijos sugeridos: `feature/`, `fix/`, `docs/`, `dataset/`, `senas/`.
-4. **Configura el entorno** siguiendo `SETUP.md`.
+4. **Configura el entorno** siguiendo `documentacion/guias/SETUP.md`.
 5. **Haz tus cambios**, asegurando que:
    - El código pasa `python verify_setup.py`.
    - Se mantiene el formato del proyecto (Black + Ruff, configurados en `.vscode/settings.json`).

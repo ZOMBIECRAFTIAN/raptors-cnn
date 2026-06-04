@@ -18,7 +18,7 @@ REM ===========================================================================
 
 setlocal
 
-cd /d "%~dp0"
+cd /d "%~dp0..\.."
 
 call %USERPROFILE%\anaconda3\Scripts\activate.bat raptors-pt
 if errorlevel 1 goto err_env

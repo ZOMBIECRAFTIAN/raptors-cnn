@@ -20,10 +20,10 @@ Atajos de teclado:
     [Esc]          -> cerrar app
 
 Uso:
-    python selector_galeria_gui.py
-    python selector_galeria_gui.py --only-missing      # solo especies sin imagen
-    python selector_galeria_gui.py --start Buteo_jamaicensis  # arranca desde X
-    python selector_galeria_gui.py --thumb 180         # tamaño thumbnail (px)
+    python scripts/dataset/selector_galeria_gui.py
+    python scripts/dataset/selector_galeria_gui.py --only-missing
+    python scripts/dataset/selector_galeria_gui.py --start Buteo_jamaicensis
+    python scripts/dataset/selector_galeria_gui.py --thumb 180
 
 Requiere: Pillow (ya esta en environment.yml). Tkinter viene con Python.
 
@@ -47,7 +47,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 VALID_EXT = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def cargar_lista_especies() -> list[str]:
@@ -226,7 +226,8 @@ class App(tk.Tk):
         if not files:
             tk.Label(self.grid_frame,
                      text=("Esta especie no tiene imagenes en el dataset.\n"
-                           "Usa  descargar_v1_1.bat <CODIGO>  para descargar."),
+                           "Usa scripts\\windows\\descargar_v1_1.bat "
+                           "<CODIGO> para descargar."),
                      bg="#1F3A5F", fg="#FFD680",
                      font=("Segoe UI", 12)).pack(pady=40)
             return
@@ -340,8 +341,14 @@ def main() -> None:
     args = ap.parse_args()
 
     especies = cargar_lista_especies()
-    src = Path(args.source).resolve()
-    dst = Path(args.dest).resolve()
+    src = Path(args.source)
+    dst = Path(args.dest)
+    if not src.is_absolute():
+        src = ROOT / src
+    if not dst.is_absolute():
+        dst = ROOT / dst
+    src = src.resolve()
+    dst = dst.resolve()
 
     if not src.exists():
         print(f"ERROR: no existe la carpeta fuente {src}")

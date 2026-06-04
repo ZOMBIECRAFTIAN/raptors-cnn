@@ -10,11 +10,11 @@ Esto alimenta la pagina "Species Guide" de la GUI Flask, que ya espera
 imagenes con esa convencion de nombre.
 
 Uso:
-    python seleccionar_imagenes_galeria.py
-    python seleccionar_imagenes_galeria.py --width 800
-    python seleccionar_imagenes_galeria.py --force        # sobreescribe existentes
-    python seleccionar_imagenes_galeria.py --source datos/raw  # otra carpeta fuente
-    python seleccionar_imagenes_galeria.py --quick        # solo escoge el archivo mas grande, sin scoring
+    python scripts/dataset/seleccionar_imagenes_galeria.py
+    python scripts/dataset/seleccionar_imagenes_galeria.py --width 800
+    python scripts/dataset/seleccionar_imagenes_galeria.py --force
+    python scripts/dataset/seleccionar_imagenes_galeria.py --source datos/raw
+    python scripts/dataset/seleccionar_imagenes_galeria.py --quick
 
 Dependencias: Pillow (incluido en environment.yml).
 
@@ -34,6 +34,7 @@ except ImportError:
     sys.exit(1)
 
 VALID_EXT = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
+ROOT = Path(__file__).resolve().parents[2]
 
 
 # ---------------------------------------------------------------------------
@@ -192,8 +193,14 @@ def main() -> None:
                     help="Modo rapido: escoge la imagen mas grande por bytes sin score")
     args = ap.parse_args()
 
-    source = Path(args.source).resolve()
-    dest = Path(args.dest).resolve()
+    source = Path(args.source)
+    dest = Path(args.dest)
+    if not source.is_absolute():
+        source = ROOT / source
+    if not dest.is_absolute():
+        dest = ROOT / dest
+    source = source.resolve()
+    dest = dest.resolve()
 
     print(f"\n=== Galeria de especies para la Species Guide ===\n")
     print(f"Fuente:  {source}")
@@ -212,7 +219,8 @@ def main() -> None:
     if faltantes:
         print(f"  Faltantes       : {', '.join(faltantes)}")
         print(f"\n  Tip: para esas especies necesitas descargar mas imagenes con")
-        print(f"       descargar_v1_1.bat <CODE>  o  descargar_v1_1.bat raras")
+        print("       scripts\\windows\\descargar_v1_1.bat <CODE>  o")
+        print("       scripts\\windows\\descargar_v1_1.bat raras")
 
 
 if __name__ == "__main__":

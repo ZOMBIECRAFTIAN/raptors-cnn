@@ -27,6 +27,84 @@ import config  # noqa: E402
 sys.path.insert(0, str(_BASE))
 from species_data import SPECIES_DETAILS  # noqa: E402
 
+# Optional English translation overrides (work in progress).
+# Falls back silently to Spanish when a species/field is not yet translated.
+try:
+    from species_data_en import (
+        SPECIES_DETAILS_EN,
+        IUCN_STATUS_EN,
+        SHORT_PHRASE_EN,
+    )
+except ImportError:
+    SPECIES_DETAILS_EN: dict[str, dict[str, str]] = {}
+    IUCN_STATUS_EN: dict[str, str] = {}
+    SHORT_PHRASE_EN: dict[str, str] = {}
+
+
+_PAREN_ES_TO_EN = {
+    "declinante regional":   "regionally declining",
+    "estable":               "stable",
+    "en aumento":            "increasing",
+    "estable regional":      "regionally stable",
+    "amenazada regional":    "regionally threatened",
+}
+
+
+def _clean_iucn_status(raw: str, lang: str) -> str:
+    """Map the IUCN headline to English while preserving any parenthetical
+    note (translating the few common Spanish phrases). Does not delete info.
+    Examples:
+        'Least Concern (declinante regional)' + lang='en'
+            -> 'Least Concern (regionally declining)'
+        'Preocupacion Menor' + lang='en'
+            -> 'Least Concern'
+    """
+    if not raw or raw == "—":
+        return raw
+    # Split head and optional parenthetical note
+    if "(" in raw and raw.endswith(")"):
+        head, _, rest = raw.partition("(")
+        note = rest.rstrip(")").strip()
+    else:
+        head, note = raw, ""
+    head = head.strip()
+    if lang == "en":
+        head = IUCN_STATUS_EN.get(head, IUCN_STATUS_EN.get(raw, head))
+        if note:
+            note = _PAREN_ES_TO_EN.get(note, note)
+    return f"{head} ({note})" if note else head
+
+
+def _translate_short(text: str, lang: str) -> str:
+    """Apply short Spanish->English phrase substitutions when lang='en'.
+
+    Used for habitat lines and the first sentence of distribution. Does not
+    attempt full translation; if no entry in `SHORT_PHRASE_EN` matches, the
+    original Spanish is returned unchanged.
+    """
+    if lang != "en" or not text:
+        return text
+    out = text
+    for es, en in SHORT_PHRASE_EN.items():
+        out = out.replace(es, en)
+    return out
+
+
+def localized_field(species_key: str, field: str, lang: str,
+                    default: str = "—") -> str:
+    """Return `field` for `species_key` in the requested locale.
+
+    Priority: SPECIES_DETAILS_EN[species_key][field] (if lang='en' and present)
+              -> SPECIES_DETAILS[species_key][field] (Spanish fallback)
+              -> default ('—')
+    """
+    es_details = SPECIES_DETAILS.get(species_key, {})
+    if lang == "en":
+        en_details = SPECIES_DETAILS_EN.get(species_key, {})
+        if field in en_details and en_details[field]:
+            return en_details[field]
+    return es_details.get(field, default)
+
 # ─── Paleta por familia (3 tonos por familia para variedad) ───────────────
 # Cathartidae: marrones tierra; Pandionidae: azul agua; Accipitridae:
 # variedad amplia (gavilanes-verde, águilas-bordó, milanos-turquesa);

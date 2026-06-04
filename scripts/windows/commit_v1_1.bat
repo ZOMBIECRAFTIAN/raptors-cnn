@@ -5,13 +5,13 @@ REM
 REM Add + commit + push de TODOS los cambios al GitHub remoto.
 REM Evita comillas anidadas, parentesis y puntos suspensivos en bloques if.
 REM
-REM Uso: doble-clic, o desde CMD: cd C:\Users\hogwa\raptors-cnn ^& commit_v1_1.bat
+REM Uso: doble-clic, o desde CMD: scripts\windows\commit_v1_1.bat
 REM ===========================================================================
 
 setlocal
 
 REM Ir a la raiz del proyecto independientemente desde donde se invoque
-cd /d "%~dp0"
+cd /d "%~dp0..\.."
 
 REM ----- Paso 1: Limpieza de locks y huerfanos (sin if anidados) -----
 echo.

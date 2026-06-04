@@ -25,6 +25,13 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.coverage
+coverage.xml
+htmlcov/
 
 # Entornos virtuales
 .venv/
@@ -38,22 +45,36 @@ conda-meta/
 .ipynb_checkpoints/
 profile_default/
 ipython_config.py
+*.nbconvert.ipynb
 
 # ----- Datasets (no se commitean imágenes; pesan demasiado) -----
 datos/raw/
 datos/processed/
 datos/annotations/*.csv
+datos/feedback/*
+!datos/feedback/.gitkeep
+!datos/feedback/README.md
+datos/observations/
+datos/videos/raw/
+datos/videos/processed/
+datos/videos/annotations/*.csv
 # Sí commitear el README y la guía de fuentes
 !datos/README.md
 !datos/FUENTES_DE_IMAGENES.md
+!datos/videos/README.md
 
 # ----- Modelos entrenados y artefactos de entrenamiento -----
-codigo/pytorch/outputs/checkpoints/
-codigo/pytorch/outputs/logs/
-codigo/pytorch/outputs/*.png
-codigo/tensorflow/outputs/checkpoints/
-codigo/tensorflow/outputs/logs/
-codigo/tensorflow/outputs/*.png
+codigo/pytorch/outputs/*
+codigo/tensorflow/outputs/*
+!codigo/pytorch/outputs/.gitkeep
+!codigo/tensorflow/outputs/.gitkeep
+codigo/pytorch/app_flask/uploads/
+codigo/pytorch/app_flask/static/behavior_videos/*
+codigo/pytorch/app_flask/static/is_videos/*
+codigo/pytorch/app_flask/static/auslan_videos/*
+!codigo/pytorch/app_flask/static/behavior_videos/.gitkeep
+!codigo/pytorch/app_flask/static/is_videos/.gitkeep
+!codigo/pytorch/app_flask/static/auslan_videos/.gitkeep
 *.pt
 *.pth
 *.ckpt
@@ -61,6 +82,12 @@ codigo/tensorflow/outputs/*.png
 *.keras
 *.tflite
 *.onnx
+*.pkl
+*.pickle
+*.joblib
+*.npy
+*.npz
+*.parquet
 
 # Permitir que la estructura de outputs/ exista en el repo con un .gitkeep
 !codigo/pytorch/outputs/.gitkeep
@@ -73,6 +100,10 @@ runs/
 tb_logs/
 lightning_logs/
 *.log
+*.sqlite
+*.sqlite3
+*.db
+instance/
 
 # ----- IDE / editores -----
 # Mantener .vscode con la configuración compartida del proyecto
@@ -92,6 +123,8 @@ Tesis Biologia.docx
 ~$*
 *.tmp
 *.bak
+*.orig
+*.rej
 
 # ----- Archivos huerfanos creados accidentalmente desde la consola -----
 # (ej: cuando un comando 'python X | Ibycter' tipea mal y crea archivos vacios)

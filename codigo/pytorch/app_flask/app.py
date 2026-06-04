@@ -94,21 +94,72 @@ raptor_model = None
 inference_tf = None
 
 
+def _detect_arch_from_state(state) -> str:
+    """Adivina la arquitectura inspeccionando las keys del state_dict."""
+    keys = list(state.keys())
+    sample = " ".join(keys[:20])
+    if "layer_scale" in sample or any(".block." in k for k in keys[:50]):
+        return "convnext_tiny"
+    if any(k == "conv1.weight" for k in keys) and any(k.startswith("layer1.") for k in keys):
+        return "resnet50"
+    if any("se_layer" in k or "_se." in k for k in keys):
+        return "mobilenet_v3_large"
+    if any(k.startswith("features.") and "stem" not in k for k in keys[:5]):
+        return "efficientnet_b3"
+    raise ValueError(
+        "Cannot detect architecture from checkpoint. First keys: "
+        + ", ".join(keys[:8])
+    )
+
+
 def load_model() -> bool:
-    """Carga el modelo entrenado una sola vez al iniciar la app."""
+    """Carga el modelo entrenado una sola vez al iniciar la app.
+
+    Autodetecta la arquitectura desde el state_dict; si falla esa detección,
+    intenta las 4 arquitecturas conocidas hasta que alguna cargue sin errores
+    de keys. La app arranca en modo demo si el checkpoint no existe o si
+    ninguna arch acepta los pesos.
+    """
     global raptor_model, inference_tf
     if not MODEL_PATH.exists():
         print(f"[warn] No existe el modelo en {MODEL_PATH}. "
-              f"Entrena con `python train.py --smoke-test` antes.")
+              f"La app arranca en modo demo - entrena con "
+              f"`python train.py --smoke-test` para activar predicciones.")
         return False
-    raptor_model = build_model("resnet50").to(device)
-    raptor_model._arch_name = "resnet50"
+
     state = torch.load(MODEL_PATH, map_location=device)
-    raptor_model.load_state_dict(state)
-    raptor_model.eval()
-    _, inference_tf = get_transforms()
-    print(f"[init] Modelo cargado de {MODEL_PATH}")
-    return True
+
+    candidates = []
+    try:
+        candidates.append(_detect_arch_from_state(state))
+    except ValueError as e:
+        print(f"[warn] Auto-detect fallo: {e}")
+    # Fallback: probar todas las arquitecturas conocidas
+    for arch in ("resnet50", "convnext_tiny", "efficientnet_b3",
+                 "mobilenet_v3_large"):
+        if arch not in candidates:
+            candidates.append(arch)
+
+    last_err = None
+    for arch in candidates:
+        try:
+            model = build_model(arch).to(device)
+            model.load_state_dict(state)
+            model.eval()
+            raptor_model = model
+            raptor_model._arch_name = arch
+            _, inference_tf = get_transforms()
+            print(f"[init] Modelo cargado de {MODEL_PATH} como {arch}")
+            return True
+        except (RuntimeError, KeyError) as e:
+            last_err = e
+            continue
+
+    print(f"[error] Ninguna arquitectura aceptó el checkpoint.")
+    print(f"        Ultimo error: {str(last_err)[:200]}...")
+    print(f"        La app arranca en modo demo. Re-entrena para usar predicciones:")
+    print(f"        cd codigo/pytorch && python train.py --arch resnet50 --smoke-test")
+    return False
 
 
 _MODEL_LOADED = load_model()
@@ -118,15 +169,41 @@ _MODEL_LOADED = load_model()
 def _localized_species_info() -> dict[str, dict]:
     """
     Devuelve SPECIES_INFO localizado en el idioma actual.
-    Si el idioma es 'en', sobreescribe common_name con el inglés;
-    si es 'es' (por defecto) usa el español.
+    Aplica tres niveles de traduccion cuando lang='en':
+      1. common_name -> common_name_en
+      2. iucn_status / epbc_status -> mapeo limpio EN (sin parentesis ES)
+      3. campos textuales largos (habitat, diagnostic, ...) ->
+         species_data_en.SPECIES_DETAILS_EN si existe, sino fallback ES.
     """
+    from species_info import (
+        localized_field, _clean_iucn_status, _translate_short
+    )
     lang = get_locale()
     out: dict[str, dict] = {}
     for key, base in SPECIES_INFO.items():
         merged = dict(base)
         if lang == "en":
             merged["common_name"] = base["common_name_en"]
+            # IUCN/NOM-059 status: limpia parentesis ES y mapea a EN
+            merged["iucn_status"] = _clean_iucn_status(
+                base.get("iucn_status", "—"), "en")
+            merged["epbc_status"] = _clean_iucn_status(
+                base.get("epbc_status", "—"), "en")
+            # Habitat se construye desde distribution; intenta version EN
+            en_distribution = localized_field(key, "distribution", "en")
+            if en_distribution and en_distribution != "—":
+                first = en_distribution.split(".")[0]
+                merged["habitat"] = first[:90].strip() + (
+                    "..." if len(first) > 90 else ""
+                )
+            else:
+                # Fallback: traduce frases cortas comunes en el ES existente
+                merged["habitat"] = _translate_short(
+                    base.get("habitat", "—"), "en")
+            # Diagnostic (campo corto pero importante)
+            merged["diagnostic"] = localized_field(
+                key, "diagnostic", "en", default=base.get("diagnostic", "—")
+            )
         out[key] = merged
     return out
 
@@ -188,12 +265,31 @@ def predict_image(img_path: Path) -> dict:
 # ─── Rutas Flask ──────────────────────────────────────
 @app.route("/set_lang/<code>")
 def set_lang(code: str):
-    """Cambia el idioma vía cookie de 1 año."""
-    target = request.args.get("next") or request.referrer or "/"
+    """Cambia el idioma via cookie de 1 ano.
+
+    Fix de persistencia: la cookie se establece con path="/" explicito, sin
+    domain (para que valga tanto en localhost como en 127.0.0.1), y con
+    samesite="Lax" para que sobreviva al redirect. Tambien se valida que el
+    target del redirect sea interno para evitar open-redirect.
+    """
+    raw_target = request.args.get("next") or request.referrer or "/"
+    # Solo aceptamos paths internos (que empiecen con "/")
+    target = raw_target if raw_target.startswith("/") else "/"
+
     resp = make_response(redirect(target))
     if code in LANGUAGES:
-        resp.set_cookie(COOKIE_NAME, code, max_age=60 * 60 * 24 * 365,
-                        samesite="Lax")
+        resp.set_cookie(
+            COOKIE_NAME,
+            code,
+            max_age=60 * 60 * 24 * 365,  # 1 ano
+            path="/",                     # disponible en TODAS las rutas
+            samesite="Lax",               # sobrevive al redirect
+            secure=False,                 # dev local sin HTTPS
+            httponly=False,               # legible por JS si se quiere
+        )
+        # Y lo dejamos accesible en la request actual por si algun
+        # template lo lee inmediatamente
+        request.cookies = {**request.cookies, COOKIE_NAME: code}  # type: ignore
     return resp
 
 
@@ -385,6 +481,32 @@ def _behavior_video_status() -> dict[str, dict]:
     return out
 
 
+def _localized_species_details() -> dict[str, dict]:
+    """Devuelve SPECIES_DETAILS con campos largos sustituidos por EN cuando
+    el locale es 'en' y existe traduccion en species_data_en.SPECIES_DETAILS_EN.
+    Cualquier campo no traducido cae a la version espanola original."""
+    from species_info import (
+        SPECIES_DETAILS_EN, _clean_iucn_status,
+    )
+    lang = get_locale()
+    if lang != "en":
+        return SPECIES_DETAILS
+    out: dict[str, dict] = {}
+    for key, es_details in SPECIES_DETAILS.items():
+        en_details = SPECIES_DETAILS_EN.get(key, {})
+        merged = dict(es_details)
+        # Campo por campo: si hay version EN no vacia, usala
+        for field, en_val in en_details.items():
+            if en_val:
+                merged[field] = en_val
+        # Limpieza extra del iucn_status (quitar parentesis ES)
+        if "iucn_status" in merged:
+            merged["iucn_status"] = _clean_iucn_status(
+                merged["iucn_status"], "en")
+        out[key] = merged
+    return out
+
+
 @app.route("/species")
 def species_page():
     """Catálogo: grid de las 53 especies con perfiles enriquecidos."""
@@ -393,7 +515,7 @@ def species_page():
         "species.html",
         species_info=info_loc,
         species_metrics=_load_species_metrics(),
-        species_details=SPECIES_DETAILS,
+        species_details=_localized_species_details(),
         behavior_videos=_behavior_video_status(),
     )
 

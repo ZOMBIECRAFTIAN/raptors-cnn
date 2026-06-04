@@ -13,7 +13,8 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[Español](README_ES.md) · [Interview notes](INTERVIEW_NOTES.md) · [Installation manual](MANUAL_INSTALACION.md)
+[Español](README_ES.md) · [Interview notes](documentacion/presentacion_en/INTERVIEW_NOTES.md) · [Installation manual](documentacion/guias/MANUAL_INSTALACION.md)
+· [Complete documentation](documentacion/guias/COMPLETE_PROJECT_DOCUMENTATION_EN.md)
 
 </div>
 
@@ -86,7 +87,7 @@ A complementary **video module** (Section 8) is planned to add a Bayesian prior 
 
 ## 8. Model architectures
 
-Four backbones are benchmarked head-to-head under the same split, the same augmentations and the same training protocol. Comparative results will be reported in `results/METRICS_TEMPLATE.md` after training.
+Four backbones are benchmarked head-to-head under the same split, the same augmentations and the same training protocol. Comparative results will be reported in `documentacion/resultados/METRICS_TEMPLATE.md` after training.
 
 | Architecture | Parameters | Input | ImageNet top-1 (ref.) | Intended role |
 |---|---|---|---|---|
@@ -119,15 +120,15 @@ Hardware-aware defaults in `config.py`: `BATCH_SIZE = 16`, `GRADIENT_ACCUM_STEPS
 - **Inference latency** (ms per image, batch size 1)
 - **Trained-model size** (MB on disk)
 
-All scripts that compute these live in `codigo/pytorch/evaluate.py`. Reporting templates are in `results/`.
+All scripts that compute these live in `codigo/pytorch/evaluate.py`. Reporting templates are in `documentacion/resultados/`.
 
 ## 11. Explainability with Grad-CAM
 
-`codigo/pytorch/gradcam.py` produces gradient-weighted class activation maps for any image given a trained checkpoint. The validation protocol is described in `results/GRADCAM_EXAMPLES.md`:
+`codigo/pytorch/gradcam.py` produces gradient-weighted class activation maps for any image given a trained checkpoint. The validation protocol is described in `documentacion/resultados/GRADCAM_EXAMPLES.md`:
 
 - at least 20 maps per class are reviewed by the author;
 - any image where the activation peak falls on background (sky / canopy) instead of on the bird is flagged for audit;
-- this catches a well-known failure mode called **shortcut learning** (Geirhos et al., *Nature Machine Intelligence*, 2020) — see `results/SHORTCUT_LEARNING_FINDING.md`.
+- this catches a well-known failure mode called **shortcut learning** (Geirhos et al., *Nature Machine Intelligence*, 2020) — see `documentacion/resultados/SHORTCUT_LEARNING_FINDING.md`.
 
 ## 12. Current status
 
@@ -162,7 +163,7 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Reporting t
 
 ## 15. How to install
 
-A complete multi-platform manual is in [`MANUAL_INSTALACION.md`](MANUAL_INSTALACION.md). Quick start:
+A complete multi-platform manual is in [`documentacion/guias/MANUAL_INSTALACION.md`](documentacion/guias/MANUAL_INSTALACION.md). Quick start:
 
 ```bash
 git clone https://github.com/ZOMBIECRAFTIAN/raptors-cnn.git
@@ -239,8 +240,6 @@ Full machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
 raptors-cnn/
 ├── README.md                       This file
 ├── README_ES.md                    Spanish version
-├── INTERVIEW_NOTES.md              Talking points for graduate-admissions interviews
-├── MANUAL_INSTALACION.md           Multi-platform install manual
 ├── LICENSE  ·  CITATION.cff
 │
 ├── codigo/pytorch/                 Main implementation
@@ -252,16 +251,21 @@ raptors-cnn/
 │   └── app_flask/                  Flask GUI (separate module)
 │
 ├── codigo/comparacion/             Four-architecture benchmark scripts
-├── datos/                          Dataset folders (gitignored content)
-│
-├── results/                        Result templates — see Section 10
-│   ├── METRICS_TEMPLATE.md
-│   ├── CONFUSION_MATRIX_TEMPLATE.md
-│   ├── GRADCAM_EXAMPLES.md
-│   ├── TRAINING_CURVES.md
-│   └── SHORTCUT_LEARNING_FINDING.md
+├── datos/                          Dataset folders; heavy media is gitignored
 │
 ├── documentacion/                  Methodology docs and thesis chapter drafts
+│   ├── guias/                      Installation, setup and command guides
+│   ├── presentacion_en/            Interview and presentation material
+│   ├── auditorias/                 Project audit reports
+│   ├── tesis/                      Thesis chapter drafts
+│   └── resultados/                 Result templates — see Section 10
+│       ├── METRICS_TEMPLATE.md
+│       ├── CONFUSION_MATRIX_TEMPLATE.md
+│       ├── GRADCAM_EXAMPLES.md
+│       ├── TRAINING_CURVES.md
+│       └── SHORTCUT_LEARNING_FINDING.md
+│
+├── scripts/                        Windows shortcuts and dataset utilities
 ├── lengua_de_senas/                International Sign extension (Section 9)
 └── referencias/                    Bibliography
 ```

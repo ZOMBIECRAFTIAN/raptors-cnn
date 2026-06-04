@@ -14,14 +14,14 @@ This document summarises the audit performed on the repository for use as eviden
 |---|---|---|
 | `README.md` | Full rewrite. 19 sections, academic tone, *"research project / proposal / work in progress"* framing throughout. Removed "Tesis de Maestría" language and the TensorFlow badge from the headline. Sign-language extension is now Section 19, clearly separated as **secondary deliverable**. | Avoid overstating finished work to admissions committees. |
 | `README_ES.md` | New. Mirror of the English README in academic Spanish. | Bilingual reach for Mexican advisors and committees. |
-| `INTERVIEW_NOTES.md` | New. 1-minute, 3-minute and 30-second pitches in EN + ES. 10 hard questions with recommended answers. 5 recovery phrases. Honest limitations list. | Concrete preparation for admissions interviews. |
-| `results/README.md` | New. Inventory of result templates with status flags. | Single entry point for reviewers. |
-| `results/METRICS_TEMPLATE.md` | New. Per-architecture and per-species metric tables, all marked TBD. Includes a reference table from the predecessor Australian project (F1-macro 0.85) labelled as such. | No fabricated numbers; calibrated reader expectation. |
-| `results/CONFUSION_MATRIX_TEMPLATE.md` | New. Protocol + a-priori confusion-cluster hypotheses. | Frames the matrix as a hypothesis test, not a black-box dump. |
-| `results/GRADCAM_EXAMPLES.md` | New. Interpretability protocol; per-class audit threshold; gallery layout. | Validates the model attends to the bird, not the background. |
-| `results/TRAINING_CURVES.md` | New. Expected curve shape + diagnostic checklist. | Sets reviewer expectations before training completes. |
-| `results/SHORTCUT_LEARNING_FINDING.md` | New. Documented failure mode (sky-colour shortcut) + three-layer mitigation. | Addresses "how do you know the model learned the right thing?" directly. |
-| `AUDIT_REPORT.md` | This file. | Provides the committee with a transparent change log. |
+| `documentacion/presentacion_en/INTERVIEW_NOTES.md` | New. 1-minute, 3-minute and 30-second pitches in EN + ES. 10 hard questions with recommended answers. 5 recovery phrases. Honest limitations list. | Concrete preparation for admissions interviews. |
+| `documentacion/resultados/README.md` | New. Inventory of result templates with status flags. | Single entry point for reviewers. |
+| `documentacion/resultados/METRICS_TEMPLATE.md` | New. Per-architecture and per-species metric tables, all marked TBD. Includes a reference table from the predecessor Australian project (F1-macro 0.85) labelled as such. | No fabricated numbers; calibrated reader expectation. |
+| `documentacion/resultados/CONFUSION_MATRIX_TEMPLATE.md` | New. Protocol + a-priori confusion-cluster hypotheses. | Frames the matrix as a hypothesis test, not a black-box dump. |
+| `documentacion/resultados/GRADCAM_EXAMPLES.md` | New. Interpretability protocol; per-class audit threshold; gallery layout. | Validates the model attends to the bird, not the background. |
+| `documentacion/resultados/TRAINING_CURVES.md` | New. Expected curve shape + diagnostic checklist. | Sets reviewer expectations before training completes. |
+| `documentacion/resultados/SHORTCUT_LEARNING_FINDING.md` | New. Documented failure mode (sky-colour shortcut) + three-layer mitigation. | Addresses "how do you know the model learned the right thing?" directly. |
+| `documentacion/auditorias/AUDIT_REPORT.md` | This file. | Provides the committee with a transparent change log. |
 
 ## 2. Errors fixed and improvements applied
 
@@ -31,12 +31,12 @@ This document summarises the audit performed on the repository for use as eviden
 4. **Added explicit `Current status` table** with WORKING / IN PROGRESS / PENDING flags per component, so reviewers can see at a glance what is real today vs. planned.
 5. **Added honest `Limitations` section** with five concrete items, including "no peer-reviewed publication yet" at the top.
 6. **All result numbers in the README are sourced.** Reference numbers from the Australian predecessor project are labelled `from raptor-australia/results/reporte_final.json (2026)`. 53-species placeholders are marked TBD.
-7. **`results/` folder** created with five reporting templates instead of dumping outputs into `codigo/pytorch/outputs/` where committee reviewers may not look.
-8. **`INTERVIEW_NOTES.md`** provides ready answers in EN+ES to the ten most likely hard questions for an admissions interview.
+7. **`documentacion/resultados/` folder** created with five reporting templates instead of dumping outputs into `codigo/pytorch/outputs/` where committee reviewers may not look.
+8. **`documentacion/presentacion_en/INTERVIEW_NOTES.md`** provides ready answers in EN+ES to the ten most likely hard questions for an admissions interview.
 
 ## 3. Errors NOT yet fixed (out of scope of this pass)
 
-- `commit_v1_1.bat` uses the maintainer's local path in its comments. Functionally portable (`cd /d "%~dp0"`) but the comments should be cleaned later.
+- The Windows helper scripts now live in `scripts/windows/` and are intended as convenience wrappers, not required infrastructure.
 - The TensorFlow mirror in `codigo/tensorflow/` is partially in sync with the PyTorch implementation. For admissions purposes the PyTorch implementation is authoritative. A later pass can either align or remove the TF tree.
 - Capítulos 2 and 4 of the thesis drafts in `documentacion/tesis/` predate the V1.1 expansion. They still reference 23 species in places. Not user-facing but should be regenerated before the formal defence.
 

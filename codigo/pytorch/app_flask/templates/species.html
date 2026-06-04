@@ -153,6 +153,7 @@
                         </div>
                     </div>
 
+                    {% if d.nesting %}
                     <div class="detail-row">
                         <span class="detail-icon">🪺</span>
                         <div>
@@ -160,7 +161,9 @@
                             <p>{{ d.nesting }}</p>
                         </div>
                     </div>
+                    {% endif %}
 
+                    {% if d.breeding_months %}
                     <div class="detail-row">
                         <span class="detail-icon">🥚</span>
                         <div>
@@ -168,6 +171,7 @@
                             <p>{{ d.breeding_months }}</p>
                         </div>
                     </div>
+                    {% endif %}
 
                     <div class="detail-row">
                         <span class="detail-icon">👁️</span>

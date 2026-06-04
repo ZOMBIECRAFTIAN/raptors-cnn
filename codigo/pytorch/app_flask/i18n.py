@@ -23,13 +23,14 @@ TRANSLATIONS_DIR = Path(__file__).parent / "translations"
 DEFAULT_LANG     = "es"
 COOKIE_NAME      = "raptors_lang"
 
-# Registry de idiomas. El orden aquí es el orden mostrado en el dropdown.
+# Registry de idiomas. El orden aqui es el orden mostrado en el dropdown.
 # Cada idioma agregado requiere su correspondiente translations/<code>.json
+# Solo se exponen idiomas con archivo de traduccion presente; los otros
+# se anaden cuando exista el JSON correspondiente para evitar que el
+# usuario clique un idioma sin contenido y caiga silenciosamente a default.
 LANGUAGES: dict[str, dict[str, str]] = {
     "es": {"name": "Spanish",   "native": "Español",     "flag": "🇲🇽"},
     "en": {"name": "English",   "native": "English",     "flag": "🇺🇸"},
-    "pt": {"name": "Portuguese","native": "Português",   "flag": "🇧🇷"},
-    "fr": {"name": "French",    "native": "Français",    "flag": "🇫🇷"},
 }
 
 _TRANSLATIONS: dict[str, dict[str, Any]] = {}
