@@ -72,7 +72,7 @@ gantt
 ## 📦 ¿Qué hay disponible hoy?
 
 - 🌐 **Repositorio público**: `github.com/<usuario>/raptors-cnn`
-- 📑 **5 capítulos de tesis** en `documentacion/tesis/`
+- 📑 **Capítulos de tesis** conservados como material interno local
 - 🧪 **Pipeline reproducible** verificado end-to-end con GPU NVIDIA
 - 🎨 **Catálogo preliminar de 14 señas** en `lengua_de_senas/catalogo_senas/`
 - 📚 **Bibliografía consolidada** de 50+ referencias en APA 7.ª

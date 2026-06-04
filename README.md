@@ -13,8 +13,7 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[Español](README_ES.md) · [Interview notes](documentacion/presentacion_en/INTERVIEW_NOTES.md) · [Installation manual](documentacion/guias/MANUAL_INSTALACION.md)
-· [Complete documentation](documentacion/guias/COMPLETE_PROJECT_DOCUMENTATION_EN.md)
+[Español](README_ES.md) · [Installation manual](documentacion/guias/MANUAL_INSTALACION.md) · [Complete documentation](documentacion/guias/COMPLETE_PROJECT_DOCUMENTATION_EN.md)
 
 </div>
 
@@ -253,11 +252,9 @@ raptors-cnn/
 ├── codigo/comparacion/             Four-architecture benchmark scripts
 ├── datos/                          Dataset folders; heavy media is gitignored
 │
-├── documentacion/                  Methodology docs and thesis chapter drafts
+├── documentacion/                  Public methodology docs, guides and results templates
 │   ├── guias/                      Installation, setup and command guides
-│   ├── presentacion_en/            Interview and presentation material
-│   ├── auditorias/                 Project audit reports
-│   ├── tesis/                      Thesis chapter drafts
+│   ├── diagramas/                  Architecture diagrams
 │   └── resultados/                 Result templates — see Section 10
 │       ├── METRICS_TEMPLATE.md
 │       ├── CONFUSION_MATRIX_TEMPLATE.md

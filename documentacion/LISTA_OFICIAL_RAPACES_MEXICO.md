@@ -163,8 +163,8 @@ Spizaetus_tyrannus            BLHE  Black Hawk-Eagle
   spp. entre sí, *Astur* spp. vs. *Accipiter striatus*, *Cathartes aura* vs. *C. burrovianus*.
   Plan: matriz de confusión 53×53 + Grad-CAM en pares confusos.
 - **Estratificación territorial:** especies tropicales (sur del Eje Neovolcánico) no aparecerán
-  en imágenes del centro/norte. Incorporar **prior bayesiano por coordenadas** (ver
-  `ROADMAP_V2.md` §4).
+  en imágenes del centro/norte. Incorporar **prior bayesiano por coordenadas** en futuras
+  versiones del sistema.
 
 ---
 

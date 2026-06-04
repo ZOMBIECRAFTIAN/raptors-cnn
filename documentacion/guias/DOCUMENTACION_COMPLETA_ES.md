@@ -423,20 +423,17 @@ Contiene la parte academica y de gestion del proyecto.
 | Archivo/carpeta | Funcion |
 |---|---|
 | `guias/` | Manuales de instalacion, comandos y documentacion completa. |
-| `tesis/` | Capitulos de tesis/propuesta en Word. |
 | `resultados/` | Plantillas para reportar metricas, curvas, confusion matrix y Grad-CAM. |
-| `presentacion_en/` | Material para entrevistas/presentaciones en ingles. |
-| `auditorias/` | Reportes de auditoria del repositorio. |
 | `diagramas/` | Diagramas de arquitectura. |
 | `LISTA_OFICIAL_RAPACES_MEXICO.md` | Lista taxonomica oficial de especies objetivo. |
 | `WORKFLOW_DATASET_REAL.md` | Flujo para construir el dataset real. |
-| `ROADMAP_V2.md` | Plan de trabajo futuro. |
 | `data_management_plan.md` | Plan de gestion de datos. |
 | `preregistration.md` | Prerregistro de hipotesis/metodologia. |
 | `contribucion_novedosa.md` | Explica la contribucion academica. |
 | `glosario.md` | Glosario de terminos. |
 | `RESUMEN_EJECUTIVO.md` | Resumen ejecutivo del proyecto. |
-| `Presentacion_Base_raptors-cnn.pptx` | Presentacion base. |
+
+Los borradores internos, auditorias, entrevistas, presentaciones binarias y capitulos en Word se conservan localmente, pero estan excluidos de GitHub mediante `.gitignore`.
 
 ---
 
@@ -649,4 +646,3 @@ Si conviene afirmar:
 - que tiene pipeline de entrenamiento/evaluacion;
 - que la interfaz Flask permite una demostracion clara;
 - que video/YOLO es el siguiente modulo.
-

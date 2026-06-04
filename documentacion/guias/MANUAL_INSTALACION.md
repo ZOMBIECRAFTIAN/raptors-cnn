@@ -372,9 +372,10 @@ raptors-cnn/
 │
 ├── documentacion/
 │   ├── LISTA_OFICIAL_RAPACES_MEXICO.md
-│   ├── tesis/                       Capítulos 1-5 en .docx
-│   ├── ROADMAP_V2.md                Plan para doctorado
-│   └── ...
+│   ├── guias/                       Manuales y documentación completa
+│   ├── resultados/                  Plantillas de métricas y Grad-CAM
+│   ├── diagramas/                   Diagramas de arquitectura
+│   └── documentos metodológicos públicos
 │
 ├── lengua_de_senas/
 │   ├── catalogo_senas/              53 fichas de señas

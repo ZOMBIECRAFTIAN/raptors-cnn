@@ -13,8 +13,7 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[English](README.md) · [Notas de entrevista](documentacion/presentacion_en/INTERVIEW_NOTES.md) · [Manual de instalación](documentacion/guias/MANUAL_INSTALACION.md)
-· [Documentación completa](documentacion/guias/DOCUMENTACION_COMPLETA_ES.md)
+[English](README.md) · [Manual de instalación](documentacion/guias/MANUAL_INSTALACION.md) · [Documentación completa](documentacion/guias/DOCUMENTACION_COMPLETA_ES.md)
 
 </div>
 
@@ -243,11 +242,8 @@ raptors-cnn/
 ├── codigo/                         Implementaciones PyTorch, TensorFlow y Flask
 ├── datos/                          Dataset local; imágenes y videos pesados ignorados por Git
 ├── documentacion/
-│   ├── tesis/                       Capítulos de tesis en .docx
 │   ├── guias/                       Instalación, comandos y setup
 │   ├── resultados/                  Plantillas de métricas, Grad-CAM y curvas
-│   ├── presentacion_en/             Material de entrevista/presentación en inglés
-│   ├── auditorias/                  Reportes de auditoría del proyecto
 │   └── diagramas/                   Diagramas de arquitectura
 ├── scripts/
 │   ├── windows/                     Atajos .bat para Windows

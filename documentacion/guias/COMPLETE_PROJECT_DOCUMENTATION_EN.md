@@ -423,20 +423,17 @@ Contains the academic and project-management material.
 | File/folder | Purpose |
 |---|---|
 | `guias/` | Installation manuals, command guides and complete documentation. |
-| `tesis/` | Thesis/proposal chapters in Word. |
 | `resultados/` | Templates for metrics, curves, confusion matrix and Grad-CAM. |
-| `presentacion_en/` | English interview/presentation material. |
-| `auditorias/` | Repository audit reports. |
 | `diagramas/` | Architecture diagrams. |
 | `LISTA_OFICIAL_RAPACES_MEXICO.md` | Official taxonomic list of target species. |
 | `WORKFLOW_DATASET_REAL.md` | Workflow for building the real dataset. |
-| `ROADMAP_V2.md` | Future roadmap. |
 | `data_management_plan.md` | Data management plan. |
 | `preregistration.md` | Hypothesis/methodology preregistration. |
 | `contribucion_novedosa.md` | Academic contribution statement. |
 | `glosario.md` | Glossary. |
 | `RESUMEN_EJECUTIVO.md` | Executive summary. |
-| `Presentacion_Base_raptors-cnn.pptx` | Base presentation deck. |
+
+Internal drafts, audits, interview notes, binary presentations and Word thesis chapters are kept locally, but excluded from GitHub through `.gitignore`.
 
 ---
 
@@ -649,4 +646,3 @@ You can claim:
 - it has a training/evaluation pipeline;
 - the Flask interface provides a clear demonstration;
 - video/YOLO is the next module.
-
