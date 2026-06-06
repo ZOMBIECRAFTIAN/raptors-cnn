@@ -6,7 +6,7 @@ Implementación espejo de la versión PyTorch para realizar la comparativa exigi
 
 ```
 tensorflow/
-├── config.py        # 14 especies y mismos hiperparámetros que PyTorch
+├── config.py        # 53 especies y configuración espejo de PyTorch
 ├── data_loader.py   # tf.keras.utils.image_dataset_from_directory + augmentation
 ├── model.py         # ResNet50 / EfficientNetB3 / MobileNetV3Large / ConvNeXtTiny
 ├── train.py         # Pipeline en dos etapas (Keras callbacks, EarlyStopping)
@@ -35,6 +35,6 @@ python evaluate.py --weights outputs/checkpoints/best_stage2.keras
 
 ## Notas de paridad con PyTorch
 
-- `SPECIES`, `INPUT_SIZE`, `BATCH_SIZE` y los diccionarios `STAGE1` / `STAGE2` son idénticos a los de la implementación PyTorch.
+- `SPECIES`, `INPUT_SIZE`, `BATCH_SIZE` y los diccionarios `STAGE1` / `STAGE2` buscan mantener paridad con la implementación PyTorch.
 - El mismo seed (42) y la misma estructura de carpetas garantizan resultados comparables.
 - Las pequeñas divergencias esperadas entre frameworks (precisión numérica, scheduler, BatchNorm) se reportan en el Capítulo 4, sección 4.2.6.

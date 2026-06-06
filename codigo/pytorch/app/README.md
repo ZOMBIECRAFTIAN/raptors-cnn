@@ -1,7 +1,12 @@
-# App Gradio — raptors-cnn
+# App Gradio legacy — raptors-cnn
 
-Interfaz web para identificar aves rapaces a partir de imágenes o videos, con catálogo
+Interfaz web histórica para identificar aves rapaces a partir de imágenes o videos, con catálogo
 integrado de señas en International Sign.
+
+> **Estado:** esta app se conserva como alternativa/legacy. La interfaz principal para presentar
+> el proyecto es `codigo/pytorch/app_flask/`, que está alineada con el catálogo nacional de
+> 53 especies. Esta carpeta puede contener textos o componentes del alcance V1/V1.1 y no debe
+> describirse como la app oficial actual.
 
 ## Estructura
 

@@ -4,7 +4,7 @@ App Gradio del proyecto raptors-cnn.
 Tres pestañas:
    1. Identificar imagen — upload PNG/JPG, predicción + Grad-CAM + seña
    2. Identificar video — upload MP4, procesamiento frame-by-frame + timeline
-   3. Catálogo de señas — grid con las 14 especies y sus señas en IS
+   3. Catálogo de señas — grid legacy del alcance inicial y sus señas en IS
 
 Uso:
     conda activate raptors-pt
@@ -320,11 +320,11 @@ def build_interface() -> gr.Blocks:
             # ============================================
             with gr.Tab("🤟 Catálogo de señas IS"):
                 gr.Markdown(
-                    "Catálogo preliminar de **14 señas en International Sign** para las especies "
-                    "objetivo. Las descripciones provienen del diseño original del autor "
+                    "Catálogo preliminar legacy de señas en International Sign para el alcance "
+                    "inicial. Las descripciones provienen del diseño original del autor "
                     "(co-creación con la comunidad sorda en curso)."
                 )
-                # Botones de las 14 especies
+                # Botones de las especies incluidas en la demo legacy
                 with gr.Row():
                     cards = []
                     for sci in SPECIES_ORDER:
@@ -455,17 +455,16 @@ def build_interface() -> gr.Blocks:
                 gr.Markdown(f"""
 ## Acerca del proyecto
 
-**raptors-cnn** — Sistema integrado de identificación automatizada de aves rapaces migratorias
-del corredor de Veracruz, integrado con un catálogo de señas en International Sign para inclusión
-de la comunidad sorda.
+**raptors-cnn** — Sistema integrado de identificación automatizada de rapaces mexicanas,
+integrado con un catálogo de señas en International Sign para inclusión de la comunidad sorda.
 
 ### Características técnicas
 
 - **Arquitectura ML:** CNN ResNet-50 con transfer learning desde ImageNet, fine-tuned sobre
-  imágenes de rapaces en vuelo (14 especies objetivo).
+  imágenes de rapaces en vuelo.
 - **Interpretabilidad:** Grad-CAM (Selvaraju et al., 2017) como verificación visual de que
   el modelo atiende a caracteres morfológicos diagnósticos.
-- **Inclusión:** catálogo de 14 señas en International Sign co-creado con la comunidad sorda,
+- **Inclusión:** catálogo de señas en International Sign co-creado con la comunidad sorda,
   validado con escala Likert sobre claridad, naturalidad y memorabilidad.
 
 ### Estado actual

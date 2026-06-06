@@ -114,7 +114,7 @@
 | API | Application Programming Interface |
 | AUC | Area Under the Curve |
 | AVE | Aves Verdaderas (Neornithes) |
-| BW, SW, TV, etc. | Códigos internos de dos letras para cada una de las 14 especies |
+| SSHA, SWHA, TUVU, etc. | Códigos de cuatro letras alineados con el catálogo de 53 especies |
 | CC | Creative Commons |
 | CDPD | Convención sobre los Derechos de las Personas con Discapacidad (ONU, 2006) |
 | CNN | Convolutional Neural Network |

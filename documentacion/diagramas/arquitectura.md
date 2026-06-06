@@ -12,12 +12,15 @@ flowchart LR
     B --> B1[Resize 224×224]
     B --> B2[Normalización<br/>ImageNet]
     B1 & B2 --> C[🧠 CNN<br/>ResNet-50 / EfficientNet-B3 /<br/>MobileNetV3 / ConvNeXt-Tiny]
-    C --> D[Softmax<br/>14 clases]
+    C --> D[Softmax<br/>53 clases]
     D --> E[🏷️ Especie<br/>predicha + prob.]
     C --> F[Grad-CAM]
     F --> G[🔥 Mapa de calor<br/>verificación]
     E --> H[🤟 Video seña<br/>en International Sign]
     E --> I[📋 Ficha técnica<br/>nombre cient. + común]
+    V[🎥 Video de campo] --> Y[YOLO<br/>detección + tracking]
+    Y --> J[Comportamiento<br/>planeo / kettle / stoop]
+    J -. futuro .-> E
 
     style A fill:#FFE5B4
     style C fill:#B4D7FF
@@ -38,7 +41,7 @@ flowchart TB
     end
 
     subgraph "🧠 Modelo CNN"
-        M1[config.py<br/>14 especies, hiperparámetros]
+        M1[config.py<br/>53 especies, hiperparámetros]
         M2[data_loader.py<br/>ImageFolder + augmentation]
         M3[model.py<br/>4 arquitecturas]
         M4[train.py<br/>2 etapas: freeze + fine-tune]
@@ -46,8 +49,14 @@ flowchart TB
         M6[gradcam.py<br/>explicabilidad]
     end
 
+    subgraph "🎥 Video / comportamiento"
+        V1[datos/videos<br/>clips de campo]
+        V2[YOLO<br/>detección + tracking]
+        V3[clasificador<br/>comportamiento]
+    end
+
     subgraph "🤟 Módulo Lengua de Señas"
-        S1[catalogo_senas/<br/>14 señas en IS]
+        S1[catalogo_senas/<br/>53 señas en IS]
         S2[glosario_IS_LSM.md<br/>equivalencias]
         S3[videos/<br/>grabaciones]
         S4[instrumentos_validacion/<br/>cuestionario Likert]
@@ -70,6 +79,7 @@ flowchart TB
     M4 --> M6
     M5 --> T4
     M6 --> T4
+    V1 --> V2 --> V3 --> T4
     S1 --> S3
     S3 --> S4
     S4 --> T4
@@ -118,7 +128,7 @@ flowchart LR
     subgraph "Etapa 2 — Fine-Tuning"
         E2A[Descongelar<br/>todo el modelo]
         E2B[Re-entrenar<br/>con lr bajo]
-        E2C[60 epochs<br/>lr=1e-4, AdamW<br/>cosine schedule]
+        E2C[Hasta 80 epochs<br/>lr=1e-4, AdamW<br/>warmup + cosine]
         E2D[Mixup + CutMix<br/>+ label smoothing 0.1]
     end
 
@@ -138,7 +148,7 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-    Dataset[(Dataset compartido<br/>14 clases × 200 imgs)]
+    Dataset[(Dataset compartido<br/>53 clases<br/>split 70/15/15)]
 
     subgraph "PyTorch (raptors-pt)"
         PT1[torchvision.models]
@@ -173,32 +183,21 @@ flowchart TB
 
 ---
 
-## 6. Las 14 especies — organización taxonómica
+## 6. Las 53 especies — organización taxonómica
 
 ```mermaid
 flowchart TB
-    Order[Accipitriformes<br/>y Falconiformes]
+    Catalogo[53 rapaces diurnas de México<br/>AOS 2024]
 
-    Order --> F1[Accipitridae<br/>9 especies]
-    Order --> F2[Cathartidae<br/>1 especie]
-    Order --> F3[Pandionidae<br/>1 especie]
-    Order --> F4[Falconidae<br/>3 especies]
+    Catalogo --> F1[Accipitridae<br/>38 especies]
+    Catalogo --> F2[Cathartidae<br/>4 especies]
+    Catalogo --> F3[Pandionidae<br/>1 especie]
+    Catalogo --> F4[Falconidae<br/>10 especies]
 
-    F1 --> SS[SS · Accipiter striatus]
-    F1 --> CH[CH · Astur cooperii]
-    F1 --> ZT[ZT · Buteo albonotatus]
-    F1 --> RT[RT · Buteo jamaicensis]
-    F1 --> RS[RS · Buteo lineatus]
-    F1 --> BW[BW · Buteo platypterus]
-    F1 --> SW[SW · Buteo swainsoni]
-    F1 --> NH[NH · Circus hudsonius]
-    F1 --> MK[MK · Ictinia mississippiensis]
-
-    F2 --> TV[TV · Cathartes aura]
-    F3 --> OS[OS · Pandion haliaetus]
-    F4 --> ML[ML · Falco columbarius]
-    F4 --> PG[PG · Falco peregrinus]
-    F4 --> AK[AK · Falco sparverius]
+    F1 --> A1[Buteos, milanos,<br/>águilas y gavilanes]
+    F2 --> A2[Zopilotes<br/>y cóndores americanos]
+    F3 --> A3[Pandion haliaetus<br/>águila pescadora]
+    F4 --> A4[Halcones,<br/>caracaras y forest-falcons]
 
     style F1 fill:#B4D7FF
     style F2 fill:#FFE5B4

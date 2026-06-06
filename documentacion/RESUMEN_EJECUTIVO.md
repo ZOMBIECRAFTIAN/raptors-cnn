@@ -6,29 +6,30 @@
 
 ## 🎯 ¿Qué es este proyecto?
 
-Un sistema de **inteligencia artificial** que identifica automáticamente **14 especies de aves rapaces migratorias** que pasan por el corredor de Veracruz, integrado con un **catálogo de señas en lengua de señas internacional (International Sign)** para hacer el conocimiento accesible a la comunidad sorda.
+Un sistema de **inteligencia artificial** que identifica automáticamente las **53 especies de rapaces diurnas de México**, con énfasis en observaciones en vuelo, silueta y comportamiento. Incluye además un **catálogo de señas en International Sign** como entregable secundario de accesibilidad.
 
 ## 🧪 ¿Por qué importa?
 
-- **Veracruz es el corredor migratorio de rapaces más grande del mundo:** más de 5 millones de individuos por temporada.
+- **México combina alta diversidad de rapaces y corredores migratorios clave**, incluido Veracruz River of Raptors, con más de 5 millones de individuos por temporada.
 - **El monitoreo actual depende totalmente de expertos humanos**, con sesgo inter-observador y costo logístico alto.
 - **Las personas sordas están sistemáticamente excluidas** del discurso ornitológico: no existen señas formalizadas para la mayoría de las rapaces.
-- Este proyecto **atiende los dos problemas simultáneamente**.
+- Este proyecto **atiende el problema técnico de identificación y abre una línea de inclusión científica**.
 
 ## 🛠️ ¿Cómo lo hacemos?
 
 | Componente | Tecnología | Estado |
 |------------|-----------|--------|
 | Identificación visual | CNN (ResNet-50, EfficientNet-B3, MobileNetV3, ConvNeXt-Tiny) + transfer learning | ✅ Pipeline verificado |
-| Comparativa | PyTorch + TensorFlow + CUDA | ✅ Implementado |
+| Comparativa | PyTorch principal + TensorFlow espejo | 🚧 En consolidación |
 | Interpretabilidad | Grad-CAM | ✅ Funcionando |
-| Dataset | iNaturalist + Macaulay Library + propio (≥ 200 img/especie) | 🚧 En recolección |
-| Lengua de señas | Catálogo de 14 señas en International Sign | ✅ Propuesta hecha por el autor |
+| Video/comportamiento | YOLO detección/seguimiento + análisis de vuelo | 🚧 Siguiente módulo |
+| Dataset | iNaturalist + Macaulay Library + eBird + CONABIO | 🚧 En curación y evaluación |
+| Lengua de señas | Catálogo de 53 señas en International Sign | 🚧 Propuesta y validación pendiente |
 | Validación inclusiva | Escala Likert con grupo focal sordo | 🚧 Pendiente |
 
 ## 📊 ¿Qué resultados esperamos?
 
-- **H1**: Accuracy ≥ 85 % y F1 macro ≥ 0.83 sobre las 14 clases con dataset real.
+- **H1**: reportar accuracy, F1 macro, top-3 accuracy, matriz de confusión y métricas por especie sobre las 53 clases.
 - **H2**: Promedio Likert ≥ 4.0 / 5.0 en claridad, naturalidad y memorabilidad de cada seña.
 
 ## 🔍 Hallazgo destacado durante la verificación
@@ -46,13 +47,15 @@ gantt
     Capítulos 1, 2, 3                 :done, 2026-03, 2026-05
     section Infraestructura
     Pipeline PyTorch + CUDA           :done, 2026-04, 2026-05
-    Pipeline TensorFlow + CUDA        :active, 2026-05, 1M
+    Pipeline TensorFlow espejo        :active, 2026-05, 1M
+    Modulo YOLO video/comportamiento  :2026-06, 2M
     section Dataset
     Descargador iNaturalist           :done, 2026-05, 1w
     Recolección real                  :2026-05, 2M
     Etiquetado doble-anotador         :2026-06, 1M
     section Modelo
-    Entrenamiento real                :2026-07, 1M
+    Evaluacion 53 clases              :2026-06, 1M
+    Entrenamiento/comparativa completa :2026-07, 1M
     Comparativa de arquitecturas      :2026-08, 2w
     section Señas
     Catálogo IS preliminar            :done, 2026-04, 1w
@@ -64,7 +67,7 @@ gantt
 
 ## 🤝 ¿Cómo pueden ayudar mis compañeros?
 
-- **Compañeros biólogos**: aportar fotografías propias del corredor, ayudar con la doble anotación.
+- **Compañeros biólogos**: aportar fotografías propias, ayudar con la doble anotación y validar especies raras.
 - **Compañeros de cómputo**: revisar el código, sugerir optimizaciones, ayudar con el frontend del prototipo.
 - **Comunidad sorda y aliados**: participar en los talleres de co-creación y validación de señas.
 - **Comité y asesor**: revisar capítulos, sugerir bibliografía, conectar con Pronatura.
@@ -74,7 +77,7 @@ gantt
 - 🌐 **Repositorio público**: `github.com/<usuario>/raptors-cnn`
 - 📑 **Capítulos de tesis** conservados como material interno local
 - 🧪 **Pipeline reproducible** verificado end-to-end con GPU NVIDIA
-- 🎨 **Catálogo preliminar de 14 señas** en `lengua_de_senas/catalogo_senas/`
+- 🎨 **Catálogo preliminar de señas** en `lengua_de_senas/catalogo_senas/`
 - 📚 **Bibliografía consolidada** de 50+ referencias en APA 7.ª
 
 ---

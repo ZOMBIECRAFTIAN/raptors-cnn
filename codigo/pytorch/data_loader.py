@@ -52,9 +52,10 @@ def build_dataloaders(
     processed_dir: Path = config.PROCESSED_DIR,
     batch_size: int = config.BATCH_SIZE,
     num_workers: int = 4,
+    input_size: int | None = None,
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """Construye los DataLoaders de train, val y test."""
-    train_tf, eval_tf = get_transforms()
+    train_tf, eval_tf = get_transforms(input_size or config.INPUT_SIZE)
 
     train_ds = datasets.ImageFolder(processed_dir / "train", transform=train_tf)
     val_ds   = datasets.ImageFolder(processed_dir / "val",   transform=eval_tf)

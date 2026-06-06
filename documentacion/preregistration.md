@@ -5,31 +5,35 @@
 **Fecha de pre-registro:** 2026-05-14
 **Autor:** Brian Fernández Báez
 **Repositorio público:** https://github.com/ZOMBIECRAFTIAN/raptors-cnn
-**Versión del pre-registro:** 1.0
+**Versión del pre-registro:** 1.1
 
 ---
 
 ## 1. Pregunta de investigación
 
-**P1:** ¿Puede una red neuronal convolucional entrenada mediante transfer learning identificar correctamente, con accuracy global ≥ 85 % y F1 macro ≥ 0.83, las 14 especies objetivo de rapaces migratorias del corredor de Veracruz a partir de imágenes en vuelo?
+**P1:** ¿Puede una red neuronal convolucional entrenada mediante transfer learning identificar correctamente las 53 especies de rapaces diurnas de México a partir de imágenes en vuelo, reportando métricas globales y por especie?
 
 **P2:** ¿Cuál de las cuatro arquitecturas (ResNet-50, EfficientNet-B3, MobileNetV3-Large, ConvNeXt-Tiny) ofrece el mejor compromiso entre precisión y eficiencia computacional?
 
-**P3:** ¿Puede un catálogo de 14 señas en International Sign, co-creado con la comunidad sorda, obtener calificación promedio ≥ 4.0 / 5.0 en escala Likert sobre claridad, naturalidad y memorabilidad?
+**P3:** ¿Puede un catálogo de 53 señas en International Sign, co-creado con la comunidad sorda, obtener calificación promedio ≥ 4.0 / 5.0 en escala Likert sobre claridad, naturalidad y memorabilidad?
+
+**P4:** ¿Puede un módulo futuro basado en YOLO detectar y seguir aves en video para extraer señales de comportamiento de vuelo que complementen la clasificación visual?
 
 ## 2. Hipótesis
 
 **H1 (principal, cuantitativa):**
-Una CNN ResNet-50 entrenada en dos etapas (feature extraction de 10 epochs + fine-tuning de 60 epochs con cross-entropy ponderada por clase) sobre un dataset balanceado de ≥ 200 imágenes por especie alcanzará:
-- Accuracy global ≥ 0.85 (intervalo de confianza 95 %)
-- F1 macro ≥ 0.83
-- AUC macro ≥ 0.92
+Una CNN ResNet-50 entrenada en dos etapas (feature extraction de 10 epochs + fine-tuning de hasta 80 epochs con cross-entropy ponderada por clase, Mixup/CutMix y label smoothing) funcionará como baseline principal para el catálogo nacional de 53 especies. La hipótesis se evaluará con:
+- Accuracy global
+- F1 macro
+- F1 por especie
+- Top-3 accuracy
+- AUC macro
 
 **H0 (hipótesis nula):**
 La CNN no superará un baseline trivial (modelo que predice la clase mayoritaria) en F1 macro con significancia estadística p < 0.05.
 
 **H2 (complementaria, cualitativa-cuantitativa):**
-Un catálogo de 14 señas en IS, validado con grupo focal de 8-12 miembros de la comunidad sorda, obtendrá promedio Likert ≥ 4.0 en cada una de las tres dimensiones (claridad, naturalidad, memorabilidad).
+Un catálogo de 53 señas en IS, validado con grupo focal de 8-12 miembros de la comunidad sorda, obtendrá promedio Likert ≥ 4.0 en cada una de las tres dimensiones (claridad, naturalidad, memorabilidad).
 
 ## 3. Diseño experimental
 
@@ -55,8 +59,8 @@ Un catálogo de 14 señas en IS, validado con grupo focal de 8-12 miembros de la
 
 **Justificación:**
 - Mínimo de 200 imágenes por clase basado en heurística de Tan & Le (2019) para fine-tuning de EfficientNet con transfer learning sobre dominios específicos.
-- Total objetivo: 2,800 imágenes (14 × 200). 1,960 train + 420 val + 420 test.
-- Cálculo de potencia: con n=420 imágenes test y baseline 1/14 ≈ 7.1 % (clase aleatoria), se detecta accuracy ≥ 85 % con potencia > 0.99 (alpha=0.05, prueba binomial).
+- Total objetivo inicial: 10,600 imágenes (53 × 200), aceptando estrategia de "best effort" para especies extremadamente raras como *Morphnus guianensis*, *Harpia harpyja* y *Falco deiroleucus*.
+- Baseline aleatorio aproximado: 1/53 ≈ 1.9 %. Debido al desbalance esperado, F1 macro será la métrica primaria de comparación.
 
 ### 3.3 Procedimientos de validación
 
@@ -92,15 +96,15 @@ Un catálogo de 14 señas en IS, validado con grupo focal de 8-12 miembros de la
 
 ### 4.3 Análisis de errores
 
-- Matriz de confusión 14×14 normalizada por filas.
-- Análisis cualitativo de pares confundidos con frecuencia (esperado: SS↔CH por similitud Accipiter, TV↔ZT por mimetismo).
+- Matriz de confusión 53×53 normalizada por filas.
+- Análisis cualitativo de pares confundidos con frecuencia (ej. *Buteo* juveniles entre sí, *Spizaetus* spp., *Cathartes aura* vs. *Cathartes burrovianus*).
 - Grad-CAM sobre 3 imágenes correctas y 3 incorrectas por clase.
 
 ## 5. Resultados que considero como "aceptables"
 
 Esta tesis considera la hipótesis H1 **soportada** si y solo si:
-1. Al menos UNA combinación arquitectura+framework alcanza accuracy ≥ 0.85 en test.
-2. F1 macro ≥ 0.83 en el modelo ganador.
+1. Al menos UNA arquitectura supera claramente el baseline mayoritario y aleatorio en test.
+2. F1 macro y top-3 accuracy son suficientemente altos para justificar continuidad experimental.
 3. No hay ninguna clase con recall < 0.50 (todas las especies son identificables al menos la mitad del tiempo).
 
 Si H1 NO se soporta, la tesis aún tiene valor: documentar el resultado negativo es contribución científica, identificar qué clases son irrecuperables sin más datos es información práctica.
@@ -118,9 +122,10 @@ Cualquiera de estos resultados activa una segunda iteración del análisis y rev
 
 ## 7. Limitaciones reconocidas pre-experimento
 
-- El dataset puede no representar variación geográfica completa (Veracruz-México vs. mismas especies en otras regiones).
+- El dataset puede no representar variación geográfica completa entre norte, centro, sur y trópico mexicano.
 - La validación del catálogo de señas se realizará con grupo focal mexicano; generalización a otras comunidades sordas internacionales será trabajo futuro.
 - Hardware de entrenamiento (RTX 3050, 4.3 GB VRAM) puede limitar tamaño de batch en arquitecturas grandes (ConvNeXt-Tiny puede requerir batch=16 en lugar de 32).
+- El módulo YOLO de video/comportamiento queda preregistrado como siguiente etapa, no como resultado cerrado de la versión actual.
 
 ## 8. Compromisos de transparencia
 

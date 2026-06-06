@@ -77,12 +77,11 @@ La construcción del dataset se detalla en `documentacion/WORKFLOW_DATASET_REAL.
 
 El pipeline aplica **transfer learning** estándar sobre backbones preentrenados en ImageNet, con augmentaciones específicamente ajustadas para forzar al modelo a aprender **silueta y forma** en lugar de color de plumaje:
 
-- jitter de saturación hasta 0.4
-- conversión aleatoria a escala de grises, p = 0.2
+- jitter de brillo, contraste y saturación
 - `RandomErasing` sobre regiones de plumaje
 - conjunto estándar: `RandomResizedCrop`, `HorizontalFlip`, rotación moderada, `ColorJitter`, Normalize, **Mixup** α=0.2, **CutMix** α=1.0
 
-Un **módulo de video** complementario (Sección 8) está planificado para añadir un prior bayesiano a partir de clips cortos. El código actual implementa el prior como placeholder; el V2 multimodal completo se reserva para el trabajo doctoral.
+Un **módulo de video** complementario (Sección 8) está planificado para añadir un prior de comportamiento a partir de clips cortos. El siguiente paso técnico es detección/seguimiento con YOLO y posterior clasificación del comportamiento de vuelo.
 
 ## 8. Arquitecturas comparadas
 
@@ -105,7 +104,7 @@ Transfer learning en dos etapas, siguiendo Howard & Ruder (2018, ULMFiT):
 Adam, lr = 1e-3. Backbone congelado, sólo entrena la cabeza clasificadora. Propósito: estabilizar la cabeza antes de tocar los pesos preentrenados.
 
 **Etapa 2 — fine-tuning** (≤ 80 epochs, early-stopping patience 15)
-AdamW, lr = 1e-4, weight decay = 5e-4. Cosine annealing con 3 epochs de warm-up. Label smoothing 0.1, Mixup α = 0.2, CutMix α = 1.0. Cross-entropy ponderada para mitigar desbalance de clases.
+AdamW, lr = 1e-4, weight decay = 5e-4. Cosine annealing con 3 epochs de warm-up. Label smoothing 0.1, Mixup α = 0.2, CutMix α = 1.0. Cross-entropy ponderada para mitigar desbalance de clases. El historial de entrenamiento se exporta como CSV y curvas de aprendizaje.
 
 Defaults sensibles al hardware en `config.py`: `BATCH_SIZE = 16`, `GRADIENT_ACCUM_STEPS = 2`, `USE_AMP = True`. Detección multiplataforma de dispositivo (NVIDIA CUDA, Apple MPS, fallback CPU).
 
@@ -119,7 +118,7 @@ Defaults sensibles al hardware en `config.py`: `BATCH_SIZE = 16`, `GRADIENT_ACCU
 - **Latencia de inferencia** (ms por imagen, batch size 1)
 - **Tamaño del modelo entrenado** (MB en disco)
 
-Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate.py`. Las plantillas de reporte están en `documentacion/resultados/`.
+Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate.py`. La evaluación exporta `outputs/metrics_<arch>.json`, reporte de clasificación en texto, matriz de confusión y curvas ROC. Las plantillas de reporte están en `documentacion/resultados/`.
 
 ## 11. Explicabilidad con Grad-CAM
 
@@ -133,13 +132,14 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 
 | Componente | Estado | Notas |
 |---|---|---|
-| Adquisición de dataset (53 especies) | **En curso** | Scripts listos; descarga es incremental |
-| Pipeline de curación (`curate.py`) | **Funcional** | Probado en el subset V1 (23 especies) |
-| Entrenamiento de las 4 arquitecturas | **Pendiente run completo** | Smoke test pasa; benchmark agendado |
-| Scripts de evaluación | **Funcional** | Los mismos scripts del proyecto predecesor en Australia (F1-macro 0.85 sobre 8 especies) |
+| Adquisición de dataset (53 especies) | **En curso** | El split local procesado contiene 53 carpetas de clase; la media pesada no se sube a Git |
+| Pipeline de curación (`curate.py`) | **Funcional** | Diseñado para el dataset de 53 especies y metadatos de curación |
+| Entrenamiento de las 4 arquitecturas | **Parcialmente corrido localmente** | ResNet/EfficientNet/MobileNet pueden entrenarse; benchmark completo pendiente |
+| Scripts de evaluación | **Funcional** | Exportan JSON de métricas, reporte de clasificación, matriz de confusión y ROC |
+| Evaluación ResNet-50 | **Resultado local preliminar** | Test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
 | Módulo Grad-CAM | **Funcional** | Demo sobre datos sintéticos validado |
 | GUI web Flask | **Funcional en modo demo** | Carga pesos entrenados cuando existen |
-| Módulo de comportamiento (prior V1) | **Prototipo** | Combinación bayesiana implementada como placeholder; V2 multimodal es trabajo doctoral |
+| Módulo video/comportamiento | **Prototipo** | Flask contiene demo con detector; YOLO detección/seguimiento es el módulo de investigación planeado |
 | Vocabulario International Sign | **En propuesta** | 53 señas diseñadas; validación con grupos focales agendada |
 | Infraestructura de reproducibilidad | **Funcional** | Seeds, environments (CUDA / CPU / MPS), tags de Git |
 
@@ -147,15 +147,16 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 
 - **Desbalance de clases.** *Cathartes aura* tiene > 1000 imágenes; *Harpia harpyja* y *Morphnus guianensis* menos de 100. Cross-entropy ponderada, Mixup y CutMix ayudan; se requiere alianza con The Peregrine Fund y CONABIO para datos de especies raras.
 - **Sesgo fotográfico de iNaturalist.** La mayoría de subidas son aves en planeo contra cielo limpio. El modelo subrendirá previsiblemente sobre fondos de dosel típicos de *Spizaetus* y *Harpagus*.
-- **Resolución temporal del módulo de comportamiento.** El prior V1 actual opera a ~1 fps y no captura eventos rápidos como el stoop de *Falco peregrinus*. V2 está planificado con CNN 3D a 8-16 fps.
+- **Resolución temporal del módulo de comportamiento.** La ruta de video actual es prototipo. El módulo YOLO planeado debe detectar/seguir aves entre frames antes de medir planeo, flap-glide, hovering, kettle y stoop con robustez.
 - **Riesgo del prior geográfico.** Los priors por coordenadas pueden introducir sesgo de confirmación. V2 ponderará el prior por la incertidumbre del clasificador visual.
+- **Resultados preliminares.** Los números actuales de ResNet-50 sirven como baseline, no como resultados finales de tesis. Las especies raras requieren más datos y análisis de error.
 - **Sin publicación arbitrada aún.** Este es un proyecto de investigación en desarrollo.
 
 ## 14. Trabajo futuro
 
 1. Completar el benchmark de las 4 arquitecturas y publicar la curva de Pareto (accuracy vs latencia vs VRAM).
-2. Reemplazar el prior placeholder V1 por un módulo de comportamiento basado en CNN 3D (SlowFast o ResNet3D-18).
-3. Añadir DeepSORT para tracking por individuo y agregación temporal entre frames.
+2. Reemplazar el prototipo de video actual por detección/seguimiento con YOLO y un clasificador de comportamiento para planeo, flap-glide, hovering, kettle y stoop.
+3. Añadir tracking por individuo y agregación temporal entre frames.
 4. Validar el catálogo de International Sign con la comunidad sorda usando protocolo Likert (claridad, naturalidad, memorabilidad).
 5. Fusión bayesiana multimodal: visión + comportamiento + fenología + geografía a nivel posterior.
 6. Extensión a Strigiformes (búhos), lo que introduce modalidades de audio y visión nocturna.

@@ -11,8 +11,7 @@ del código y mantiene la trazabilidad de los hiperparámetros.
 Alcance (V1.1, mayo 2026): TODAS las rapaces diurnas de México — 53 especies.
 Sustituye al alcance V1 (23 rapaces del corredor de Veracruz).
 Ver `documentacion/LISTA_OFICIAL_RAPACES_MEXICO.md` para la justificación
-taxonómica completa y `documentacion/AUDITORIA_INCONGRUENCIAS.md` para la
-migración aplicada.
+taxonómica completa.
 """
 from pathlib import Path
 import torch
@@ -195,7 +194,20 @@ DEVICE = _detect_device()
 # -----------------------------------------------------------------------------
 # Hiperparámetros — etapa 1 (feature extraction) y etapa 2 (fine-tuning)
 # -----------------------------------------------------------------------------
-INPUT_SIZE = 224  # cambia a 300 para EfficientNet-B3, 232 para ConvNeXt-Tiny
+INPUT_SIZE = 224
+ARCH_INPUT_SIZE = {
+    "resnet50": 224,
+    "mobilenet_v3_large": 224,
+    "efficientnet_b3": 300,
+    "convnext_tiny": 232,
+}
+
+
+def input_size_for_arch(arch: str) -> int:
+    """Devuelve el tamaño de entrada recomendado para cada arquitectura."""
+    return ARCH_INPUT_SIZE.get(arch.lower(), INPUT_SIZE)
+
+
 BATCH_SIZE = 16   # reducido de 32 → 16 para RTX 3050 4GB. Sube a 32 si tienes ≥ 8GB.
 
 # Activar mixed precision (AMP) para reducir VRAM y acelerar. Recomendado en

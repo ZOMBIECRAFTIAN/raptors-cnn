@@ -49,7 +49,7 @@ Para cada arquitectura se calcularán:
 1. Mismo split (`seed=42`) train/val/test 70/15/15 estratificado por especie.
 2. Mismo input size por arquitectura (no es justo forzar todas a 224×224 — perdería la ventaja de EfficientNet).
 3. Mismo esquema de entrenamiento: `stage1` (cabeza, 10 epochs, LR 1e-3) + `stage2` (full fine-tuning, 80 epochs, LR 1e-4, cosine, mixup, cutmix, label smoothing 0.1, early stopping patience 15).
-4. Mismas augmentaciones (RandAugment + RandomErasing + saturation jitter — definidas en `data_loader.py`).
+4. Mismas augmentaciones base (`RandomResizedCrop`, `HorizontalFlip`, rotación, `ColorJitter`, `RandomErasing`) y mezcla de batches (`Mixup`/`CutMix`) durante Stage 2.
 5. Cross-entropy ponderada (`USE_CLASS_WEIGHTS=True`) para mitigar desbalance.
 6. Se evalúa cada modelo en el mismo test set con el mejor checkpoint según `val_acc`.
 
@@ -68,7 +68,7 @@ python comparar_arquitecturas.py --evaluate
 python comparar_arquitecturas.py --report
 ```
 
-Resultado: archivo `metricas_arquitecturas.csv` + figuras en `figures/`.
+Resultado: archivo `metricas_arquitecturas.csv` + figuras en `figures/`. Los entrenamientos nuevos guardan checkpoints genéricos (`best_stage2.pt`) y específicos por arquitectura (`best_stage2_<arch>.pt`) para evitar sobrescribir comparativas.
 
 ---
 

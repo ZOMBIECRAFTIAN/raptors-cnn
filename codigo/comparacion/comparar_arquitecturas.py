@@ -97,7 +97,10 @@ def entrenar(arch: str) -> dict:
 def evaluar(arch: str) -> dict:
     """Evalua una arquitectura ya entrenada. Asume best_stage2.pt."""
     print(f"\n{'=' * 70}\n  EVALUANDO {arch}\n{'=' * 70}")
-    weights = PYTORCH_DIR / "outputs" / "checkpoints" / "best_stage2.pt"
+    ckpt_dir = PYTORCH_DIR / "outputs" / "checkpoints"
+    weights = ckpt_dir / f"best_stage2_{arch}.pt"
+    if not weights.exists():
+        weights = ckpt_dir / "best_stage2.pt"
     if not weights.exists():
         print(f"  WARNING: no hay pesos en {weights} - saltando")
         return {"arch": arch, "eval_status": "NO_WEIGHTS"}
@@ -115,7 +118,7 @@ def evaluar(arch: str) -> dict:
                 "accuracy":    data.get("accuracy"),
                 "f1_macro":    data.get("f1_macro"),
                 "top3_acc":    data.get("top3_accuracy"),
-                "model_size_MB": data.get("model_size_MB"),
+                "model_size_MB": data.get("model_size_mb", data.get("model_size_MB")),
                 "latency_ms":  data.get("latency_ms_per_image"),
             })
         except Exception as e:

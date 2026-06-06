@@ -10,8 +10,8 @@ pero su API gratuita ofrece datos extremadamente utiles para la tesis:
     - Estadisticas de abundancia por mes/temporada
     - Verificacion taxonomica oficial
 
-Este script genera un CSV con observaciones recientes de cada una de las
-14 especies del proyecto, util para:
+Este script genera un CSV con observaciones recientes de las especies
+objetivo del proyecto, util para:
 
     - Validar que el dataset cubra zonas donde la especie realmente esta
     - Mapear hotspots (Cardel, Chichicaxtle, otros sitios)

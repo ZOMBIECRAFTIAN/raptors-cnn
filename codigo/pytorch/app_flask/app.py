@@ -148,7 +148,7 @@ def load_model() -> bool:
             model.eval()
             raptor_model = model
             raptor_model._arch_name = arch
-            _, inference_tf = get_transforms()
+            _, inference_tf = get_transforms(config.input_size_for_arch(arch))
             print(f"[init] Modelo cargado de {MODEL_PATH} como {arch}")
             return True
         except (RuntimeError, KeyError) as e:

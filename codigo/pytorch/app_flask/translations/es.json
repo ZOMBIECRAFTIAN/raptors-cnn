@@ -78,7 +78,7 @@
     "trained_on_suffix": "imágenes",
     "identify_button": "Identifica esta especie →",
     "footer_title": "Cómo el modelo reconoce estas especies",
-    "footer_text": "La CNN se entrena con transfer learning sobre ResNet-50 (ImageNet pretrained) y fine-tuning sobre ~10,000 imágenes curadas de iNaturalist, Macaulay Library, eBird y CONABIO. Usa AMP, cosine annealing y class weighting para mitigar el desbalance entre especies abundantes (Buteo jamaicensis, Cathartes aura) y especies raras (Harpia harpyja, Morphnus guianensis, Falco deiroleucus). Cada predicción incluye un mapa Grad-CAM que muestra qué región de la imagen impulsó la decisión.",
+    "footer_text": "El pipeline de clasificación por imagen usa transfer learning sobre CNNs preentrenadas en ImageNet, con ResNet-50 como modelo baseline. Soporta AMP, warmup + cosine schedule, class weighting, Mixup y CutMix para mitigar el desbalance entre especies abundantes (Buteo jamaicensis, Cathartes aura) y especies raras (Harpia harpyja, Morphnus guianensis, Falco deiroleucus). Grad-CAM se usa como protocolo de explicabilidad para auditar qué región de la imagen impulsa la decisión.",
     "references": "Referencias: Howell & Webb (1995); Berlanga et al. (2019); Bildstein (2006); Liguori (2005, 2011); AOS Check-list (64th–65th Supp.); IUCN Red List (2025); NOM-059-SEMARNAT-2010.",
     "profile_title": "📖 Perfil de la especie",
     "distribution": "Distribución",

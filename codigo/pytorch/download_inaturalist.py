@@ -1,5 +1,5 @@
 """
-Descargador de imágenes de iNaturalist para las 14 especies del proyecto.
+Descargador de imágenes de iNaturalist para las 53 especies del proyecto.
 
 Usa la API pública de iNaturalist (no requiere autenticación) para descargar
 imágenes etiquetadas con grado de investigación (`research-grade`) y bajo
@@ -13,7 +13,7 @@ Uso típico:
 Argumentos:
     --target N       Cuántas imágenes objetivo por especie (default 250).
     --max-pages N    Hasta cuántas páginas de la API consultar por especie (default 5).
-    --species CODE   Solo descargar una especie (ej. BW, TV). Default: todas las 14.
+    --species CODE   Solo descargar una especie (ej. SSHA, TUVU). Default: todas las 53.
     --licenses ...   Lista de licencias permitidas. Default: cc0 cc-by cc-by-sa.
     --dry-run        Solo lista qué descargaría, no descarga nada.
 

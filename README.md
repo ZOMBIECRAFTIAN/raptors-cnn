@@ -77,12 +77,11 @@ Dataset construction is described in detail in `documentacion/WORKFLOW_DATASET_R
 
 The pipeline applies standard **transfer-learning** on backbones pre-trained on ImageNet, with augmentations specifically tuned to force the model to learn **silhouette and shape** rather than plumage colour:
 
-- saturation jitter up to 0.4
-- random conversion to grayscale, p = 0.2
+- colour jitter for brightness, contrast and saturation
 - `RandomErasing` on plumage regions
 - standard set: `RandomResizedCrop`, `HorizontalFlip`, mild rotation, `ColorJitter`, Normalize, **Mixup** α=0.2, **CutMix** α=1.0
 
-A complementary **video module** (Section 8) is planned to add a Bayesian prior from short clips. The current code-base implements the prior as a placeholder and the full multimodal V2 is reserved for doctoral work.
+A complementary **video module** (Section 8) is planned to add a behaviour prior from short clips. The next implementation step is YOLO-based bird detection/tracking followed by flight-behaviour classification.
 
 ## 8. Model architectures
 
@@ -105,7 +104,7 @@ Two-stage transfer learning, following Howard & Ruder (2018, ULMFiT):
 Adam, lr = 1e-3. Backbone frozen, only the classifier head trains. Purpose: stabilise the head before risking the pre-trained weights.
 
 **Stage 2 — fine-tuning** (≤ 80 epochs, early-stopping patience 15)
-AdamW, lr = 1e-4, weight decay = 5e-4. Cosine annealing scheduler with 3 warm-up epochs. Label smoothing 0.1, Mixup α = 0.2, CutMix α = 1.0. Weighted cross-entropy to mitigate class imbalance.
+AdamW, lr = 1e-4, weight decay = 5e-4. Cosine annealing with 3 warm-up epochs. Label smoothing 0.1, Mixup α = 0.2, CutMix α = 1.0. Weighted cross-entropy mitigates class imbalance. Training history is exported as CSV plus learning-curve figures.
 
 Hardware-aware defaults in `config.py`: `BATCH_SIZE = 16`, `GRADIENT_ACCUM_STEPS = 2`, `USE_AMP = True`. Multi-platform device detection (NVIDIA CUDA, Apple MPS, CPU fallback).
 
@@ -119,7 +118,7 @@ Hardware-aware defaults in `config.py`: `BATCH_SIZE = 16`, `GRADIENT_ACCUM_STEPS
 - **Inference latency** (ms per image, batch size 1)
 - **Trained-model size** (MB on disk)
 
-All scripts that compute these live in `codigo/pytorch/evaluate.py`. Reporting templates are in `documentacion/resultados/`.
+All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation exports `outputs/metrics_<arch>.json`, a text classification report, a confusion matrix and ROC curves. Reporting templates are in `documentacion/resultados/`.
 
 ## 11. Explainability with Grad-CAM
 
@@ -133,13 +132,14 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Reporting t
 
 | Component | Status | Notes |
 |---|---|---|
-| Dataset acquisition (53 species) | **In progress** | Scripts ready; download is incremental |
-| Curation pipeline (`curate.py`) | **Working** | Tested on the V1 (23-species) subset |
-| Four-architecture training | **Pending full run** | Smoke test passes; full benchmark scheduled |
-| Evaluation scripts | **Working** | Same scripts used for the predecessor Australian project (F1-macro 0.85 on 8 species) |
+| Dataset acquisition (53 species) | **In progress** | Local processed split contains 53 class folders; public media is gitignored |
+| Curation pipeline (`curate.py`) | **Working** | Designed for the 53-species dataset and writes curation metadata |
+| Four-architecture training | **Partially run locally** | ResNet/EfficientNet/MobileNet checkpoints can be trained; full benchmark still pending |
+| Evaluation scripts | **Working** | Export JSON metrics, classification report, confusion matrix and ROC curves |
+| ResNet-50 evaluation | **Preliminary local result** | Test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
 | Grad-CAM module | **Working** | Demo on synthetic data validated |
 | Flask web GUI | **Working in demo mode** | Loads trained weights when present |
-| Behaviour module (V1 prior) | **Prototype** | Bayesian combination implemented as placeholder; full multimodal V2 is doctoral work |
+| Behaviour/video module | **Prototype** | Flask contains a detector-based demo; YOLO detection/tracking is the planned research module |
 | International Sign vocabulary | **Proposal stage** | 53 signs drafted; focus-group validation scheduled |
 | Reproducibility infrastructure | **Working** | Seeds, environment files (CUDA / CPU / MPS), Git tags |
 
@@ -147,15 +147,16 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Reporting t
 
 - **Class imbalance.** *Cathartes aura* has > 1000 images available, while *Harpia harpyja* and *Morphnus guianensis* have fewer than 100. Weighted cross-entropy, Mixup, CutMix help; partnership with The Peregrine Fund and CONABIO is required for rare-species data.
 - **iNaturalist photographic bias.** Most uploads are clear-sky soaring birds. The model is expected to under-perform on canopy backgrounds typical of *Spizaetus* and *Harpagus*.
-- **Temporal resolution of the behaviour module.** The current V1 prior operates at ~1 fps and cannot resolve fast events such as the *Falco peregrinus* stoop. V2 is planned with a 3D-CNN at 8-16 fps.
+- **Temporal resolution of the behaviour module.** The current video path is a prototype. The planned YOLO module must detect/track birds across frames before behaviour cues such as soaring, flap-glide, hovering and stoop can be measured robustly.
 - **Geographic prior risk.** Range-by-coordinates priors can introduce confirmation bias. V2 will weight the prior by visual-classifier uncertainty.
+- **Preliminary results.** The current ResNet-50 numbers are useful as a baseline, not as final thesis results. Rare species still need more data and error analysis.
 - **No peer-reviewed publication yet.** This is a research project under development.
 
 ## 14. Future work
 
 1. Complete the four-architecture benchmark and publish the Pareto curve (accuracy vs latency vs VRAM).
-2. Replace the V1 placeholder prior with a 3D-CNN behaviour module (SlowFast or ResNet3D-18).
-3. Add DeepSORT for per-individual tracking and time-aggregation across frames.
+2. Replace the current video prototype with YOLO-based bird detection/tracking and a behaviour classifier for soaring, flap-glide, hovering, kettle formation and stoop.
+3. Add per-individual tracking and time-aggregation across frames.
 4. Validate the International Sign catalogue with the Deaf community using a Likert protocol (clarity, naturalness, memorability).
 5. Multi-modal Bayesian fusion: vision + behaviour + phenology + geography at the posterior level.
 6. Extension to Strigiformes (owls), which introduces audio and night-vision modalities.

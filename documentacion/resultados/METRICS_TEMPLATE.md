@@ -8,14 +8,16 @@
 |---|---|---|---|---|---|---|---|---|
 | MobileNetV3-Large | 5.5  | 224 | TBD | TBD | TBD | TBD | TBD | TBD |
 | EfficientNet-B3   | 12.2 | 300 | TBD | TBD | TBD | TBD | TBD | TBD |
-| ResNet-50 *(baseline)* | 25.6 | 224 | TBD | TBD | TBD | TBD | TBD | TBD |
+| ResNet-50 *(baseline, local 2026-06-06)* | 25.6 | 224 | 0.5665 | 0.5314 | 0.7488 | 20.59 | 90.39 | 3.09 |
 | ConvNeXt-Tiny     | 28.6 | 232 | TBD | TBD | TBD | TBD | TBD | TBD |
 
-**TBD** = to be reported after the full training run. Latency and model size are reported on a fixed reference machine (RTX 3050, 4 GB VRAM; batch size = 1).
+**TBD** = to be reported after the full training run. The ResNet-50 row is a preliminary local evaluation from `outputs/metrics_resnet50.json`, not a final thesis result. Latency and model size are reported on the current local machine; batch size = 1.
 
 ## Table 2. Reference results from the Australian predecessor project (8 species)
 
 These are **not** results from the current 53-species Mexico project. They are reported here to give an order-of-magnitude expectation for the same training recipe and are taken from the public sibling repository `raptor-australia`.
+
+EfficientNet-B4 appears here only as an external reference from the predecessor project. The current `raptors-cnn` code compares EfficientNet-B3, ResNet-50, MobileNetV3-Large and ConvNeXt-Tiny.
 
 | Metric | Value |
 |---|---|

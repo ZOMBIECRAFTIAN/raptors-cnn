@@ -17,7 +17,7 @@ A divergence between training and validation loss is the first signal of overfit
 |---|---|---|
 | ResNet-50 *(baseline)* | `learning_curves_resnet50.png` | TBD |
 | EfficientNet-B3 | `learning_curves_efficientnet_b3.png` | TBD |
-| MobileNetV3-Large | `learning_curves_mobilenet_v3.png` | TBD |
+| MobileNetV3-Large | `learning_curves_mobilenet_v3_large.png` | TBD |
 | ConvNeXt-Tiny | `learning_curves_convnext_tiny.png` | TBD |
 
 ## Diagnostic checklist

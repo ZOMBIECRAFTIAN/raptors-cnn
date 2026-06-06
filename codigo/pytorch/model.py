@@ -8,7 +8,7 @@ Soporta cuatro arquitecturas con transfer learning desde ImageNet:
     - convnext_tiny
 
 Cada modelo es construido con la cabeza clasificadora ajustada al número de clases
-del proyecto (config.NUM_CLASSES = 7).
+del proyecto (config.NUM_CLASSES = 53).
 """
 import torch
 import torch.nn as nn

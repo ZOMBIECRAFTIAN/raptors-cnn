@@ -103,7 +103,7 @@ Esto te valida que TODO el pipeline funciona, sin necesidad de tener aún imáge
 ```bash
 conda activate raptors-pt
 cd codigo\pytorch
-python make_synthetic_dataset.py            # crea ~70 imágenes × 14 especies
+python make_synthetic_dataset.py            # crea imágenes sintéticas × 53 especies
 python train.py --arch resnet50 --smoke-test
 ```
 
@@ -139,7 +139,7 @@ cd ..\pytorch
 python evaluate.py --arch resnet50 --weights outputs\checkpoints\best_stage2.pt
 ```
 
-Genera `outputs\confusion_matrix.png` y `outputs\roc_curves.png`. Ábrelos para ver que las figuras se generan correctamente (otra vez: los números no significan nada con dataset sintético).
+Genera `outputs\metrics_resnet50.json`, `outputs\classification_report_resnet50.txt`, `outputs\confusion_matrix.png` y `outputs\roc_curves.png`. Ábrelos para ver que las salidas se generan correctamente (otra vez: los números no significan nada con dataset sintético).
 
 ---
 
@@ -170,7 +170,7 @@ python train.py --arch resnet50
 
 Ahora que el entorno está listo, las siguientes piezas que faltan para entrenar el modelo real son:
 
-1. **Recolectar las imágenes reales** de las 14 especies (Macaulay Library + iNaturalist + Pronatura + propias) — sigue el Capítulo 3, sección 3.3.
+1. **Recolectar y curar las imágenes reales** de las 53 especies (Macaulay Library + iNaturalist + eBird + CONABIO + propias) — sigue `documentacion/WORKFLOW_DATASET_REAL.md`.
 2. **Etiquetar y validar** con dos anotadores (kappa de Cohen ≥ 0.80).
 3. **Borrar el dataset sintético** de `datos\processed\` y reemplazarlo por el real.
 4. **Correr el entrenamiento real** sin `--smoke-test`.
