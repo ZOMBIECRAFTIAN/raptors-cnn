@@ -14,7 +14,7 @@ australianas + AUSLAN) para el alcance nacional mexicano (53 especies + IS).
 Rutas principales:
     GET  /                      Home + identificación (drag-drop imagen/video)
     POST /identify              Predicción CNN sobre imagen
-    POST /identify_video        Multi-especie video (Faster R-CNN + CNN)
+    POST /identify_video        Video YOLO + tracking + CNN por recorte
     POST /save_observation      Guardar observación confirmada (CSV)
     POST /feedback              Correcciones del usuario (active learning)
     GET  /feedback_stats        JSON contador de correcciones
@@ -666,26 +666,6 @@ def behavior_video(filename):
         str(BASE_DIR / "static" / "behavior_videos"), filename)
 
 
-# ─── Video analysis (multi-species, multi-bird) ─────────────────────────
-_video_detector = None
-
-
-def _lazy_video_detector():
-    """Faster R-CNN detector cargado al primer uso."""
-    global _video_detector
-    if _video_detector is None:
-        from torchvision.models.detection import (
-            fasterrcnn_resnet50_fpn,
-            FasterRCNN_ResNet50_FPN_Weights,
-        )
-        weights = FasterRCNN_ResNet50_FPN_Weights.DEFAULT
-        m = fasterrcnn_resnet50_fpn(weights=weights, box_score_thresh=0.45)
-        m.eval().to(device)
-        m._ra_categories = weights.meta["categories"]
-        _video_detector = m
-    return _video_detector
-
-
 def _classify_crop(crop_pil) -> dict:
     """Clasifica una sola crop del detector sobre la CNN entrenada."""
     info_loc = _localized_species_info()
@@ -709,18 +689,13 @@ def identify_video():
     """
     Pipeline multi-especie sobre video:
     1. Muestrea frames a ~1 fps con OpenCV.
-    2. Faster R-CNN para detectar pájaros.
-    3. CNN especifica para cada crop.
-    4. Devuelve timeline por frame + resumen por especie.
+    2. YOLO detecta aves por frame.
+    3. Tracking ligero por IoU asigna individuos entre frames.
+    4. CNN especifica para cada crop.
+    5. Devuelve timeline, resumen por especie y etiqueta de comportamiento.
     """
     if not _MODEL_LOADED:
         return jsonify({"error": "Modelo no cargado"}), 500
-
-    try:
-        import cv2
-    except Exception:
-        return jsonify({"error": "OpenCV (cv2) no instalado. "
-                                  "Instala: pip install opencv-python"}), 500
 
     if "video" not in request.files:
         return jsonify({"error": "No video uploaded"}), 400
@@ -737,96 +712,22 @@ def identify_video():
     file.save(str(tmp_path))
 
     try:
-        cap = cv2.VideoCapture(str(tmp_path))
-        if not cap.isOpened():
-            return jsonify({"error": "No se pudo abrir el video"}), 500
-
-        fps      = cap.get(cv2.CAP_PROP_FPS) or 30.0
-        n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
-        duration = n_frames / fps if fps > 0 else 0
-        step     = max(1, int(round(fps)))
-        max_frames = 60
-        sampled  = 0
-
-        from torchvision.transforms.functional import to_tensor
-        detector = _lazy_video_detector()
-        cats     = detector._ra_categories
-
-        timeline: list[dict] = []
-        per_species: dict[str, int] = {}
-        info_loc = _localized_species_info()
-        frame_idx = 0
-
-        while sampled < max_frames:
-            ret, bgr = cap.read()
-            if not ret:
-                break
-            if frame_idx % step != 0:
-                frame_idx += 1
-                continue
-
-            rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
-            pil = Image.fromarray(rgb)
-            W, H = pil.size
-
-            with torch.no_grad():
-                out = detector([to_tensor(pil).to(device)])[0]
-
-            birds: list[dict] = []
-            for i in range(len(out["labels"])):
-                if cats[int(out["labels"][i])] != "bird":
-                    continue
-                if float(out["scores"][i]) < 0.5:
-                    continue
-                x0, y0, x1, y1 = [float(v) for v in out["boxes"][i]]
-                m = 0.05 * min(W, H)
-                cx0 = max(0, int(x0 - m))
-                cy0 = max(0, int(y0 - m))
-                cx1 = min(W, int(x1 + m))
-                cy1 = min(H, int(y1 + m))
-                crop = pil.crop((cx0, cy0, cx1, cy1))
-                if min(crop.size) < 32:
-                    continue
-                pred = _classify_crop(crop)
-                pred["bbox"] = [cx0, cy0, cx1, cy1]
-                pred["bbox_score"] = round(float(out["scores"][i]), 3)
-                birds.append(pred)
-                per_species[pred["species_key"]] = \
-                    per_species.get(pred["species_key"], 0) + 1
-
-            timeline.append({
-                "t_seconds":  round(frame_idx / fps, 2),
-                "frame_idx":  frame_idx,
-                "n_birds":    len(birds),
-                "detections": birds,
-            })
-            sampled += 1
-            frame_idx += 1
-            for _ in range(step - 1):
-                cap.grab()
-                frame_idx += 1
-
-        cap.release()
-
-        summary = sorted(
-            [{
-                "species_key": k,
-                "common_name": info_loc[k]["common_name"],
-                "scientific":  info_loc[k]["scientific_name"],
-                "color":       info_loc[k]["color"],
-                "frames_with_species": per_species[k],
-            } for k in per_species],
-            key=lambda x: -x["frames_with_species"],
+        from yolo.video_pipeline import analyze_video, default_yolo_weights
+        weights = os.getenv("RAPTORS_YOLO_WEIGHTS") or default_yolo_weights()
+        result = analyze_video(
+            tmp_path,
+            yolo_weights=weights,
+            classifier_fn=_classify_crop,
+            device=str(device),
+            sample_every_s=1.0,
+            max_frames=60,
+            conf=0.35,
+            imgsz=640,
         )
+        return jsonify(result)
 
-        return jsonify({
-            "duration_seconds": round(duration, 2),
-            "video_fps":        round(fps, 2),
-            "frames_sampled":   sampled,
-            "timeline":         timeline,
-            "summary":          summary,
-        })
-
+    except RuntimeError as e:
+        return jsonify({"error": str(e)}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:

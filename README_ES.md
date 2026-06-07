@@ -81,7 +81,7 @@ El pipeline aplica **transfer learning** estándar sobre backbones preentrenados
 - `RandomErasing` sobre regiones de plumaje
 - conjunto estándar: `RandomResizedCrop`, `HorizontalFlip`, rotación moderada, `ColorJitter`, Normalize, **Mixup** α=0.2, **CutMix** α=1.0
 
-Un **módulo de video** complementario (Sección 8) está planificado para añadir un prior de comportamiento a partir de clips cortos. El siguiente paso técnico es detección/seguimiento con YOLO y posterior clasificación del comportamiento de vuelo.
+Un **módulo de video** complementario (Sección 8) añade detección/seguimiento con YOLO sobre clips cortos. YOLO localiza aves por frame, un tracker ligero por IoU mantiene individuos entre frames y la CNN de 53 clases clasifica cada recorte. El comportamiento de vuelo se reporta con heurísticas conservadoras (`soaring_or_gliding`, `active_flapping_or_maneuvering`, `hovering_or_wind_hold`, `stoop_or_descent`) que funcionan como baseline interpretable antes de entrenar un clasificador temporal supervisado.
 
 ## 8. Arquitecturas comparadas
 
@@ -139,7 +139,7 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 | Evaluación ResNet-50 | **Resultado local preliminar** | Test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
 | Módulo Grad-CAM | **Funcional** | Demo sobre datos sintéticos validado |
 | GUI web Flask | **Funcional en modo demo** | Carga pesos entrenados cuando existen |
-| Módulo video/comportamiento | **Prototipo** | Flask contiene demo con detector; YOLO detección/seguimiento es el módulo de investigación planeado |
+| Módulo video/comportamiento | **Prototipo YOLO implementado** | `/identify_video` usa YOLO + tracking IoU + CNN por recorte; entrenamiento YOLO propio queda listo para cajas anotadas |
 | Vocabulario International Sign | **En propuesta** | 53 señas diseñadas; validación con grupos focales agendada |
 | Infraestructura de reproducibilidad | **Funcional** | Seeds, environments (CUDA / CPU / MPS), tags de Git |
 
@@ -147,7 +147,7 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 
 - **Desbalance de clases.** *Cathartes aura* tiene > 1000 imágenes; *Harpia harpyja* y *Morphnus guianensis* menos de 100. Cross-entropy ponderada, Mixup y CutMix ayudan; se requiere alianza con The Peregrine Fund y CONABIO para datos de especies raras.
 - **Sesgo fotográfico de iNaturalist.** La mayoría de subidas son aves en planeo contra cielo limpio. El modelo subrendirá previsiblemente sobre fondos de dosel típicos de *Spizaetus* y *Harpagus*.
-- **Resolución temporal del módulo de comportamiento.** La ruta de video actual es prototipo. El módulo YOLO planeado debe detectar/seguir aves entre frames antes de medir planeo, flap-glide, hovering, kettle y stoop con robustez.
+- **Resolución temporal del módulo de comportamiento.** La ruta de video YOLO actual es prototipo: detecta y sigue aves, pero las etiquetas de comportamiento son heurísticas. Para resultados finales se requieren cajas y etiquetas temporales anotadas por clip.
 - **Riesgo del prior geográfico.** Los priors por coordenadas pueden introducir sesgo de confirmación. V2 ponderará el prior por la incertidumbre del clasificador visual.
 - **Resultados preliminares.** Los números actuales de ResNet-50 sirven como baseline, no como resultados finales de tesis. Las especies raras requieren más datos y análisis de error.
 - **Sin publicación arbitrada aún.** Este es un proyecto de investigación en desarrollo.
@@ -155,8 +155,8 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 ## 14. Trabajo futuro
 
 1. Completar el benchmark de las 4 arquitecturas y publicar la curva de Pareto (accuracy vs latencia vs VRAM).
-2. Reemplazar el prototipo de video actual por detección/seguimiento con YOLO y un clasificador de comportamiento para planeo, flap-glide, hovering, kettle y stoop.
-3. Añadir tracking por individuo y agregación temporal entre frames.
+2. Entrenar un detector YOLO propio con cajas de rapaces mexicanas y comparar contra el detector COCO `bird`.
+3. Sustituir las heurísticas de comportamiento por un clasificador temporal supervisado para planeo, flap-glide, hovering, kettle y stoop.
 4. Validar el catálogo de International Sign con la comunidad sorda usando protocolo Likert (claridad, naturalidad, memorabilidad).
 5. Fusión bayesiana multimodal: visión + comportamiento + fenología + geografía a nivel posterior.
 6. Extensión a Strigiformes (búhos), lo que introduce modalidades de audio y visión nocturna.
@@ -176,6 +176,8 @@ conda env create -f codigo/pytorch/environment.yml          # NVIDIA CUDA
 
 conda activate raptors-pt
 pip install -r codigo/pytorch/pip-requirements.txt
+# Opcional: modulo de video YOLO
+pip install -r codigo/pytorch/requirements-yolo.txt
 python codigo/pytorch/verify_setup.py
 ```
 
@@ -214,6 +216,14 @@ cd codigo/pytorch
 python gradcam.py --image ruta/a/imagen.jpg \
                   --arch resnet50 \
                   --weights outputs/checkpoints/best_stage2.pt
+
+# Analisis de video con YOLO
+python yolo_predict_video.py --video ../../datos/videos/raw/Buteo_jamaicensis/clip_001.mp4
+
+# Entrenar/evaluar YOLO propio cuando existan cajas anotadas
+python yolo_train.py --data yolo/dataset_template.yaml --model yolov8n.pt --epochs 80
+python yolo_evaluate.py --data yolo/dataset_template.yaml \
+                        --weights outputs/yolo/checkpoints/best.pt
 ```
 
 ## 18. Cómo citar

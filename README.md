@@ -81,7 +81,7 @@ The pipeline applies standard **transfer-learning** on backbones pre-trained on 
 - `RandomErasing` on plumage regions
 - standard set: `RandomResizedCrop`, `HorizontalFlip`, mild rotation, `ColorJitter`, Normalize, **Mixup** α=0.2, **CutMix** α=1.0
 
-A complementary **video module** (Section 8) is planned to add a behaviour prior from short clips. The next implementation step is YOLO-based bird detection/tracking followed by flight-behaviour classification.
+A complementary **video module** (Section 8) adds YOLO-based detection/tracking over short clips. YOLO localises birds per sampled frame, a lightweight IoU tracker keeps individual IDs across frames, and the 53-class CNN classifies each crop. Flight behaviour is reported with conservative interpretable heuristics (`soaring_or_gliding`, `active_flapping_or_maneuvering`, `hovering_or_wind_hold`, `stoop_or_descent`) before a supervised temporal classifier is trained.
 
 ## 8. Model architectures
 
@@ -139,7 +139,7 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation 
 | ResNet-50 evaluation | **Preliminary local result** | Test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
 | Grad-CAM module | **Working** | Demo on synthetic data validated |
 | Flask web GUI | **Working in demo mode** | Loads trained weights when present |
-| Behaviour/video module | **Prototype** | Flask contains a detector-based demo; YOLO detection/tracking is the planned research module |
+| Behaviour/video module | **YOLO prototype implemented** | `/identify_video` uses YOLO + IoU tracking + CNN crop classification; custom YOLO training is ready for annotated boxes |
 | International Sign vocabulary | **Proposal stage** | 53 signs drafted; focus-group validation scheduled |
 | Reproducibility infrastructure | **Working** | Seeds, environment files (CUDA / CPU / MPS), Git tags |
 
@@ -147,7 +147,7 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation 
 
 - **Class imbalance.** *Cathartes aura* has > 1000 images available, while *Harpia harpyja* and *Morphnus guianensis* have fewer than 100. Weighted cross-entropy, Mixup, CutMix help; partnership with The Peregrine Fund and CONABIO is required for rare-species data.
 - **iNaturalist photographic bias.** Most uploads are clear-sky soaring birds. The model is expected to under-perform on canopy backgrounds typical of *Spizaetus* and *Harpagus*.
-- **Temporal resolution of the behaviour module.** The current video path is a prototype. The planned YOLO module must detect/track birds across frames before behaviour cues such as soaring, flap-glide, hovering and stoop can be measured robustly.
+- **Temporal resolution of the behaviour module.** The current YOLO video path is a prototype: it detects and tracks birds, but behaviour labels are heuristic. Final results require annotated boxes and temporal behaviour labels per clip.
 - **Geographic prior risk.** Range-by-coordinates priors can introduce confirmation bias. V2 will weight the prior by visual-classifier uncertainty.
 - **Preliminary results.** The current ResNet-50 numbers are useful as a baseline, not as final thesis results. Rare species still need more data and error analysis.
 - **No peer-reviewed publication yet.** This is a research project under development.
@@ -155,8 +155,8 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation 
 ## 14. Future work
 
 1. Complete the four-architecture benchmark and publish the Pareto curve (accuracy vs latency vs VRAM).
-2. Replace the current video prototype with YOLO-based bird detection/tracking and a behaviour classifier for soaring, flap-glide, hovering, kettle formation and stoop.
-3. Add per-individual tracking and time-aggregation across frames.
+2. Train a custom YOLO detector with Mexican raptor boxes and compare it against the COCO `bird` detector.
+3. Replace behaviour heuristics with a supervised temporal classifier for soaring, flap-glide, hovering, kettle formation and stoop.
 4. Validate the International Sign catalogue with the Deaf community using a Likert protocol (clarity, naturalness, memorability).
 5. Multi-modal Bayesian fusion: vision + behaviour + phenology + geography at the posterior level.
 6. Extension to Strigiformes (owls), which introduces audio and night-vision modalities.
@@ -176,6 +176,8 @@ conda env create -f codigo/pytorch/environment.yml          # NVIDIA CUDA
 
 conda activate raptors-pt
 pip install -r codigo/pytorch/pip-requirements.txt
+# Optional: YOLO video module
+pip install -r codigo/pytorch/requirements-yolo.txt
 python codigo/pytorch/verify_setup.py
 ```
 
@@ -214,6 +216,14 @@ cd codigo/pytorch
 python gradcam.py --image path/to/image.jpg \
                   --arch resnet50 \
                   --weights outputs/checkpoints/best_stage2.pt
+
+# YOLO video analysis
+python yolo_predict_video.py --video ../../datos/videos/raw/Buteo_jamaicensis/clip_001.mp4
+
+# Train/evaluate a custom YOLO detector once boxes are annotated
+python yolo_train.py --data yolo/dataset_template.yaml --model yolov8n.pt --epochs 80
+python yolo_evaluate.py --data yolo/dataset_template.yaml \
+                        --weights outputs/yolo/checkpoints/best.pt
 ```
 
 ## 18. How to cite

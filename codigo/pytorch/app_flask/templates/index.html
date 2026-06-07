@@ -269,6 +269,7 @@ const SPECIES_NAMES = {
     {% endfor %}
 };
 const FOCUS_TPL = {{ t('home.focus_title')|tojson }};
+const CURRENT_LANG = {{ get_locale()|tojson }};
 
 // If the user arrived from the catalogue with ?focus=<key>,
 // show a localized banner above the upload zone.
@@ -302,7 +303,12 @@ uploadZone.addEventListener("drop", e => {
     e.preventDefault();
     uploadZone.classList.remove("dragover");
     const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
+    if (!file) return;
+    if (file.type && file.type.startsWith("video/")) {
+        handleVideo(file);
+    } else {
+        handleFile(file);
+    }
 });
 
 function handleFile(file) {
@@ -344,9 +350,14 @@ async function handleVideo(file) {
 
 function renderVideoResults(data, filename) {
     const meta = document.getElementById("videoMeta");
+    const detector = data.detector ? `${data.detector} · ` : "";
+    const tracks = Number.isInteger(data.n_tracks)
+        ? ` · ${data.n_tracks} track${data.n_tracks===1?"":"s"}`
+        : "";
     meta.textContent =
-        `${filename} · ${data.duration_seconds}s @ ${data.video_fps} fps · `
-        + `${data.frames_sampled} frames analysed`;
+        `${detector}${filename} · ${data.duration_seconds}s @ `
+        + `${data.video_fps} fps · ${data.frames_sampled} frames analysed`
+        + tracks;
 
     // Summary cards: one per species detected
     const sumWrap = document.getElementById("videoSummary");
@@ -358,14 +369,18 @@ function renderVideoResults(data, filename) {
             const c = document.createElement("div");
             c.className = "video-summary-card";
             c.style.borderLeftColor = s.color;
+            const behavior = CURRENT_LANG === "es"
+                ? (s.primary_behavior_es || s.primary_behavior)
+                : (s.primary_behavior_en || s.primary_behavior);
             c.innerHTML = `
                 <div class="video-summary-header" style="color:${s.color}">
                     ${s.common_name}
                 </div>
                 <em>${s.scientific}</em>
                 <div class="video-summary-count">
-                    ${s.frames_with_species} frame${s.frames_with_species===1?"":"s"}
+                    ${s.frames_with_species} detection${s.frames_with_species===1?"":"s"}
                 </div>
+                <div class="video-summary-behavior">${behavior}</div>
             `;
             sumWrap.appendChild(c);
         });
@@ -385,6 +400,10 @@ function renderVideoResults(data, filename) {
             const best = frame.detections.reduce(
                 (a,b) => a.confidence>b.confidence?a:b);
             cell.style.background = best.color;
+            const behavior = CURRENT_LANG === "es"
+                ? (best.behavior_es || best.behavior)
+                : (best.behavior_en || best.behavior);
+            cell.title += ` · track ${best.track_id} · ${best.common_name} · ${behavior}`;
             cell.textContent = frame.n_birds > 1 ? `×${frame.n_birds}` : "";
         }
         tl.appendChild(cell);

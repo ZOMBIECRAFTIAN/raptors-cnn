@@ -70,7 +70,7 @@ Merlin Bird ID es una herramienta muy fuerte, generalista y cerrada. Este proyec
 | Enfoque | Identificacion general por foto/audio | Silueta, forma y comportamiento de vuelo |
 | Reproducibilidad | No expone todo el pipeline | Scripts, datos esperados, entrenamiento y evaluacion documentados |
 | Investigacion | Producto terminado | Prototipo academico en desarrollo |
-| Video/comportamiento | No es el foco visible del usuario | Modulo futuro planeado con YOLO/comportamiento |
+| Video/comportamiento | No es el foco principal de Merlin | Prototipo YOLO implementado para deteccion, tracking y comportamiento heuristico |
 | Interpretabilidad | No expuesta al usuario | Grad-CAM para revisar donde mira el modelo |
 
 La idea central no es competir con Merlin por escala, sino demostrar un enfoque especializado, abierto y academico para rapaces en vuelo.
@@ -350,7 +350,7 @@ http://localhost:5000
 |---|---|
 | `/` | Pagina principal. |
 | `/identify` | Recibe imagen y devuelve prediccion top-3. |
-| `/identify_video` | Prototipo de analisis de video. Debe reemplazarse/fortalecerse con YOLO. |
+| `/identify_video` | Analisis de video con YOLO, tracking IoU, CNN por recorte y comportamiento heuristico. |
 | `/species` | Guia de especies. |
 | `/data` | Panel de datos y observaciones. |
 | `/feedback` | Guarda correcciones de usuario. |
@@ -372,12 +372,12 @@ datos/videos/
 codigo/pytorch/app_flask/static/behavior_videos/
 ```
 
-`datos/videos/` esta pensado para clips de campo usados por el modulo futuro de comportamiento. La idea correcta para el siguiente paso es implementar deteccion/seguimiento con YOLO para localizar aves en video y luego analizar comportamiento de vuelo.
+`datos/videos/` esta pensado para clips de campo usados por el modulo de comportamiento. La version actual ya implementa deteccion/seguimiento con YOLO para localizar aves en video, asignar `track_id` por individuo y analizar comportamiento de vuelo con heuristicas conservadoras.
 
 Estado recomendado para presentacion:
 
-- **actual:** carpeta y prototipo preparados;
-- **pendiente:** implementar pipeline real con YOLO;
+- **actual:** pipeline YOLO implementado como prototipo reproducible;
+- **pendiente:** entrenar detector YOLO propio con cajas anotadas y validar etiquetas temporales;
 - **no afirmar:** que el modulo de video ya es un clasificador final validado.
 
 ---
@@ -624,7 +624,7 @@ Version corta:
 
 Version honesta del estado:
 
-> La clasificacion por imagen y la interfaz estan implementadas como prototipo. La parte de video/comportamiento esta preparada como linea futura y sera fortalecida con YOLO para deteccion y seguimiento.
+> La clasificacion por imagen y la interfaz estan implementadas como prototipo. La parte de video/comportamiento ya usa YOLO para deteccion y seguimiento, pero sus etiquetas de comportamiento son heuristicas hasta contar con anotaciones temporales validadas.
 
 ---
 
@@ -633,7 +633,7 @@ Version honesta del estado:
 No afirmar:
 
 - que el sistema ya supera a Merlin;
-- que el modulo de video YOLO ya esta terminado;
+- que el modulo de video YOLO ya esta validado como resultado final;
 - que los resultados finales de las 53 especies ya estan validados si aun no se corrio el benchmark completo;
 - que sustituye a expertos humanos;
 - que la lengua de senas es una contribucion central de IA.
@@ -645,4 +645,4 @@ Si conviene afirmar:
 - que usa transfer learning;
 - que tiene pipeline de entrenamiento/evaluacion;
 - que la interfaz Flask permite una demostracion clara;
-- que video/YOLO es el siguiente modulo.
+- que video/YOLO ya existe como prototipo y el siguiente paso es validarlo con anotaciones reales.

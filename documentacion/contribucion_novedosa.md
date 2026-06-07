@@ -44,7 +44,7 @@
 
 **C-T3.** Prototipo funcional con backend de inferencia y frontend accesible, demostrando viabilidad de despliegue en plataformas educativas o ciudadanas.
 
-**C-T4.** Extensión planeada de video con YOLO para detección/seguimiento de aves y extracción de comportamiento de vuelo (planeo, flap-glide, hovering, kettle y stoop), separando el problema de localización temporal del problema de clasificación de especie.
+**C-T4.** Prototipo de video con YOLO para detección/seguimiento de aves y extracción heurística de comportamiento de vuelo (planeo, flap-glide, hovering, kettle y stoop), separando el problema de localización temporal del problema de clasificación de especie. La validación final requiere cajas anotadas y etiquetas temporales por clip.
 
 ### 3.3 Contribuciones sociales e interdisciplinares
 

@@ -26,11 +26,11 @@
     "subtitle": "Upload a photo of a bird in flight to identify the species and learn the corresponding International Sign.",
     "choose_image": "Choose Image",
     "choose_video": "Choose Video",
-    "supported": "Supported: JPG, PNG, TIFF, WebP — Max 16MB · video MP4/MOV/WEBM Max 32MB",
-    "analyzing": "Analyzing image with CNN model…",
+    "supported": "Supported: JPG, PNG, TIFF, WebP — Max 16MB · YOLO video MP4/MOV/WEBM Max 32MB",
+    "analyzing": "Analyzing with CNN/YOLO…",
     "focus_title": "Looking for {name}?",
     "focus_text": "Upload a photo and we'll confirm whether the model recognises this species.",
-    "video_results": "Video analysis"
+    "video_results": "YOLO video analysis"
   },
   "result": {
     "species_information": "Species Information",

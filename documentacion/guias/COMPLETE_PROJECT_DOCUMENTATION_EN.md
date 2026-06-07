@@ -70,7 +70,7 @@ Merlin Bird ID is a strong, broad and closed general-purpose tool. This project 
 | Focus | General photo/audio identification | Silhouette, shape and flight behaviour |
 | Reproducibility | Full training pipeline is not exposed | Scripts, expected data layout, training and evaluation are documented |
 | Research status | Finished product | Academic prototype in progress |
-| Video/behaviour | Not the visible user-facing focus | Future module planned with YOLO/behaviour |
+| Video/behaviour | Not Merlin's visible user-facing focus | YOLO prototype implemented for detection, tracking and heuristic behaviour |
 | Interpretability | Not exposed to users | Grad-CAM checks where the model looks |
 
 The point is not to beat Merlin at scale, but to demonstrate a specialized, open and academic approach for raptors in flight.
@@ -244,7 +244,7 @@ datos/
 │   └── test/                    final test split
 ├── annotations/                 CSV metadata and curation reports
 ├── feedback/                    user corrections and feedback
-└── videos/                      future behaviour/video module
+└── videos/                      behaviour/video module
 ```
 
 Heavy data should not be uploaded to GitHub. That is why `datos/raw/`, `datos/processed/` and real video folders are ignored.
@@ -350,7 +350,7 @@ http://localhost:5000
 |---|---|
 | `/` | Main page. |
 | `/identify` | Receives an image and returns top-3 prediction. |
-| `/identify_video` | Video-analysis prototype. Should be replaced/strengthened with YOLO. |
+| `/identify_video` | YOLO video analysis with IoU tracking, CNN crop classification and heuristic behaviour. |
 | `/species` | Species guide. |
 | `/data` | Data and observations panel. |
 | `/feedback` | Stores user corrections. |
@@ -372,12 +372,13 @@ datos/videos/
 codigo/pytorch/app_flask/static/behavior_videos/
 ```
 
-`datos/videos/` is intended for field clips used by the future behaviour module. The correct next step is to implement YOLO-based detection/tracking to locate birds in video, then analyse flight behaviour.
+`datos/videos/` is intended for field clips used by the behaviour module. The current version already implements YOLO-based detection/tracking to locate birds in video, assign an individual `track_id`, then analyse flight behaviour with conservative heuristics.
 
 Recommended status wording:
 
 - **current:** folder and prototype are prepared;
-- **pending:** real YOLO pipeline for detection/tracking;
+- **current:** YOLO pipeline implemented as a reproducible prototype;
+- **pending:** custom YOLO detector training with annotated boxes and validated temporal labels;
 - **do not claim:** that the video module is already a final validated classifier.
 
 ---
@@ -624,7 +625,7 @@ Short version:
 
 Honest status version:
 
-> Image classification and the Flask interface are implemented as a prototype. The video/behaviour section is prepared as future work and will be strengthened with YOLO for detection and tracking.
+> Image classification and the Flask interface are implemented as a prototype. The video/behaviour section already uses YOLO for detection and tracking, but behaviour labels remain heuristic until validated temporal annotations are available.
 
 ---
 
@@ -633,7 +634,7 @@ Honest status version:
 Do not claim:
 
 - that the system already outperforms Merlin;
-- that the YOLO video module is finished;
+- that the YOLO video module is a final validated result;
 - that final 53-species benchmark results are validated if the full benchmark has not been run;
 - that it replaces human experts;
 - that sign language is the central AI contribution.
@@ -645,4 +646,4 @@ You can claim:
 - it uses transfer learning;
 - it has a training/evaluation pipeline;
 - the Flask interface provides a clear demonstration;
-- video/YOLO is the next module.
+- video/YOLO already exists as a prototype and the next step is validation with real annotations.

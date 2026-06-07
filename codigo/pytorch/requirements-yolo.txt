@@ -1,0 +1,6 @@
+# Optional dependencies for the YOLO video/behaviour module.
+# Install after the base PyTorch environment:
+#   pip install -r codigo/pytorch/requirements-yolo.txt
+
+ultralytics>=8.3
+opencv-python>=4.8

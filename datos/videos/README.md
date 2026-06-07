@@ -1,6 +1,6 @@
 # Video data
 
-This folder holds **field videos** used for the flight-behaviour module (V2).
+This folder holds **field videos** used for the YOLO flight-behaviour module.
 It mirrors the structure of `datos/raw/` and `datos/processed/` for images.
 
 ```
@@ -18,7 +18,8 @@ datos/videos/
 │   │   └── ...
 │   └── <Genus_species>/
 └── annotations/                  per-clip labels (CSV)
-    └── clips.csv                 columns: file, species, n_birds, flight_mode, start_s, end_s
+    ├── clips.csv                 columns: file, species, n_birds, flight_mode, start_s, end_s
+    └── yolo_boxes/               optional YOLO TXT labels for detector training
 ```
 
 ## Naming convention
@@ -34,7 +35,7 @@ datos/videos/
 
 | Purpose | Location |
 |---|---|
-| Behaviour-module training (V2, 3D-CNN) | here: `datos/videos/raw/<species>/` |
+| Behaviour-module training (YOLO + temporal labels) | here: `datos/videos/raw/<species>/` |
 | Showing a behaviour clip in the Flask GUI | `codigo/pytorch/app_flask/static/behavior_videos/<species>.mp4` (one per species) |
 | International Sign vocabulary | `lengua_de_senas/videos/<species>.mp4` |
 
@@ -49,17 +50,24 @@ species filename — the template auto-detects it.
    folder if it does not exist.
 3. If you also want it visible in the GUI Species Guide, copy or symlink
    it to `codigo/pytorch/app_flask/static/behavior_videos/<species>.mp4`.
-4. If you label the flight modes (soaring, flap-glide, hovering, stoop,
+4. If you label bounding boxes, export them in YOLO TXT format and point a
+   dataset YAML to those folders. A template lives in
+   `codigo/pytorch/yolo/dataset_template.yaml`.
+5. If you label the flight modes (soaring, flap-glide, hovering, stoop,
    active), add a row to `datos/videos/annotations/clips.csv` so the
-   future training script can use it.
+   behaviour classifier can use it later.
 
 ## Format recommendations (for V2 training)
 
 - Container: MP4 (H.264) or MKV
 - Resolution: at least 720p; 1080p preferred
-- Frame rate: 30 fps (the V2 3D-CNN samples at 8-16 fps internally, but
-  30 fps gives headroom for temporal jitter augmentation)
+- Frame rate: 30 fps preferred. The current YOLO analyzer samples at ~1 fps
+  for a light demo, but training data should preserve the original cadence.
 - Duration: 5-30 seconds per clip; longer clips can be split
 
-A preprocessing script `scripts/standardise_videos.py` is on the V2
-roadmap; until then videos can stay in their original recording format.
+Run a quick YOLO analysis from `codigo/pytorch`:
+
+```bash
+pip install -r requirements-yolo.txt
+python yolo_predict_video.py --video ../../datos/videos/raw/<species>/clip_001.mp4
+```

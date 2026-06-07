@@ -22,7 +22,7 @@ Un sistema de **inteligencia artificial** que identifica automáticamente las **
 | Identificación visual | CNN (ResNet-50, EfficientNet-B3, MobileNetV3, ConvNeXt-Tiny) + transfer learning | ✅ Pipeline verificado |
 | Comparativa | PyTorch principal + TensorFlow espejo | 🚧 En consolidación |
 | Interpretabilidad | Grad-CAM | ✅ Funcionando |
-| Video/comportamiento | YOLO detección/seguimiento + análisis de vuelo | 🚧 Siguiente módulo |
+| Video/comportamiento | YOLO detección/seguimiento + análisis de vuelo | ✅ Prototipo implementado |
 | Dataset | iNaturalist + Macaulay Library + eBird + CONABIO | 🚧 En curación y evaluación |
 | Lengua de señas | Catálogo de 53 señas en International Sign | 🚧 Propuesta y validación pendiente |
 | Validación inclusiva | Escala Likert con grupo focal sordo | 🚧 Pendiente |
@@ -48,7 +48,7 @@ gantt
     section Infraestructura
     Pipeline PyTorch + CUDA           :done, 2026-04, 2026-05
     Pipeline TensorFlow espejo        :active, 2026-05, 1M
-    Modulo YOLO video/comportamiento  :2026-06, 2M
+    Modulo YOLO video/comportamiento  :active, 2026-06, 2M
     section Dataset
     Descargador iNaturalist           :done, 2026-05, 1w
     Recolección real                  :2026-05, 2M
@@ -77,6 +77,7 @@ gantt
 - 🌐 **Repositorio público**: `github.com/<usuario>/raptors-cnn`
 - 📑 **Capítulos de tesis** conservados como material interno local
 - 🧪 **Pipeline reproducible** verificado end-to-end con GPU NVIDIA
+- 🎥 **Módulo YOLO de video** para detección, tracking y comportamiento heurístico
 - 🎨 **Catálogo preliminar de señas** en `lengua_de_senas/catalogo_senas/`
 - 📚 **Bibliografía consolidada** de 50+ referencias en APA 7.ª
 

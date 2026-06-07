@@ -109,6 +109,12 @@ pip install -r codigo\pytorch\pip-requirements.txt
 
 La primera línea tarda ~10-15 minutos (descarga ~3 GB).
 
+Para activar el módulo opcional de video con YOLO:
+
+```powershell
+pip install -r codigo\pytorch\requirements-yolo.txt
+```
+
 Verifica que CUDA está detectado:
 
 ```cmd
@@ -285,7 +291,14 @@ cd codigo/pytorch/app_flask
 python app.py
 ```
 
-Abre el navegador en `http://localhost:5000`. Sube una foto de un ave rapaz y verás top-3 candidatos con Grad-CAM, ficha estilo Merlin Bird ID y video de la seña en International Sign.
+Abre el navegador en `http://localhost:5000`. Sube una foto de un ave rapaz y verás top-3 candidatos con Grad-CAM, ficha estilo Merlin Bird ID y video de la seña en International Sign. Si instalaste `requirements-yolo.txt`, también puedes subir clips MP4/MOV/WEBM para detección YOLO, tracking por individuo y resumen de comportamiento.
+
+Análisis YOLO por consola:
+
+```bash
+cd codigo/pytorch
+python yolo_predict_video.py --video ../../datos/videos/raw/<species>/clip_001.mp4
+```
 
 Para detenerla: `Ctrl+C` en la terminal.
 

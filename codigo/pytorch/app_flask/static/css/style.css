@@ -738,6 +738,19 @@ body {
     color: var(--blue);
 }
 
+.video-summary-behavior {
+    display: inline-block;
+    margin-top: 0.45rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(26, 110, 104, 0.10);
+    color: var(--teal);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
 .video-timeline {
     display: flex;
     gap: 1px;

@@ -26,11 +26,11 @@
     "subtitle": "Sube una fotografía de un ave en vuelo para identificar la especie y aprender su seña en International Sign.",
     "choose_image": "Elegir imagen",
     "choose_video": "Elegir video",
-    "supported": "Compatibles: JPG, PNG, TIFF, WebP — Máx. 16 MB · video MP4/MOV/WEBM Máx. 32 MB",
-    "analyzing": "Analizando con el modelo CNN…",
+    "supported": "Compatibles: JPG, PNG, TIFF, WebP — Máx. 16 MB · video YOLO MP4/MOV/WEBM Máx. 32 MB",
+    "analyzing": "Analizando con CNN/YOLO…",
     "focus_title": "¿Buscas {name}?",
     "focus_text": "Sube una foto y confirmamos si el modelo reconoce esta especie.",
-    "video_results": "Análisis de video"
+    "video_results": "Análisis de video con YOLO"
   },
   "result": {
     "species_information": "Información de la especie",

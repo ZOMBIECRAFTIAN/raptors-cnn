@@ -17,7 +17,7 @@
 
 **P3:** ¿Puede un catálogo de 53 señas en International Sign, co-creado con la comunidad sorda, obtener calificación promedio ≥ 4.0 / 5.0 en escala Likert sobre claridad, naturalidad y memorabilidad?
 
-**P4:** ¿Puede un módulo futuro basado en YOLO detectar y seguir aves en video para extraer señales de comportamiento de vuelo que complementen la clasificación visual?
+**P4:** ¿Puede un módulo basado en YOLO detectar y seguir aves en video para extraer señales de comportamiento de vuelo que complementen la clasificación visual?
 
 ## 2. Hipótesis
 
@@ -125,7 +125,7 @@ Cualquiera de estos resultados activa una segunda iteración del análisis y rev
 - El dataset puede no representar variación geográfica completa entre norte, centro, sur y trópico mexicano.
 - La validación del catálogo de señas se realizará con grupo focal mexicano; generalización a otras comunidades sordas internacionales será trabajo futuro.
 - Hardware de entrenamiento (RTX 3050, 4.3 GB VRAM) puede limitar tamaño de batch en arquitecturas grandes (ConvNeXt-Tiny puede requerir batch=16 en lugar de 32).
-- El módulo YOLO de video/comportamiento queda preregistrado como siguiente etapa, no como resultado cerrado de la versión actual.
+- El módulo YOLO de video/comportamiento existe como prototipo, pero sus resultados de comportamiento son heurísticos hasta contar con cajas y etiquetas temporales anotadas.
 
 ## 8. Compromisos de transparencia
 

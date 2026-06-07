@@ -18,9 +18,12 @@ flowchart LR
     F --> G[🔥 Mapa de calor<br/>verificación]
     E --> H[🤟 Video seña<br/>en International Sign]
     E --> I[📋 Ficha técnica<br/>nombre cient. + común]
-    V[🎥 Video de campo] --> Y[YOLO<br/>detección + tracking]
-    Y --> J[Comportamiento<br/>planeo / kettle / stoop]
-    J -. futuro .-> E
+    V[🎥 Video de campo] --> Y[YOLO<br/>detección de aves]
+    Y --> TR[Tracking IoU<br/>track_id por individuo]
+    TR --> CR[Recortes por ave]
+    CR --> C
+    TR --> J[Comportamiento<br/>heurístico]
+    J --> E
 
     style A fill:#FFE5B4
     style C fill:#B4D7FF
@@ -51,8 +54,9 @@ flowchart TB
 
     subgraph "🎥 Video / comportamiento"
         V1[datos/videos<br/>clips de campo]
-        V2[YOLO<br/>detección + tracking]
-        V3[clasificador<br/>comportamiento]
+        V2[YOLO<br/>detección de aves]
+        V3[tracking IoU<br/>por individuo]
+        V4[heurísticas<br/>comportamiento]
     end
 
     subgraph "🤟 Módulo Lengua de Señas"
@@ -79,7 +83,7 @@ flowchart TB
     M4 --> M6
     M5 --> T4
     M6 --> T4
-    V1 --> V2 --> V3 --> T4
+    V1 --> V2 --> V3 --> V4 --> T4
     S1 --> S3
     S3 --> S4
     S4 --> T4

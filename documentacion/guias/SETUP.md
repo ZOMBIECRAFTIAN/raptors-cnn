@@ -55,6 +55,13 @@ conda env remove -n raptors-pt
 conda env create -f codigo\pytorch\environment.yml
 ```
 
+Si también quieres activar el módulo de video con YOLO:
+
+```bash
+cd codigo\pytorch
+pip install -r requirements-yolo.txt
+```
+
 ---
 
 ## Paso 2 — Crear el entorno TensorFlow
@@ -156,6 +163,7 @@ cd codigo\pytorch
 python train.py --arch resnet50           # entrenamiento real (cuando tengas el dataset)
 python evaluate.py --weights outputs\checkpoints\best_stage2.pt --arch resnet50
 python gradcam.py --image ruta\a\foto.jpg --weights outputs\checkpoints\best_stage2.pt
+python yolo_predict_video.py --video ..\..\datos\videos\raw\<species>\clip_001.mp4
 
 # Cambiar a TensorFlow
 conda deactivate

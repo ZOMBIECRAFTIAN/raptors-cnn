@@ -1,0 +1,10 @@
+# Copy this file and edit the paths before training a custom detector.
+# Copia este archivo y ajusta las rutas antes de entrenar un detector propio.
+
+path: C:/Users/hogwa/raptors-cnn/datos/videos/yolo_dataset
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: bird

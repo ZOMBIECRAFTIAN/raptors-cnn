@@ -33,6 +33,7 @@ def get_transforms(input_size: int = config.INPUT_SIZE):
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandomRotation(degrees=15),
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+        transforms.RandomGrayscale(p=0.2),
         transforms.ToTensor(),
         transforms.Normalize(imagenet_mean, imagenet_std),
         transforms.RandomErasing(p=0.25, scale=(0.02, 0.15)),
