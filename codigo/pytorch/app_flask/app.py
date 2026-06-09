@@ -77,6 +77,13 @@ OOD_LOG_CSV      = PROJECT_ROOT / "datos" / "feedback" / "out_of_domain_log.csv"
 METRICS_JSON     = PROJECT_ROOT / "codigo" / "pytorch" / "outputs" / "reporte_final.json"
 RAW_DIR          = config.RAW_DIR
 
+FEEDBACK_FIELDS = [
+    "feedback_id", "timestamp",
+    "predicted_key", "predicted_name",
+    "correct_key", "correct_name", "confidence",
+]
+_RECENT_FEEDBACK_KEYS: dict[str, float] = {}
+
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB (videos)
 
@@ -374,30 +381,53 @@ def save_feedback():
         if not data:
             return jsonify({"error": "No data"}), 400
 
-        correct_key = data.get("correct_key", "")
+        predicted_key = (
+            data.get("predicted_key")
+            or data.get("predicted_species")
+            or data.get("predicted_code")
+            or ""
+        )
+        predicted_name = data.get("predicted_name") or predicted_key
+        correct_key = (
+            data.get("correct_key")
+            or data.get("true_species")
+            or data.get("true_code")
+            or ""
+        )
+        correct_name = data.get("correct_name") or data.get("true_species") or correct_key
+        confidence = data.get("confidence", "")
+
+        dedupe_key = "|".join(map(str, [
+            predicted_key, correct_key, correct_name, confidence,
+        ]))
+        now_ts = datetime.now().timestamp()
+        _prune_recent_feedback(now_ts)
+        if _RECENT_FEEDBACK_KEYS.get(dedupe_key, 0) > now_ts - 5:
+            return jsonify({
+                "status": "duplicate_ignored",
+                "message": "Feedback duplicado ignorado.",
+            })
+        _RECENT_FEEDBACK_KEYS[dedupe_key] = now_ts
+
         is_ood = (correct_key == "other_not_listed")
 
         log_file = OOD_LOG_CSV if is_ood else FEEDBACK_CSV
         log_file.parent.mkdir(parents=True, exist_ok=True)
-        file_exists = log_file.exists()
+        file_exists = _ensure_feedback_schema(log_file)
 
         feedback_id = str(uuid.uuid4())[:8]
         with open(log_file, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=[
-                "feedback_id", "timestamp",
-                "predicted_key", "predicted_name",
-                "correct_key", "correct_name", "confidence",
-            ])
+            writer = csv.DictWriter(f, fieldnames=FEEDBACK_FIELDS)
             if not file_exists:
                 writer.writeheader()
             writer.writerow({
                 "feedback_id":    feedback_id,
                 "timestamp":      datetime.now().isoformat(),
-                "predicted_key":  data.get("predicted_key", ""),
-                "predicted_name": data.get("predicted_name", ""),
+                "predicted_key":  predicted_key,
+                "predicted_name": predicted_name,
                 "correct_key":    correct_key,
-                "correct_name":   data.get("correct_name", ""),
-                "confidence":     data.get("confidence", ""),
+                "correct_name":   correct_name,
+                "confidence":     confidence,
             })
         return jsonify({
             "status": "saved",
@@ -408,6 +438,32 @@ def save_feedback():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+def _prune_recent_feedback(now_ts: float, window_s: float = 5) -> None:
+    """Keep only recent feedback keys used for duplicate-submit protection."""
+    stale = [
+        key for key, ts in _RECENT_FEEDBACK_KEYS.items()
+        if ts <= now_ts - window_s
+    ]
+    for key in stale:
+        del _RECENT_FEEDBACK_KEYS[key]
+
+
+def _ensure_feedback_schema(log_file: Path) -> bool:
+    """Ensure the feedback CSV uses the current schema before appending."""
+    if not log_file.exists():
+        return False
+    with open(log_file, "r", encoding="utf-8", newline="") as f:
+        reader = csv.reader(f)
+        header = next(reader, [])
+    if header == FEEDBACK_FIELDS:
+        return True
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup = log_file.with_name(f"{log_file.stem}_legacy_{stamp}{log_file.suffix}")
+    log_file.replace(backup)
+    print(f"[feedback] Legacy schema moved to {backup}")
+    return False
 
 
 @app.route("/feedback_stats")

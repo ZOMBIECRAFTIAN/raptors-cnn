@@ -260,6 +260,8 @@
 
 <script>
 let currentPrediction = null;
+let feedbackSubmitting = false;
+let feedbackSubmitted = false;
 
 // Species names are populated from server-side localized data so the
 // focus banner shows the user's locale-specific common name.
@@ -441,6 +443,8 @@ async function uploadAndIdentify(file) {
 }
 
 function displayResults(result) {
+    feedbackSubmitting = false;
+    feedbackSubmitted = false;
     document.getElementById("resultHeader").style.background = result.color;
     document.getElementById("commonName").textContent        = result.common_name;
     document.getElementById("scientificName").textContent    = result.scientific_name;
@@ -620,6 +624,7 @@ function onCorrectionSelectChange() {
 
 async function submitCorrection() {
     if (!currentPrediction) return;
+    if (feedbackSubmitting || feedbackSubmitted) return;
     const select     = document.getElementById("correctSpeciesSelect");
     const correctKey = select.value;
     if (!correctKey) { alert("Please select the correct species."); return; }
@@ -644,11 +649,13 @@ async function submitCorrection() {
     };
 
     try {
+        feedbackSubmitting = true;
         await fetch("/feedback", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(data)
         });
+        feedbackSubmitted = true;
 
         document.getElementById("correctionPanel").style.display = "none";
         document.getElementById("feedbackThanks").style.display  = "block";
@@ -664,6 +671,7 @@ async function submitCorrection() {
         }
     } catch (error) {
         alert("Error submitting feedback: " + error.message);
+        feedbackSubmitting = false;
     }
 }
 </script>
