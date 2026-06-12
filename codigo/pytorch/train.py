@@ -23,6 +23,7 @@ from torch.optim import Adam, AdamW
 
 import config
 from data_loader import build_dataloaders, class_weights
+from experiment_utils import runtime_metadata, write_json
 from model import build_model, freeze_backbone, unfreeze_all, count_parameters
 
 
@@ -226,6 +227,39 @@ def save_training_history(history, arch: str):
     plt.close(fig)
 
 
+def save_training_manifest(
+    arch: str,
+    input_size: int,
+    split_protocol: str,
+    processed_dir: Path,
+    best_val_acc: float,
+    history_rows: int,
+) -> None:
+    """Guarda metadatos de entrenamiento para trazabilidad academica."""
+    payload = runtime_metadata(config.PROJECT_ROOT, processed_dir)
+    payload.update({
+        "arch": arch,
+        "seed": config.SEED,
+        "device": str(config.DEVICE),
+        "input_size": input_size,
+        "split_protocol": split_protocol,
+        "processed_dir": str(processed_dir),
+        "best_val_accuracy_stage2": best_val_acc,
+        "history_rows": history_rows,
+        "num_classes": config.NUM_CLASSES,
+        "stage1": dict(config.STAGE1),
+        "stage2": dict(config.STAGE2),
+        "batch_size": config.BATCH_SIZE,
+        "gradient_accum_steps": getattr(config, "GRADIENT_ACCUM_STEPS", 1),
+        "use_amp": getattr(config, "USE_AMP", False),
+        "checkpoints": {
+            "generic_stage2": str(config.CHECKPOINT_DIR / "best_stage2.pt"),
+            "arch_stage2": str(config.CHECKPOINT_DIR / f"best_stage2_{arch}.pt"),
+        },
+    })
+    write_json(config.OUTPUT_DIR / f"training_manifest_{arch}.json", payload)
+
+
 def run_stage(stage_cfg, model, train_loader, val_loader, criterion, device, stage_name):
     if stage_cfg.get("freeze_backbone", False):
         freeze_backbone(model, model._arch_name)
@@ -300,6 +334,11 @@ def main():
     parser.add_argument("--skip-stage1", action="store_true")
     parser.add_argument("--smoke-test", action="store_true",
                         help="corre solo 1 epoch por etapa con batch chico para verificar que el pipeline funciona")
+    parser.add_argument("--split-protocol", default="image",
+                        choices=["image", "observation", "unknown"],
+                        help="Protocolo usado para crear datos/processed")
+    parser.add_argument("--processed-dir", type=Path, default=config.PROCESSED_DIR,
+                        help="Directorio con train/val/test")
     args = parser.parse_args()
 
     set_seed()
@@ -314,7 +353,10 @@ def main():
         config.STAGE2.update(epochs=1, early_stopping_patience=0)
         print("\n⚡ Smoke-test mode: 1 epoch por etapa, sólo verifica que el pipeline corre.\n")
 
-    train_loader, val_loader, _ = build_dataloaders(input_size=input_size)
+    train_loader, val_loader, _ = build_dataloaders(
+        processed_dir=args.processed_dir,
+        input_size=input_size,
+    )
     weights = class_weights(train_loader).to(device)
     criterion = nn.CrossEntropyLoss(weight=weights, label_smoothing=config.STAGE2["label_smoothing"])
 
@@ -338,9 +380,14 @@ def main():
     )
     full_history.extend(stage2_history)
     save_training_history(full_history, args.arch)
+    save_training_manifest(
+        args.arch, input_size, args.split_protocol, args.processed_dir,
+        final_acc, len(full_history)
+    )
     print(f"\nMejor accuracy en validación (etapa 2): {final_acc:.4f}")
     print(f"Pesos guardados en: {config.CHECKPOINT_DIR / 'best_stage2.pt'}")
     print(f"Historial guardado en: {config.OUTPUT_DIR / f'training_history_{args.arch}.csv'}")
+    print(f"Manifiesto guardado en: {config.OUTPUT_DIR / f'training_manifest_{args.arch}.json'}")
 
 
 if __name__ == "__main__":

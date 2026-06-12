@@ -11,7 +11,7 @@
 | ResNet-50 *(baseline, local 2026-06-06)* | 25.6 | 224 | 0.5665 | 0.5314 | 0.7488 | 20.59 | 90.39 | 3.09 |
 | ConvNeXt-Tiny     | 28.6 | 232 | TBD | TBD | TBD | TBD | TBD | TBD |
 
-**TBD** = to be reported after the full training run. The ResNet-50 row is a preliminary local evaluation from `outputs/metrics_resnet50.json`, not a final thesis result. Latency and model size are reported on the current local machine; batch size = 1.
+**TBD** = to be reported after the full training run. The ResNet-50 row is a preliminary local evaluation from `outputs/metrics_resnet50.json` using an image-level split, not a final thesis result. The final table must be regenerated after `split_dataset.py --group-by-observation` and `audit_dataset.py --fail-on-leak`. Latency and model size are reported on the current local machine; batch size = 1.
 
 ## Table 2. Reference results from the Australian predecessor project (8 species)
 
@@ -46,5 +46,7 @@ A 53-row table will be inserted here from `outputs/metrics_<arch>.json` once tra
 **Primary metric:** F1-macro. Justification: class imbalance is severe (1000× *Cathartes aura* vs ~60× *Harpia harpyja*). Macro-F1 gives equal weight to all species; weighted accuracy alone would understate the failure on rare species.
 
 **Top-3 accuracy** is reported because in practical field use, presenting three plausible candidates is often more useful than a single (possibly wrong) prediction.
+
+**Confidence intervals** are reported by `evaluate.py` using bootstrap resampling for accuracy, F1-macro and top-3 accuracy. These intervals should be included in thesis tables when reporting final observation-level results.
 
 **Inference latency** matters for the planned Flask GUI (target: < 1 s per image on consumer GPU). Latency is measured with batch size = 1, AMP enabled, model in eval mode.

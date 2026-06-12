@@ -23,8 +23,10 @@ config.SPECIES debe coincidir con `sorted(os.listdir(processed/train))`.
 """
 from __future__ import annotations
 import argparse
+import hashlib
 import random
 import shutil
+from collections import defaultdict
 from pathlib import Path
 
 import config
@@ -35,6 +37,18 @@ VALID_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".bmp"}
 SKIP_SUBDIRS = {"_review", "_discard", "_rejected", "_audit"}
 # Subcarpetas válidas que curate.py crea para imágenes que se quedan:
 KEEP_SUBDIRS = {"_kept", "_keep"}
+
+
+def stable_seed(seed: int, text: str) -> int:
+    """Seed deterministica; evita hash(), que cambia entre sesiones Python."""
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    return seed + int(digest[:8], 16)
+
+
+def observation_id(path: Path) -> str:
+    """Extrae observationID desde nombres tipo <observationID>_<photoID>."""
+    first = path.stem.split("_", 1)[0]
+    return first if first else path.stem
 
 
 def list_images(folder: Path, recursive: bool = True) -> list[Path]:
@@ -92,6 +106,7 @@ def split_one_species(
     sci: str, raw_dir: Path, processed_dir: Path,
     train_p: float, val_p: float, test_p: float,
     use_link: bool, dry_run: bool, seed: int,
+    group_by_observation: bool = False,
 ) -> dict[str, int]:
     """Splittea las imágenes de una especie. Devuelve conteos por split."""
     src_folder = raw_dir / sci
@@ -99,12 +114,18 @@ def split_one_species(
     if not images:
         return {"train": 0, "val": 0, "test": 0, "skipped": 0}
 
+    if group_by_observation:
+        return split_one_species_grouped(
+            sci, images, processed_dir, train_p, val_p,
+            use_link, dry_run, seed,
+        )
+
     # Respeta asignaciones existentes para imágenes V1 ya splitteadas
     existing = existing_assignments(processed_dir, sci)
 
     # Imágenes nuevas (no asignadas previamente)
     new_images = [img for img in images if img.name not in existing]
-    rng = random.Random(seed + hash(sci) % 10_000)
+    rng = random.Random(stable_seed(seed, sci))
     rng.shuffle(new_images)
 
     n_new = len(new_images)
@@ -135,6 +156,48 @@ def split_one_species(
     return counts
 
 
+def split_one_species_grouped(
+    sci: str, images: list[Path], processed_dir: Path,
+    train_p: float, val_p: float,
+    use_link: bool, dry_run: bool, seed: int,
+) -> dict[str, int]:
+    """Split por observationID: todas las fotos de una observacion quedan juntas."""
+    groups: dict[str, list[Path]] = defaultdict(list)
+    for img in images:
+        groups[observation_id(img)].append(img)
+
+    items = list(groups.items())
+    rng = random.Random(stable_seed(seed, sci + "::grouped"))
+    rng.shuffle(items)
+
+    total = sum(len(group_imgs) for _, group_imgs in items)
+    train_target = int(total * train_p)
+    val_target = int(total * val_p)
+
+    assigned_counts = {"train": 0, "val": 0, "test": 0}
+    split_groups = {"train": [], "val": [], "test": []}
+    for _, group_imgs in items:
+        if assigned_counts["train"] + len(group_imgs) <= train_target:
+            split_name = "train"
+        elif assigned_counts["val"] + len(group_imgs) <= val_target:
+            split_name = "val"
+        else:
+            split_name = "test"
+        split_groups[split_name].extend(group_imgs)
+        assigned_counts[split_name] += len(group_imgs)
+
+    written = {"train": 0, "val": 0, "test": 0, "skipped": 0}
+    for split_name, split_imgs in split_groups.items():
+        for img in split_imgs:
+            dst = processed_dir / split_name / sci / img.name
+            if dst.exists():
+                written["skipped"] += 1
+                continue
+            transfer(img, dst, use_link=use_link, dry_run=dry_run)
+            written[split_name] += 1
+    return written
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--train", type=float, default=0.70)
@@ -147,6 +210,10 @@ def main():
                    help="Usa hardlinks en lugar de copiar (ahorra disco)")
     p.add_argument("--clean", action="store_true",
                    help="Vacía processed/{train,val,test}/<especie> antes")
+    p.add_argument("--group-by-observation", action="store_true",
+                   help="Mantiene juntas las fotos con el mismo observationID")
+    p.add_argument("--processed-dir", type=Path, default=config.PROCESSED_DIR,
+                   help="Destino del split train/val/test")
     p.add_argument("--seed", type=int, default=config.SEED)
     args = p.parse_args()
 
@@ -154,7 +221,11 @@ def main():
         f"Las proporciones deben sumar 1: {args.train + args.val + args.test}"
 
     raw_dir = config.RAW_DIR
-    processed_dir = config.PROCESSED_DIR
+    processed_dir = args.processed_dir
+    if args.group_by_observation:
+        print("Modo:    agrupado por observationID (recomendado para tesis)")
+        if not args.clean:
+            print("Aviso: usa --clean para regenerar un split agrupado desde cero.")
     print(f"Origen:  {raw_dir}")
     print(f"Destino: {processed_dir}")
     print(f"Split:   {args.train:.0%} train · {args.val:.0%} val · {args.test:.0%} test")
@@ -180,6 +251,7 @@ def main():
             sci, raw_dir, processed_dir,
             args.train, args.val, args.test,
             args.link, args.dry_run, args.seed,
+            group_by_observation=args.group_by_observation,
         )
         marker = "❌" if c["train"] + c["val"] + c["test"] == 0 else "✓"
         if marker == "❌":

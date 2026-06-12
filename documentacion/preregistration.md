@@ -52,7 +52,7 @@ Un catálogo de 53 señas en IS, validado con grupo focal de 8-12 miembros de la
 - Resolución de entrada: 224×224 (256×256 internamente con center crop).
 - Batch size: 32 (16 si OOM).
 - Semilla aleatoria: 42 (fijo en todos los experimentos).
-- División train/val/test: 70/15/15 estratificada.
+- División train/val/test: 70/15/15 estratificada por especie y agrupada por `observationID` para evitar que fotos de la misma observación aparezcan simultáneamente en entrenamiento y prueba.
 - Hardware: GPU NVIDIA RTX 3050 (4.3 GB VRAM) o equivalente.
 
 ### 3.2 Tamaño muestral
@@ -65,7 +65,7 @@ Un catálogo de 53 señas en IS, validado con grupo focal de 8-12 miembros de la
 ### 3.3 Procedimientos de validación
 
 1. **Validación cruzada estratificada** k=5 sobre el conjunto train+val, manteniendo proporciones de clase.
-2. **Test reservado** (15 %) inalterable hasta el reporte final.
+2. **Test reservado** (15 %) inalterable hasta el reporte final, sin fuga de `observationID` entre splits.
 3. **Doble anotación** de cada imagen por dos observadores; kappa de Cohen mínimo aceptado: κ ≥ 0.80.
 4. **Test estadístico para comparativa** PyTorch vs TensorFlow: McNemar pareado sobre el test, complementado con t-test pareado sobre folds.
 
@@ -99,6 +99,7 @@ Un catálogo de 53 señas en IS, validado con grupo focal de 8-12 miembros de la
 - Matriz de confusión 53×53 normalizada por filas.
 - Análisis cualitativo de pares confundidos con frecuencia (ej. *Buteo* juveniles entre sí, *Spizaetus* spp., *Cathartes aura* vs. *Cathartes burrovianus*).
 - Grad-CAM sobre 3 imágenes correctas y 3 incorrectas por clase.
+- Auditoría automática del dataset con `audit_dataset.py --fail-on-leak` antes de reportar métricas finales.
 
 ## 5. Resultados que considero como "aceptables"
 

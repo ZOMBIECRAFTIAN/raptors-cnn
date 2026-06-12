@@ -11,6 +11,8 @@ pytorch/
 ├── model.py           # ResNet50 / EfficientNet-B3 / MobileNetV3 / ConvNeXt
 ├── train.py           # Pipeline en dos etapas (feature extraction → fine-tuning)
 ├── evaluate.py        # Métricas, matriz de confusión y curvas ROC sobre test
+├── audit_dataset.py   # Auditoría: fuga por observationID, soporte bajo, archivos raros
+├── split_dataset.py   # Split por imagen o por observationID
 ├── gradcam.py         # Mapas de calor para verificar dónde "mira" el modelo
 ├── yolo/              # Detección/seguimiento en video + heurísticas de comportamiento
 ├── yolo_train.py      # Entrenamiento de detector YOLO con cajas anotadas
@@ -51,10 +53,12 @@ datos/processed/
 
 ```bash
 # Entrenamiento completo (etapa 1 + etapa 2)
-python train.py --arch resnet50
+python split_dataset.py --group-by-observation --clean --link
+python audit_dataset.py --fail-on-leak
+python train.py --arch resnet50 --split-protocol observation
 
 # Evaluación sobre test
-python evaluate.py --arch resnet50 --weights outputs/checkpoints/best_stage2.pt
+python evaluate.py --arch resnet50 --weights outputs/checkpoints/best_stage2_resnet50.pt --split-protocol observation
 
 # Grad-CAM sobre una imagen
 python gradcam.py --image path/a/cathartes.jpg --arch resnet50 --weights outputs/checkpoints/best_stage2.pt
@@ -76,3 +80,5 @@ python yolo_evaluate.py --data yolo/dataset_template.yaml --weights outputs/yolo
 - Se recomienda GPU con ≥ 12 GB de VRAM.
 - El módulo YOLO es opcional: usa `RAPTORS_YOLO_WEIGHTS`, luego `outputs/yolo/checkpoints/best.pt`, y finalmente `yolov8n.pt` como detector COCO de clase `bird`.
 - YOLO detecta/localiza aves; la CNN sigue siendo responsable de la identificación fina de las 53 especies.
+- Para resultados de tesis, usa `split_dataset.py --group-by-observation` y valida con `audit_dataset.py --fail-on-leak` antes de entrenar.
+- `train.py` y `evaluate.py` guardan manifiestos/metadatos para rastrear arquitectura, seed, commit, split y conteos del dataset.

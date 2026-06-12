@@ -71,7 +71,7 @@ def run_cmd(args: list[str]) -> int:
     return proc.returncode
 
 
-def entrenar(arch: str) -> dict:
+def entrenar(arch: str, split_protocol: str) -> dict:
     """Entrena una arquitectura y mide tiempo + VRAM."""
     print(f"\n{'=' * 70}\n  ENTRENANDO {arch}\n{'=' * 70}")
     t0 = time.time()
@@ -80,7 +80,10 @@ def entrenar(arch: str) -> dict:
     if TORCH_OK and torch.cuda.is_available():
         torch.cuda.reset_peak_memory_stats()
 
-    code = run_cmd([sys.executable, "train.py", "--arch", arch])
+    code = run_cmd([
+        sys.executable, "train.py", "--arch", arch,
+        "--split-protocol", split_protocol,
+    ])
 
     elapsed_h = (time.time() - t0) / 3600.0
     if TORCH_OK and torch.cuda.is_available():
@@ -94,7 +97,7 @@ def entrenar(arch: str) -> dict:
     }
 
 
-def evaluar(arch: str) -> dict:
+def evaluar(arch: str, split_protocol: str) -> dict:
     """Evalua una arquitectura ya entrenada. Asume best_stage2.pt."""
     print(f"\n{'=' * 70}\n  EVALUANDO {arch}\n{'=' * 70}")
     ckpt_dir = PYTORCH_DIR / "outputs" / "checkpoints"
@@ -105,8 +108,11 @@ def evaluar(arch: str) -> dict:
         print(f"  WARNING: no hay pesos en {weights} - saltando")
         return {"arch": arch, "eval_status": "NO_WEIGHTS"}
 
-    code = run_cmd([sys.executable, "evaluate.py", "--arch", arch,
-                    "--weights", str(weights)])
+    code = run_cmd([
+        sys.executable, "evaluate.py", "--arch", arch,
+        "--weights", str(weights),
+        "--split-protocol", split_protocol,
+    ])
 
     # Leer outputs/metrics_<arch>.json si evaluate.py lo produce
     metrics_json = PYTORCH_DIR / "outputs" / f"metrics_{arch}.json"
@@ -116,10 +122,13 @@ def evaluar(arch: str) -> dict:
             data = json.loads(metrics_json.read_text(encoding="utf-8"))
             res.update({
                 "accuracy":    data.get("accuracy"),
+                "balanced_accuracy": data.get("balanced_accuracy"),
                 "f1_macro":    data.get("f1_macro"),
                 "top3_acc":    data.get("top3_accuracy"),
+                "cohen_kappa": data.get("cohen_kappa"),
                 "model_size_MB": data.get("model_size_mb", data.get("model_size_MB")),
                 "latency_ms":  data.get("latency_ms_per_image"),
+                "split_protocol": data.get("split_protocol"),
             })
         except Exception as e:
             print(f"  WARNING: error leyendo {metrics_json.name}: {e}")
@@ -144,7 +153,8 @@ def cargar_o_inicializar_csv() -> dict[str, dict]:
 def guardar_csv(filas: dict[str, dict]) -> None:
     import csv
     columnas = ["arch", "params_M", "input", "flops_G", "imagenet_acc",
-                "accuracy", "f1_macro", "top3_acc",
+                "accuracy", "balanced_accuracy", "f1_macro", "top3_acc",
+                "cohen_kappa", "split_protocol",
                 "train_status", "train_hours", "vram_GB",
                 "model_size_MB", "latency_ms", "eval_status"]
     with CSV_PATH.open("w", encoding="utf-8", newline="") as f:
@@ -171,7 +181,7 @@ def generar_figuras(filas: dict[str, dict]) -> None:
     # Fig 1: accuracy por arquitectura (test set del proyecto + ImageNet de referencia)
     fig, ax = plt.subplots(figsize=(9, 5))
     x = list(range(len(archs)))
-    acc_proj = [_to_float(filas[a].get("accuracy")) for a in archs]
+    acc_proj = [_to_percent(filas[a].get("accuracy")) for a in archs]
     acc_im = [_to_float(filas[a].get("imagenet_acc")) for a in archs]
     ax.bar([i - 0.2 for i in x], acc_proj, 0.4, label="Rapaces (test)", color="#2E5985")
     ax.bar([i + 0.2 for i in x], acc_im, 0.4, label="ImageNet (referencia)", color="#A8C7E8")
@@ -202,7 +212,7 @@ def generar_figuras(filas: dict[str, dict]) -> None:
     fig, ax = plt.subplots(figsize=(8, 5))
     for a in archs:
         x_val = _to_float(filas[a].get("latency_ms"))
-        y_val = _to_float(filas[a].get("accuracy"))
+        y_val = _to_percent(filas[a].get("accuracy"))
         ax.scatter(x_val, y_val, s=200, alpha=0.7)
         ax.annotate(a.replace("_", "-"), (x_val, y_val),
                     textcoords="offset points", xytext=(8, 6), fontsize=9)
@@ -225,6 +235,11 @@ def _to_float(x) -> float:
         return 0.0
 
 
+def _to_percent(x) -> float:
+    value = _to_float(x)
+    return value * 100.0 if 0.0 <= value <= 1.0 else value
+
+
 # ---------------------------------------------------------------------------
 def main() -> None:
     ap = argparse.ArgumentParser(
@@ -239,6 +254,9 @@ def main() -> None:
                     help="Equivale a --train --evaluate --report")
     ap.add_argument("--arch", choices=ARQUITECTURAS,
                     help="Solo procesar una arquitectura especifica")
+    ap.add_argument("--split-protocol", default="observation",
+                    choices=["image", "observation", "unknown"],
+                    help="Protocolo usado para crear datos/processed")
     args = ap.parse_args()
 
     if args.all:
@@ -252,13 +270,13 @@ def main() -> None:
 
     if args.train:
         for a in archs:
-            r = entrenar(a)
+            r = entrenar(a, args.split_protocol)
             filas[a].update(r)
             guardar_csv(filas)
 
     if args.evaluate:
         for a in archs:
-            r = evaluar(a)
+            r = evaluar(a, args.split_protocol)
             filas[a].update(r)
             guardar_csv(filas)
 

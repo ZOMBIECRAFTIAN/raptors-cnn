@@ -23,13 +23,14 @@ Un sistema de **inteligencia artificial** que identifica automáticamente las **
 | Comparativa | PyTorch principal + TensorFlow espejo | 🚧 En consolidación |
 | Interpretabilidad | Grad-CAM | ✅ Funcionando |
 | Video/comportamiento | YOLO detección/seguimiento + análisis de vuelo | ✅ Prototipo implementado |
+| Validez experimental | Auditoría de dataset + split por observationID | ✅ Implementado como protocolo |
 | Dataset | iNaturalist + Macaulay Library + eBird + CONABIO | 🚧 En curación y evaluación |
 | Lengua de señas | Catálogo de 53 señas en International Sign | 🚧 Propuesta y validación pendiente |
 | Validación inclusiva | Escala Likert con grupo focal sordo | 🚧 Pendiente |
 
 ## 📊 ¿Qué resultados esperamos?
 
-- **H1**: reportar accuracy, F1 macro, top-3 accuracy, matriz de confusión y métricas por especie sobre las 53 clases.
+- **H1**: reportar accuracy, balanced accuracy, F1 macro, top-3 accuracy, matriz de confusión, intervalos de confianza y métricas por especie/familia sobre las 53 clases.
 - **H2**: Promedio Likert ≥ 4.0 / 5.0 en claridad, naturalidad y memorabilidad de cada seña.
 
 ## 🔍 Hallazgo destacado durante la verificación
@@ -77,6 +78,7 @@ gantt
 - 🌐 **Repositorio público**: `github.com/<usuario>/raptors-cnn`
 - 📑 **Capítulos de tesis** conservados como material interno local
 - 🧪 **Pipeline reproducible** verificado end-to-end con GPU NVIDIA
+- 🔍 **Auditoría metodológica** para evitar fuga por observación antes de métricas finales
 - 🎥 **Módulo YOLO de video** para detección, tracking y comportamiento heurístico
 - 🎨 **Catálogo preliminar de señas** en `lengua_de_senas/catalogo_senas/`
 - 📚 **Bibliografía consolidada** de 50+ referencias en APA 7.ª

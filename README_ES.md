@@ -13,7 +13,7 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[English](README.md) · [Manual de instalación](documentacion/guias/MANUAL_INSTALACION.md) · [Documentación completa](documentacion/guias/DOCUMENTACION_COMPLETA_ES.md)
+[English](README.md) · [Manual de instalación](documentacion/guias/MANUAL_INSTALACION.md) · [Documentación completa](documentacion/guias/DOCUMENTACION_COMPLETA_ES.md) · [Validación científica](documentacion/VALIDACION_CIENTIFICA.md)
 
 </div>
 
@@ -136,7 +136,7 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 | Pipeline de curación (`curate.py`) | **Funcional** | Diseñado para el dataset de 53 especies y metadatos de curación |
 | Entrenamiento de las 4 arquitecturas | **Parcialmente corrido localmente** | ResNet/EfficientNet/MobileNet pueden entrenarse; benchmark completo pendiente |
 | Scripts de evaluación | **Funcional** | Exportan JSON de métricas, reporte de clasificación, matriz de confusión y ROC |
-| Evaluación ResNet-50 | **Resultado local preliminar** | Test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
+| Evaluación ResNet-50 | **Resultado local preliminar** | Split por imagen; test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
 | Módulo Grad-CAM | **Funcional** | Demo sobre datos sintéticos validado |
 | GUI web Flask | **Funcional en modo demo** | Carga pesos entrenados cuando existen |
 | Módulo video/comportamiento | **Prototipo YOLO implementado** | `/identify_video` usa YOLO + tracking IoU + CNN por recorte; entrenamiento YOLO propio queda listo para cajas anotadas |
@@ -149,7 +149,7 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 - **Sesgo fotográfico de iNaturalist.** La mayoría de subidas son aves en planeo contra cielo limpio. El modelo subrendirá previsiblemente sobre fondos de dosel típicos de *Spizaetus* y *Harpagus*.
 - **Resolución temporal del módulo de comportamiento.** La ruta de video YOLO actual es prototipo: detecta y sigue aves, pero las etiquetas de comportamiento son heurísticas. Para resultados finales se requieren cajas y etiquetas temporales anotadas por clip.
 - **Riesgo del prior geográfico.** Los priors por coordenadas pueden introducir sesgo de confirmación. V2 ponderará el prior por la incertidumbre del clasificador visual.
-- **Resultados preliminares.** Los números actuales de ResNet-50 sirven como baseline, no como resultados finales de tesis. Las especies raras requieren más datos y análisis de error.
+- **Resultados preliminares.** Los números actuales de ResNet-50 sirven como baseline, no como resultados finales de tesis. El protocolo final usa split agrupado por `observationID` para evitar fuga entre train/test. Las especies raras requieren más datos y análisis de error.
 - **Sin publicación arbitrada aún.** Este es un proyecto de investigación en desarrollo.
 
 ## 14. Trabajo futuro
@@ -190,17 +190,19 @@ python download_inaturalist.py --target 50 --max-pages 1
 
 # 2. Curar y partir
 python curate.py --apply
-python split_dataset.py
+python split_dataset.py --group-by-observation --clean --link
+python audit_dataset.py --fail-on-leak
 
 # 3. Smoke test (1 epoch, ~5 min)
 python train.py --arch resnet50 --smoke-test
 
 # 4. Entrenamiento completo (4-8 h en RTX 3050; CPU no recomendado)
-python train.py --arch resnet50
+python train.py --arch resnet50 --split-protocol observation
 
 # 5. Evaluar
 python evaluate.py --arch resnet50 \
-                   --weights outputs/checkpoints/best_stage2.pt
+                   --weights outputs/checkpoints/best_stage2_resnet50.pt \
+                   --split-protocol observation
 ```
 
 ## 17. Cómo ejecutar inferencia

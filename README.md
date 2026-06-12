@@ -13,7 +13,7 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[Español](README_ES.md) · [Installation manual](documentacion/guias/MANUAL_INSTALACION.md) · [Complete documentation](documentacion/guias/COMPLETE_PROJECT_DOCUMENTATION_EN.md)
+[Español](README_ES.md) · [Installation manual](documentacion/guias/MANUAL_INSTALACION.md) · [Complete documentation](documentacion/guias/COMPLETE_PROJECT_DOCUMENTATION_EN.md) · [Scientific validation](documentacion/SCIENTIFIC_VALIDATION.md)
 
 </div>
 
@@ -136,7 +136,7 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation 
 | Curation pipeline (`curate.py`) | **Working** | Designed for the 53-species dataset and writes curation metadata |
 | Four-architecture training | **Partially run locally** | ResNet/EfficientNet/MobileNet checkpoints can be trained; full benchmark still pending |
 | Evaluation scripts | **Working** | Export JSON metrics, classification report, confusion matrix and ROC curves |
-| ResNet-50 evaluation | **Preliminary local result** | Test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
+| ResNet-50 evaluation | **Preliminary local result** | Image-level split; test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
 | Grad-CAM module | **Working** | Demo on synthetic data validated |
 | Flask web GUI | **Working in demo mode** | Loads trained weights when present |
 | Behaviour/video module | **YOLO prototype implemented** | `/identify_video` uses YOLO + IoU tracking + CNN crop classification; custom YOLO training is ready for annotated boxes |
@@ -149,7 +149,7 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation 
 - **iNaturalist photographic bias.** Most uploads are clear-sky soaring birds. The model is expected to under-perform on canopy backgrounds typical of *Spizaetus* and *Harpagus*.
 - **Temporal resolution of the behaviour module.** The current YOLO video path is a prototype: it detects and tracks birds, but behaviour labels are heuristic. Final results require annotated boxes and temporal behaviour labels per clip.
 - **Geographic prior risk.** Range-by-coordinates priors can introduce confirmation bias. V2 will weight the prior by visual-classifier uncertainty.
-- **Preliminary results.** The current ResNet-50 numbers are useful as a baseline, not as final thesis results. Rare species still need more data and error analysis.
+- **Preliminary results.** The current ResNet-50 numbers are useful as a baseline, not as final thesis results. The final protocol uses `observationID`-grouped splitting to avoid train/test leakage. Rare species still need more data and error analysis.
 - **No peer-reviewed publication yet.** This is a research project under development.
 
 ## 14. Future work
@@ -190,17 +190,19 @@ python download_inaturalist.py --target 50 --max-pages 1
 
 # 2. Curate and split
 python curate.py --apply
-python split_dataset.py
+python split_dataset.py --group-by-observation --clean --link
+python audit_dataset.py --fail-on-leak
 
 # 3. Smoke test (1 epoch, ~5 min)
 python train.py --arch resnet50 --smoke-test
 
 # 4. Full training (4-8 h on RTX 3050; CPU not recommended)
-python train.py --arch resnet50
+python train.py --arch resnet50 --split-protocol observation
 
 # 5. Evaluate
 python evaluate.py --arch resnet50 \
-                   --weights outputs/checkpoints/best_stage2.pt
+                   --weights outputs/checkpoints/best_stage2_resnet50.pt \
+                   --split-protocol observation
 ```
 
 ## 17. How to run inference
