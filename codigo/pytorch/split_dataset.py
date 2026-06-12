@@ -173,16 +173,46 @@ def split_one_species_grouped(
     total = sum(len(group_imgs) for _, group_imgs in items)
     train_target = int(total * train_p)
     val_target = int(total * val_p)
+    test_target = max(1, total - train_target - val_target)
 
     assigned_counts = {"train": 0, "val": 0, "test": 0}
     split_groups = {"train": [], "val": [], "test": []}
-    for _, group_imgs in items:
-        if assigned_counts["train"] + len(group_imgs) <= train_target:
-            split_name = "train"
-        elif assigned_counts["val"] + len(group_imgs) <= val_target:
-            split_name = "val"
-        else:
-            split_name = "test"
+
+    if len(items) < 3:
+        raise ValueError(
+            f"{sci} tiene solo {len(items)} observationIDs; se necesitan "
+            "al menos 3 para un split train/val/test sin fuga."
+        )
+
+    # Reserva grupos pequenos para val/test. Esto evita que una observacion
+    # grande consuma todo el split de validacion en especies raras.
+    items_by_size = sorted(items, key=lambda item: len(item[1]))
+    val_seed = items_by_size.pop(0)
+    test_seed = items_by_size.pop(0)
+    split_groups["val"].extend(val_seed[1])
+    assigned_counts["val"] += len(val_seed[1])
+    split_groups["test"].extend(test_seed[1])
+    assigned_counts["test"] += len(test_seed[1])
+
+    remaining = items_by_size
+    rng.shuffle(remaining)
+    targets = {
+        "train": max(1, train_target),
+        "val": max(1, val_target),
+        "test": test_target,
+    }
+
+    for _, group_imgs in remaining:
+        deficits = {
+            split: targets[split] - assigned_counts[split]
+            for split in ("train", "val", "test")
+        }
+        positive = {k: v for k, v in deficits.items() if v > 0}
+        split_name = (
+            max(positive, key=positive.get)
+            if positive else
+            min(assigned_counts, key=assigned_counts.get)
+        )
         split_groups[split_name].extend(group_imgs)
         assigned_counts[split_name] += len(group_imgs)
 
