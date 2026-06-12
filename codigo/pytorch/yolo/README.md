@@ -38,6 +38,10 @@ El detector por defecto usa `RAPTORS_YOLO_WEIGHTS` si existe, despues
 `outputs/yolo/checkpoints/best.pt`, y si no hay pesos personalizados usa
 `yolov8n.pt` como detector COCO de clase `bird`.
 
+Ver tambien `documentacion/YOLO_VIDEO_MODULE.md` para la forma correcta de
+defender este modulo: complementario a la CNN, no sustituto de la evaluacion de
+53 especies.
+
 ## English
 
 This module adds YOLO-based bird detection and tracking for short videos. The
@@ -75,3 +79,7 @@ python yolo_evaluate.py --data yolo/dataset_template.yaml --weights outputs/yolo
 The detector prefers `RAPTORS_YOLO_WEIGHTS`, then
 `outputs/yolo/checkpoints/best.pt`, and finally `yolov8n.pt` as a COCO `bird`
 detector.
+
+See also `documentacion/YOLO_VIDEO_MODULE.md` for the correct defense framing:
+this module complements the CNN and should not be mixed with the 53-species
+classification metrics.

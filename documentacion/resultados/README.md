@@ -2,26 +2,33 @@
 
 This folder contains **reporting templates and current results** for the `raptors-cnn` project. It is the single place reviewers, supervisors and graduate-admission committees should look for empirical evidence.
 
-> **Honesty notice.** Some files are templates marked `to be filled after training`. Where numbers do appear, they come either from (a) a preliminary local ResNet-50 evaluation on an image-level 53-species split, or (b) the predecessor Australian raptor project used only as external context. The final thesis protocol uses observation-level splitting and dataset auditing before reporting definitive metrics.
+> **Honesty notice.** Some files are templates marked `to be filled after training`. Where current Mexico-project numbers appear, they come from a local ResNet-50 run using the observation-level split audited on 2026-06-12. Older image-level numbers are kept only as historical baselines and should not be used as final thesis claims.
 
-## Current preliminary baseline
+## Current thesis-grade baseline
 
-`ResNet-50`, evaluated locally on 2026-06-06 with `outputs/checkpoints/best_stage2.pt`.
-This baseline used an **image-level split** and must be repeated with
-`split_dataset.py --group-by-observation` before being used as a final thesis
-claim:
+`ResNet-50`, evaluated locally on 2026-06-12 with
+`outputs/checkpoints/best_stage2_resnet50.pt`.
+This baseline uses an **observation-level split** generated with
+`split_dataset.py --group-by-observation` and audited with
+`audit_dataset.py --fail-on-leak`.
 
 | Metric | Value |
 |---|---:|
-| Test images | 3,419 |
-| Accuracy | 0.5665 |
-| F1-macro | 0.5314 |
-| Top-3 accuracy | 0.7488 |
-| Macro-AUC | 0.9565 |
-| Latency | 20.59 ms/image |
-| Model size | 90.39 MB |
+| Test images | 2,653 |
+| Accuracy | 0.6072 |
+| Accuracy 95% CI | 0.5895-0.6246 |
+| Balanced accuracy | 0.5808 |
+| F1-macro | 0.5837 |
+| F1-macro 95% CI | 0.5594-0.6009 |
+| F1-weighted | 0.6133 |
+| Top-3 accuracy | 0.6958 |
+| Macro-AUC | 0.9226 |
+| Cohen's kappa | 0.5969 |
+| Latency | 19.08 ms/image |
+| Model size | 90.40 MB |
 
-These values are a baseline for improvement, not final thesis claims.
+Dataset audit summary: train=12,261, val=2,609, test=2,653, with 0
+overlapping `observationID`s across train/val/test.
 
 ## Files
 
@@ -30,6 +37,8 @@ These values are a baseline for improvement, not final thesis claims.
 | [`METRICS_TEMPLATE.md`](METRICS_TEMPLATE.md) | Per-architecture and per-species metrics table | Template — fill after training |
 | [`CONFUSION_MATRIX_TEMPLATE.md`](CONFUSION_MATRIX_TEMPLATE.md) | 53 × 53 confusion matrix protocol | Template — fill after evaluation |
 | [`GRADCAM_EXAMPLES.md`](GRADCAM_EXAMPLES.md) | Grad-CAM interpretability protocol and example gallery | Template + 1 demo example |
+| [`ERROR_ANALYSIS_RESNET50_OBSERVATION.md`](ERROR_ANALYSIS_RESNET50_OBSERVATION.md) | Error analysis for the current ResNet-50 observation-level run | Written |
+| [`GRADCAM_AUDIT_RESNET50_OBSERVATION.md`](GRADCAM_AUDIT_RESNET50_OBSERVATION.md) | Grad-CAM audit notes for correct/error examples | Written |
 | [`TRAINING_CURVES.md`](TRAINING_CURVES.md) | Loss and accuracy curves per stage | Template — fill after training |
 | [`SHORTCUT_LEARNING_FINDING.md`](SHORTCUT_LEARNING_FINDING.md) | Documented failure mode and mitigation | Written |
 

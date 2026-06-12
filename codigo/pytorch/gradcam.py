@@ -66,17 +66,18 @@ def main():
     args = parser.parse_args()
 
     device = config.DEVICE
-    model = build_model(args.arch).to(device)
+    model = build_model(args.arch, pretrained=False).to(device)
     model.load_state_dict(torch.load(args.weights, map_location=device))
 
-    _, eval_tf = get_transforms()
+    input_size = config.input_size_for_arch(args.arch)
+    _, eval_tf = get_transforms(input_size)
     img = Image.open(args.image).convert("RGB")
     x = eval_tf(img).unsqueeze(0).to(device)
 
     cam_engine = GradCAM(model, get_target_layer(model, args.arch))
     cam, pred = cam_engine(x)
 
-    img_resized = img.resize((config.INPUT_SIZE, config.INPUT_SIZE))
+    img_resized = img.resize((input_size, input_size))
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
     ax[0].imshow(img_resized); ax[0].set_title("Original"); ax[0].axis("off")
     ax[1].imshow(img_resized); ax[1].imshow(cam, cmap="jet", alpha=0.5)

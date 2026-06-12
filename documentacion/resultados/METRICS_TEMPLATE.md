@@ -1,6 +1,7 @@
 # Metrics — per-architecture summary
 
-**Status:** template. *To be filled after training.* Numbers will be inserted by `codigo/comparacion/comparar_arquitecturas.py --report`.
+**Status:** partial results available. ResNet-50 has been evaluated with the
+observation-level protocol; the other architectures remain pending.
 
 ## Table 1. Headline metrics across four architectures (53 species, test set)
 
@@ -8,10 +9,13 @@
 |---|---|---|---|---|---|---|---|---|
 | MobileNetV3-Large | 5.5  | 224 | TBD | TBD | TBD | TBD | TBD | TBD |
 | EfficientNet-B3   | 12.2 | 300 | TBD | TBD | TBD | TBD | TBD | TBD |
-| ResNet-50 *(baseline, local 2026-06-06)* | 25.6 | 224 | 0.5665 | 0.5314 | 0.7488 | 20.59 | 90.39 | 3.09 |
+| ResNet-50 *(baseline, local 2026-06-12; observation split)* | 25.6 | 224 | 0.6072 | 0.5837 | 0.6958 | 19.08 | 90.40 | 3.09 |
 | ConvNeXt-Tiny     | 28.6 | 232 | TBD | TBD | TBD | TBD | TBD | TBD |
 
-**TBD** = to be reported after the full training run. The ResNet-50 row is a preliminary local evaluation from `outputs/metrics_resnet50.json` using an image-level split, not a final thesis result. The final table must be regenerated after `split_dataset.py --group-by-observation` and `audit_dataset.py --fail-on-leak`. Latency and model size are reported on the current local machine; batch size = 1.
+**TBD** = to be reported after the full training run. The ResNet-50 row comes
+from `outputs/metrics_resnet50.json` using the audited observation-level split
+(`train=12,261`, `val=2,609`, `test=2,653`, observation leakage = 0). Latency
+and model size are reported on the current local machine; batch size = 1.
 
 ## Table 2. Reference results from the Australian predecessor project (8 species)
 

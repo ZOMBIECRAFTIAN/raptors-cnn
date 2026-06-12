@@ -14,6 +14,7 @@ pytorch/
 ├── audit_dataset.py   # Auditoría: fuga por observationID, soporte bajo, archivos raros
 ├── split_dataset.py   # Split por imagen o por observationID
 ├── gradcam.py         # Mapas de calor para verificar dónde "mira" el modelo
+├── gradcam_batch.py   # Auditoría Grad-CAM por lote: aciertos, errores y CSV
 ├── yolo/              # Detección/seguimiento en video + heurísticas de comportamiento
 ├── yolo_train.py      # Entrenamiento de detector YOLO con cajas anotadas
 ├── yolo_evaluate.py   # Evaluación YOLO (mAP, precision, recall)
@@ -62,6 +63,9 @@ python evaluate.py --arch resnet50 --weights outputs/checkpoints/best_stage2_res
 
 # Grad-CAM sobre una imagen
 python gradcam.py --image path/a/cathartes.jpg --arch resnet50 --weights outputs/checkpoints/best_stage2.pt
+
+# Grad-CAM por lote sobre aciertos/errores del test
+python gradcam_batch.py --arch resnet50 --weights outputs/checkpoints/best_stage2_resnet50.pt --split test --correct 10 --incorrect 10
 
 # Analizar un video con YOLO
 python yolo_predict_video.py --video ../../datos/videos/raw/Buteo_jamaicensis/clip_001.mp4

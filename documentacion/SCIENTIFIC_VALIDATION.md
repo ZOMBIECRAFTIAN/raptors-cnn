@@ -5,17 +5,30 @@ Its purpose is to avoid inflated claims and make the project reproducible.
 
 ## 1. Current Metrics
 
-The existing ResNet-50 metrics are **preliminary** because they were produced
-with an image-level split. The dataset uses filenames like
-`<observationID>_<photoID>`, so multiple photos from the same observation may
-appear in train, validation and test at the same time.
+ResNet-50 has now been retrained and evaluated with the defensible
+`observationID` protocol. The dataset audit reports 0 observation leaks across
+train, validation and test.
+
+Local result from 2026-06-12:
+
+| Metric | Value |
+|---|---:|
+| Test images | 2,653 |
+| Accuracy | 0.6072 |
+| Accuracy 95% CI | 0.5895-0.6246 |
+| Balanced accuracy | 0.5808 |
+| F1-macro | 0.5837 |
+| F1-macro 95% CI | 0.5594-0.6009 |
+| Top-3 accuracy | 0.6958 |
+| Macro-AUC | 0.9226 |
+| Cohen's kappa | 0.5969 |
 
 Correct interpretation:
 
-- They are an initial technical baseline.
-- They should not be presented as final generalisation estimates.
-- They must be repeated after regenerating `datos/processed/` with an
-  observation-grouped split.
+- These numbers are more defensible than the older image-level baseline.
+- Very low-support species remain inconclusive at species level.
+- Other architectures still require their own runs; they should not be inferred
+  from ResNet-50.
 
 ## 2. Thesis-Grade Split
 
@@ -43,8 +56,8 @@ python evaluate.py --arch resnet50 \
   --split-protocol observation
 ```
 
-Accuracy may decrease compared with the image-level split. That is expected:
-the new metric is more honest and scientifically defensible.
+Accuracy may differ from the image-level split. That is expected: the
+observation-grouped metric is more honest and scientifically defensible.
 
 ## 3. Mandatory Dataset Audit
 
@@ -106,7 +119,7 @@ To defend it as a scientific module, it needs:
 
 ## 7. Recommended Defense Statement
 
-> Current metrics are preliminary and were generated with an image-level split.
-> During auditing, we detected possible observation-level leakage, so the final
-> protocol uses `observationID`-grouped splitting, automated dataset auditing
-> and retraining before reporting final results.
+> The current ResNet-50 metrics were regenerated with `observationID`-grouped
+> splitting and automated auditing with no leakage across train, validation and
+> test. Rare species are still reported cautiously because some have fewer than
+> 10 test images.

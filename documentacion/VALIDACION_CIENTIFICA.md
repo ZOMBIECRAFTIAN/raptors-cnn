@@ -6,17 +6,30 @@ proyecto sigue un protocolo reproducible.
 
 ## 1. Estado de las metricas actuales
 
-Las metricas ResNet-50 existentes son **preliminares** porque fueron generadas
-sobre un split por imagen. En el dataset actual, varios archivos siguen el
-patron `<observationID>_<photoID>` y multiples fotos de la misma observacion
-pueden caer en train, val y test al mismo tiempo.
+ResNet-50 ya fue reentrenado y evaluado con el protocolo defendible por
+`observationID`. La auditoria del dataset reporta 0 fugas de observacion entre
+train, validacion y test.
+
+Resultado local del 2026-06-12:
+
+| Metrica | Valor |
+|---|---:|
+| Imagenes de prueba | 2,653 |
+| Accuracy | 0.6072 |
+| Accuracy IC 95% | 0.5895-0.6246 |
+| Balanced accuracy | 0.5808 |
+| F1-macro | 0.5837 |
+| F1-macro IC 95% | 0.5594-0.6009 |
+| Top-3 accuracy | 0.6958 |
+| Macro-AUC | 0.9226 |
+| Cohen's kappa | 0.5969 |
 
 Interpretacion correcta:
 
-- Sirven como baseline tecnico inicial.
-- No deben presentarse como estimacion final de generalizacion.
-- Deben repetirse despues de regenerar `datos/processed/` con split agrupado
-  por `observationID`.
+- Estos numeros son mas defendibles que el baseline anterior por imagen.
+- Las especies con soporte muy bajo siguen sin ser concluyentes por especie.
+- El benchmark de otras arquitecturas queda pendiente y no debe inferirse desde
+  ResNet-50.
 
 ## 2. Split recomendado para tesis
 
@@ -44,8 +57,8 @@ python evaluate.py --arch resnet50 \
   --split-protocol observation
 ```
 
-El resultado esperado puede bajar respecto al split por imagen. Eso es normal:
-la metrica nueva es mas honesta y mas defendible.
+El resultado puede diferir respecto al split por imagen. Eso es normal: la
+metrica agrupada por observacion es mas honesta y mas defendible.
 
 ## 3. Auditoria obligatoria antes de reportar
 
@@ -108,7 +121,7 @@ Para defenderlo como modulo cientifico se requiere:
 
 ## 7. Frase recomendada para defensa
 
-> Las metricas actuales son preliminares y se generaron con split por imagen.
-> Durante la auditoria detectamos posible fuga por observacion, por lo que el
-> protocolo final usa split agrupado por `observationID`, auditoria automatica
-> del dataset y reentrenamiento antes de reportar resultados finales.
+> Las metricas actuales de ResNet-50 ya fueron regeneradas con split agrupado
+> por `observationID` y auditoria automatica sin fuga entre train, validacion y
+> test. Aun asi, las especies raras se reportan con cautela porque algunas
+> tienen menos de 10 imagenes de prueba.

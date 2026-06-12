@@ -13,7 +13,7 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[English](README.md) · [Manual de instalación](documentacion/guias/MANUAL_INSTALACION.md) · [Documentación completa](documentacion/guias/DOCUMENTACION_COMPLETA_ES.md) · [Validación científica](documentacion/VALIDACION_CIENTIFICA.md)
+[English](README.md) · [Manual de instalación](documentacion/guias/MANUAL_INSTALACION.md) · [Documentación completa](documentacion/guias/DOCUMENTACION_COMPLETA_ES.md) · [Validación científica](documentacion/VALIDACION_CIENTIFICA.md) · [Módulo YOLO video](documentacion/YOLO_VIDEO_MODULE.md)
 
 </div>
 
@@ -64,7 +64,7 @@ Una identificación precisa y escalable apoya directamente:
 | Resolución mínima | lado mayor ≥ 800 px (post-curación) |
 | Script de curación | `codigo/pytorch/curate.py` — score 0-100 (resolución + nitidez Laplaciano + brillo + hash perceptual) |
 | Calidad de anotación | Doble anotación en imágenes dudosas; Cohen κ ≥ 0.85 requerido |
-| Partición | 70 / 15 / 15 entrenamiento / validación / prueba, estratificado por especie, seed = 42 |
+| Partición | 70 / 15 / 15 entrenamiento / validación / prueba, estratificado por especie y agrupado por `observationID`, seed = 42 |
 | Procedencia | SHA-256 de cada imagen registrado en `datos/annotations/` |
 
 La construcción del dataset se detalla en `documentacion/WORKFLOW_DATASET_REAL.md`.
@@ -136,7 +136,7 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 | Pipeline de curación (`curate.py`) | **Funcional** | Diseñado para el dataset de 53 especies y metadatos de curación |
 | Entrenamiento de las 4 arquitecturas | **Parcialmente corrido localmente** | ResNet/EfficientNet/MobileNet pueden entrenarse; benchmark completo pendiente |
 | Scripts de evaluación | **Funcional** | Exportan JSON de métricas, reporte de clasificación, matriz de confusión y ROC |
-| Evaluación ResNet-50 | **Resultado local preliminar** | Split por imagen; test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
+| Evaluación ResNet-50 | **Resultado local por observación** | Split por `observationID`; test n=2,653; accuracy=0.6072; balanced accuracy=0.5808; F1-macro=0.5837; top-3=0.6958; macro-AUC=0.9226 |
 | Módulo Grad-CAM | **Funcional** | Demo sobre datos sintéticos validado |
 | GUI web Flask | **Funcional en modo demo** | Carga pesos entrenados cuando existen |
 | Módulo video/comportamiento | **Prototipo YOLO implementado** | `/identify_video` usa YOLO + tracking IoU + CNN por recorte; entrenamiento YOLO propio queda listo para cajas anotadas |
@@ -149,7 +149,7 @@ Todos los scripts que calculan estas métricas viven en `codigo/pytorch/evaluate
 - **Sesgo fotográfico de iNaturalist.** La mayoría de subidas son aves en planeo contra cielo limpio. El modelo subrendirá previsiblemente sobre fondos de dosel típicos de *Spizaetus* y *Harpagus*.
 - **Resolución temporal del módulo de comportamiento.** La ruta de video YOLO actual es prototipo: detecta y sigue aves, pero las etiquetas de comportamiento son heurísticas. Para resultados finales se requieren cajas y etiquetas temporales anotadas por clip.
 - **Riesgo del prior geográfico.** Los priors por coordenadas pueden introducir sesgo de confirmación. V2 ponderará el prior por la incertidumbre del clasificador visual.
-- **Resultados preliminares.** Los números actuales de ResNet-50 sirven como baseline, no como resultados finales de tesis. El protocolo final usa split agrupado por `observationID` para evitar fuga entre train/test. Las especies raras requieren más datos y análisis de error.
+- **Incertidumbre en especies raras.** Los números actuales de ResNet-50 ya usan el split defendible por `observationID`, pero las especies con muy poco soporte de prueba siguen teniendo estimaciones inestables por especie. *Buteogallus solitarius* y *Morphnus guianensis* requieren recolección dirigida antes de tratar su F1 como concluyente.
 - **Sin publicación arbitrada aún.** Este es un proyecto de investigación en desarrollo.
 
 ## 14. Trabajo futuro

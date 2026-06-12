@@ -13,7 +13,7 @@
 [![Status: research preview](https://img.shields.io/badge/status-research%20preview-orange.svg)]()
 [![Cite this](https://img.shields.io/badge/cite-CITATION.cff-informational.svg)](CITATION.cff)
 
-[Español](README_ES.md) · [Installation manual](documentacion/guias/MANUAL_INSTALACION.md) · [Complete documentation](documentacion/guias/COMPLETE_PROJECT_DOCUMENTATION_EN.md) · [Scientific validation](documentacion/SCIENTIFIC_VALIDATION.md)
+[Español](README_ES.md) · [Installation manual](documentacion/guias/MANUAL_INSTALACION.md) · [Complete documentation](documentacion/guias/COMPLETE_PROJECT_DOCUMENTATION_EN.md) · [Scientific validation](documentacion/SCIENTIFIC_VALIDATION.md) · [YOLO video module](documentacion/YOLO_VIDEO_MODULE.md)
 
 </div>
 
@@ -64,7 +64,7 @@ Accurate, scalable raptor ID directly supports:
 | Resolution floor | long side ≥ 800 px (post-curation) |
 | Curation script | `codigo/pytorch/curate.py` — 0-100 score (resolution + Laplacian sharpness + brightness + perceptual hash) |
 | Annotation quality | Double annotation on borderline images; Cohen's κ ≥ 0.85 required |
-| Split | 70 / 15 / 15 train / val / test, stratified by species, seed = 42 |
+| Split | 70 / 15 / 15 train / val / test, stratified by species and grouped by `observationID`, seed = 42 |
 | Provenance | SHA-256 of every image logged in `datos/annotations/` |
 
 Dataset construction is described in detail in `documentacion/WORKFLOW_DATASET_REAL.md`.
@@ -136,7 +136,7 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation 
 | Curation pipeline (`curate.py`) | **Working** | Designed for the 53-species dataset and writes curation metadata |
 | Four-architecture training | **Partially run locally** | ResNet/EfficientNet/MobileNet checkpoints can be trained; full benchmark still pending |
 | Evaluation scripts | **Working** | Export JSON metrics, classification report, confusion matrix and ROC curves |
-| ResNet-50 evaluation | **Preliminary local result** | Image-level split; test n=3,419; accuracy=0.5665; F1-macro=0.5314; top-3=0.7488; macro-AUC=0.9565 |
+| ResNet-50 evaluation | **Observation-level local result** | `observationID` split; test n=2,653; accuracy=0.6072; balanced accuracy=0.5808; F1-macro=0.5837; top-3=0.6958; macro-AUC=0.9226 |
 | Grad-CAM module | **Working** | Demo on synthetic data validated |
 | Flask web GUI | **Working in demo mode** | Loads trained weights when present |
 | Behaviour/video module | **YOLO prototype implemented** | `/identify_video` uses YOLO + IoU tracking + CNN crop classification; custom YOLO training is ready for annotated boxes |
@@ -149,7 +149,7 @@ All scripts that compute these live in `codigo/pytorch/evaluate.py`. Evaluation 
 - **iNaturalist photographic bias.** Most uploads are clear-sky soaring birds. The model is expected to under-perform on canopy backgrounds typical of *Spizaetus* and *Harpagus*.
 - **Temporal resolution of the behaviour module.** The current YOLO video path is a prototype: it detects and tracks birds, but behaviour labels are heuristic. Final results require annotated boxes and temporal behaviour labels per clip.
 - **Geographic prior risk.** Range-by-coordinates priors can introduce confirmation bias. V2 will weight the prior by visual-classifier uncertainty.
-- **Preliminary results.** The current ResNet-50 numbers are useful as a baseline, not as final thesis results. The final protocol uses `observationID`-grouped splitting to avoid train/test leakage. Rare species still need more data and error analysis.
+- **Rare-species uncertainty.** The current ResNet-50 numbers are based on the defensible `observationID` split, but rare species with very low test support still have unstable per-species estimates. *Buteogallus solitarius* and *Morphnus guianensis* require targeted data collection before their species-level F1 can be treated as conclusive.
 - **No peer-reviewed publication yet.** This is a research project under development.
 
 ## 14. Future work

@@ -1,6 +1,9 @@
 # Confusion matrix — 53 × 53
 
-**Status:** template. *To be filled after training.* The matrix is produced by `codigo/pytorch/evaluate.py` as both a CSV (`outputs/confusion_matrix.csv`) and a PNG (`outputs/confusion_matrix.png`).
+**Status:** ResNet-50 observation-level matrix available locally. The matrix is
+produced by `codigo/pytorch/evaluate.py` as both CSV
+(`outputs/confusion_matrix_counts_resnet50.csv`) and PNG
+(`outputs/confusion_matrix.png`).
 
 ## Protocol
 
@@ -22,6 +25,24 @@ Based on field-guide knowledge and expert-confusion literature, the following pa
 | *Cathartes aura* vs *Cathartes burrovianus* | Same genus; difference is head colour | Often a known limitation; flag low confidence |
 
 The matrix produced from training will be compared against these hypotheses. **Confirming or refuting the predicted confusion clusters is itself a contribution.**
+
+## Observed confusion clusters: ResNet-50 observation split
+
+Top off-diagonal pairs from the 2026-06-12 run:
+
+| True species | Predicted species | Count | Interpretation |
+|---|---|---:|---|
+| *Ictinia plumbea* | *Ictinia mississippiensis* | 27 | Same genus; likely silhouette and flight-style similarity. |
+| *Accipiter striatus* | *Astur cooperii* | 20 | Known field-identification pair; size and wingbeat cues matter. |
+| *Astur cooperii* | *Accipiter striatus* | 17 | Reciprocal confusion in the same accipiter/goshawk complex. |
+| *Buteo jamaicensis* | *Buteo platypterus* | 15 | Buteo silhouette overlap in distant flight photographs. |
+| *Buteo jamaicensis* | *Buteo lineatus* | 15 | Broad Buteo confusion; requires better wing/tail diagnostic focus. |
+| *Buteo platypterus* | *Buteo lineatus* | 12 | Similar perched/soaring image bias likely contributes. |
+| *Buteogallus urubitinga* | *Buteogallus anthracinus* | 12 | Same genus; expected by the pre-registered hypothesis. |
+
+These errors are biologically plausible rather than random noise. They support
+the decision to include Grad-CAM, YOLO-based flight behaviour and top-3 output
+instead of treating single-label top-1 accuracy as the only evidence.
 
 ## Headline figure (to be inserted)
 

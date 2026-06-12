@@ -81,3 +81,7 @@ Pesos YOLO:
 - Si existe `RAPTORS_YOLO_WEIGHTS`, se usa esa ruta.
 - Si existe `codigo/pytorch/outputs/yolo/checkpoints/best.pt`, se usa ese detector propio.
 - Si no, se usa `yolov8n.pt` como detector COCO de clase `bird`.
+
+Para defensa academica, ver `documentacion/YOLO_VIDEO_MODULE.md`: YOLO se
+presenta como modulo complementario de deteccion/tracking/video, mientras que
+la CNN conserva la responsabilidad de clasificar las 53 especies.

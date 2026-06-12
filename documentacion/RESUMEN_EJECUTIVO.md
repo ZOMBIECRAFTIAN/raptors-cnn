@@ -30,7 +30,7 @@ Un sistema de **inteligencia artificial** que identifica automáticamente las **
 
 ## 📊 ¿Qué resultados esperamos?
 
-- **H1**: reportar accuracy, balanced accuracy, F1 macro, top-3 accuracy, matriz de confusión, intervalos de confianza y métricas por especie/familia sobre las 53 clases.
+- **H1**: ResNet-50 ya fue evaluado con split por `observationID`: accuracy=0.6072, balanced accuracy=0.5808, F1-macro=0.5837, top-3=0.6958, macro-AUC=0.9226, sin fuga de observación entre train/val/test.
 - **H2**: Promedio Likert ≥ 4.0 / 5.0 en claridad, naturalidad y memorabilidad de cada seña.
 
 ## 🔍 Hallazgo destacado durante la verificación
@@ -78,7 +78,8 @@ gantt
 - 🌐 **Repositorio público**: `github.com/<usuario>/raptors-cnn`
 - 📑 **Capítulos de tesis** conservados como material interno local
 - 🧪 **Pipeline reproducible** verificado end-to-end con GPU NVIDIA
-- 🔍 **Auditoría metodológica** para evitar fuga por observación antes de métricas finales
+- 🔍 **Auditoría metodológica** con 0 fugas de `observationID` entre train/val/test
+- 📊 **Resultado ResNet-50 defendible** con split por observación, intervalos de confianza y análisis de error
 - 🎥 **Módulo YOLO de video** para detección, tracking y comportamiento heurístico
 - 🎨 **Catálogo preliminar de señas** en `lengua_de_senas/catalogo_senas/`
 - 📚 **Bibliografía consolidada** de 50+ referencias en APA 7.ª
